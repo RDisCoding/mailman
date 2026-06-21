@@ -1,4 +1,4 @@
-# Mailman: Cortogen User Outreach System
+# Mailman: User Outreach System
 
 Mailman is an automated, self-contained system designed to scrape developer leads from GitHub and execute daily staggered email outreach campaigns. It features a modern glassmorphic web dashboard for manual drafts verification, stats tracking, and a background batch campaign dispatcher with live console log streaming and status email reports.
 
@@ -59,7 +59,7 @@ Create a `config.json` in the root of the project by copying `config.json.templa
 ```
 
 > [!IMPORTANT]
-> **Google App Password**: Gmail requires a 16-character third-party App Password. Turn on 2-Step Verification in Google Account -> Security -> App Passwords and generate one named `Cortogen Outreach`.
+> **Google App Password**: Gmail requires a 16-character third-party App Password. Turn on 2-Step Verification in Google Account -> Security -> App Passwords and generate one named `Outreach`.
 
 ---
 
