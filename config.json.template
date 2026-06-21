@@ -1,0 +1,8 @@
+{
+  "sender_email": "your_gmail_address@gmail.com",
+  "app_password": "your_gmail_app_password",
+  "daily_limit": 50,
+  "min_delay_seconds": 60,
+  "max_delay_seconds": 120,
+  "notification_email": "your_notification_email@gmail.com"
+}

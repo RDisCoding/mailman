@@ -1,0 +1,19 @@
+# Sensitive credentials
+config.json
+
+# Developer lead lists (contains email addresses)
+*.csv
+
+# Python caches and local environment files
+__pycache__/
+*.pyc
+.env
+.gitignore_global
+
+# Editor files
+.vscode/
+.idea/
+
+# Local media/recordings
+*.png
+*.webp

@@ -1,0 +1,1928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cortogen Publicity & Student Outreach Suite</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-base: #020617;
+            --bg-surface: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.4);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(255, 255, 255, 0.15);
+            
+            --color-primary: #3b82f6;
+            --color-primary-glow: rgba(59, 130, 246, 0.15);
+            --color-secondary: #a855f7;
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-danger: #ef4444;
+            --color-info: #06b6d4;
+            
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            
+            --font-display: 'Outfit', sans-serif;
+            --font-sans: 'Inter', sans-serif;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-premium: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* Header Section */
+        header {
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.8) 0%, rgba(15, 23, 42, 0.4) 100%);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.25rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 10;
+        }
+
+        .header-left h1 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header-left p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 0.15rem;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .stat-card {
+            background: rgba(30, 41, 59, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.4rem 0.8rem;
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .stat-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
+
+        .sync-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            transition: var(--transition);
+        }
+        .sync-indicator.syncing {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--color-primary);
+            border-color: rgba(59, 130, 246, 0.2);
+        }
+
+        .sync-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: currentColor;
+            box-shadow: 0 0 8px currentColor;
+        }
+
+        /* App Layout */
+        .app-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            width: 380px;
+            border-right: 1px solid var(--border-color);
+            background: rgba(15, 23, 42, 0.35);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-controls {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            background: rgba(15, 23, 42, 0.5);
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.6rem 1rem 0.6rem 2.25rem;
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-box input:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.25);
+            background: rgba(30, 41, 59, 0.8);
+        }
+
+        .search-box svg {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            color: var(--text-secondary);
+            pointer-events: none;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .filter-row select {
+            flex: 1;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            outline: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-row select:focus {
+            border-color: var(--color-primary);
+            color: var(--text-primary);
+        }
+
+        .researchers-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+
+        .researcher-card {
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 0.4rem;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .researcher-card:hover {
+            background: rgba(30, 41, 59, 0.3);
+            border-color: var(--border-color);
+        }
+
+        .researcher-card.active {
+            background: rgba(59, 130, 246, 0.08);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: inset 4px 0 0 var(--color-primary);
+        }
+
+        .card-header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.25rem;
+        }
+
+        .card-name {
+            font-family: var(--font-display);
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-dot.not_contacted { background-color: var(--text-muted); }
+        .status-dot.drafted { background-color: var(--color-info); }
+        .status-dot.scheduled { background-color: var(--color-warning); }
+        .status-dot.sent { background-color: var(--color-success); }
+        .status-dot.replied { background-color: var(--color-secondary); }
+
+        .card-institution {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-sources {
+            display: flex;
+            gap: 0.25rem;
+            flex-wrap: wrap;
+        }
+
+        .source-tag {
+            font-size: 0.6rem;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .source-tag.outreach {
+            background: rgba(168, 85, 247, 0.08);
+            color: #d8b4fe;
+            border-color: rgba(168, 85, 247, 0.15);
+        }
+        .source-tag.authors {
+            background: rgba(6, 182, 212, 0.08);
+            color: #22d3ee;
+            border-color: rgba(6, 182, 212, 0.15);
+        }
+        .source-tag.elite {
+            background: rgba(245, 158, 11, 0.08);
+            color: #fde047;
+            border-color: rgba(245, 158, 11, 0.15);
+        }
+
+        .status-badge {
+            font-size: 0.65rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 12px;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+
+        .status-badge.not_contacted { background: rgba(100, 116, 139, 0.15); color: #94a3b8; }
+        .status-badge.drafted { background: rgba(6, 182, 212, 0.15); color: #22d3ee; }
+        .status-badge.scheduled { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+        .status-badge.sent { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+        .status-badge.replied { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
+
+        /* Main outreach display */
+        .workspace {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            background: radial-gradient(circle at 70% 30%, rgba(59, 130, 246, 0.03) 0%, transparent 60%);
+            padding: 2rem;
+            position: relative;
+        }
+
+        /* Empty state */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            text-align: center;
+            padding: 2rem;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.05);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-primary);
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.1);
+        }
+
+        .empty-state h2 {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .empty-state p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .research-summary-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: left;
+            width: 100%;
+        }
+
+        .research-summary-box h3 {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: var(--color-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .research-summary-box ul {
+            list-style-type: none;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .research-summary-box li {
+            margin-bottom: 0.4rem;
+            position: relative;
+            padding-left: 1rem;
+        }
+
+        .research-summary-box li::before {
+            content: "•";
+            color: var(--color-primary);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        /* Detail panel active state */
+        .outreach-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .panel-row {
+            display: grid;
+            grid-template-columns: 3fr 2fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .panel-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .glass-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-premium);
+            transition: var(--transition);
+        }
+
+        .glass-card:hover {
+            border-color: var(--border-hover);
+        }
+
+        .card-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .profile-name {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .profile-position {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .inst-dot {
+            width: 4px;
+            height: 4px;
+            background-color: var(--text-muted);
+            border-radius: 50%;
+        }
+
+        .profile-links {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+
+        .btn-link {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .btn-link:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--border-hover);
+            color: var(--text-primary);
+        }
+
+        /* Description blocks */
+        .info-block {
+            margin-bottom: 1.25rem;
+        }
+
+        .info-block:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+        }
+
+        .info-value {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .info-value.paper-highlight {
+            font-weight: 500;
+            color: #93c5fd;
+            background: rgba(147, 197, 253, 0.06);
+            border: 1px solid rgba(147, 197, 253, 0.1);
+            border-radius: 6px;
+            padding: 0.4rem 0.6rem;
+            display: inline-block;
+        }
+
+        /* Contact Details Form */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.4rem;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        .input-with-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .text-input {
+            flex: 1;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.6rem 0.8rem;
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .text-input:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.15);
+        }
+
+        .btn-action {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            color: var(--color-primary);
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .btn-action:hover {
+            background: var(--color-primary);
+            color: #fff;
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-action.secondary {
+            background: rgba(168, 85, 247, 0.1);
+            border-color: rgba(168, 85, 247, 0.2);
+            color: var(--color-secondary);
+        }
+
+        .btn-action.secondary:hover {
+            background: var(--color-secondary);
+            color: #fff;
+            box-shadow: 0 0 12px rgba(168, 85, 247, 0.4);
+        }
+
+        .btn-action.success {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.2);
+            color: var(--color-success);
+        }
+
+        .btn-action.success:hover {
+            background: var(--color-success);
+            color: #fff;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Email Composer */
+        .composer-card {
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+        }
+
+        .composer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .composer-title {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #fff;
+        }
+
+        .template-selector select {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.4rem 0.8rem;
+            color: var(--text-primary);
+            font-size: 0.8rem;
+            outline: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .template-selector select:focus {
+            border-color: var(--color-primary);
+        }
+
+        .email-body-area {
+            width: 100%;
+            height: 280px;
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            font-size: 0.88rem;
+            line-height: 1.6;
+            resize: vertical;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .email-body-area:focus {
+            border-color: var(--color-primary);
+            box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.05), 0 0 15px rgba(59, 130, 246, 0.15);
+        }
+
+        .composer-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.25rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.25rem;
+            gap: 1rem;
+        }
+
+        .composer-actions-left {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .status-select {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.5rem 0.8rem;
+            color: var(--text-primary);
+            font-size: 0.8rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .btn-gmail-compose {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: #fff;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 8px;
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-gmail-compose:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5), 0 0 0 2px rgba(239, 68, 68, 0.2);
+        }
+
+        .btn-gmail-compose:active {
+            transform: translateY(0);
+        }
+
+        .btn-copy {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            border-radius: 8px;
+            padding: 0.7rem 1.2rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-copy:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-color: var(--border-hover);
+        }
+
+        /* SVG icons definitions for simplicity */
+        .icon {
+            width: 16px;
+            height: 16px;
+            stroke-width: 2;
+            stroke: currentColor;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .loading-ring {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: currentColor;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid var(--color-primary);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.1);
+            border-radius: 8px;
+            padding: 0.8rem 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #fff;
+            font-size: 0.85rem;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 100;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Campaign Modal styles */
+        .campaign-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(2, 6, 23, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .campaign-modal-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-premium);
+            border-radius: 12px;
+            width: 600px;
+            max-width: 90vw;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: modalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes modalFadeIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .campaign-modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .campaign-modal-header h2 {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-close-icon {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-close-icon:hover {
+            color: #fff;
+        }
+
+        .campaign-modal-body {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .campaign-progress-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .campaign-progress-bar-wrapper {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .campaign-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .campaign-progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .campaign-status-message {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            font-weight: 500;
+            min-height: 1.2rem;
+        }
+
+        .campaign-console {
+            background: rgba(2, 6, 23, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            height: 200px;
+            padding: 1rem;
+            overflow-y: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.75rem;
+            color: #10b981;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .campaign-modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            background: rgba(30, 41, 59, 0.15);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header>
+        <div class="header-left">
+            <h1>
+                <svg class="icon" style="width: 24px; height: 24px; color: var(--color-primary)" viewBox="0 0 24 24"><path d="M22 2L2 8.66L11.58 12.42L15.34 22L22 2Z"></path><path d="M11.58 12.42L22 2"></path></svg>
+                Cortogen Outreach Suite
+            </h1>
+            <p>Draft & Schedule Personalized User Outreach Emails for <strong>Cortogen — The ChatGPT Context Engine</strong></p>
+        </div>
+        
+        <div class="header-stats">
+            <div class="stat-card">
+                <div class="stat-value" id="stat-total">50</div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-drafted" style="color: var(--color-info)">0</div>
+                <div class="stat-label">Drafted</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-scheduled" style="color: var(--color-warning)">0</div>
+                <div class="stat-label">Scheduled</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-sent" style="color: var(--color-success)">0</div>
+                <div class="stat-label">Sent</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-replies" style="color: var(--color-secondary)">0</div>
+                <div class="stat-label">Replies</div>
+            </div>
+            
+            <div class="sync-indicator" id="sync-status">
+                <div class="sync-dot"></div>
+                <span id="sync-text">Synced to Disk</span>
+            </div>
+            
+            <button id="btn-start-batch" class="btn-primary" style="margin-left: 1.25rem; padding: 0.5rem 1rem; font-size: 0.8rem; display: flex; align-items: center; gap: 0.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); border: none; color: #fff; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); transition: var(--transition);">
+                <svg class="icon" viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: currentColor;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                Start Daily Batch
+            </button>
+        </div>
+    </header>
+
+    <!-- App Container -->
+    <div class="app-container">
+        
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-controls">
+                <div class="search-box">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="search-input" placeholder="Search researcher name, inst, paper...">
+                </div>
+                
+                <div class="filter-row">
+                    <select id="filter-source">
+                        <option value="all">All Sources</option>
+                        <option value="GitHub Scraper">GitHub Scraper</option>
+                        <option value="Related Work Authors">Related Work Authors</option>
+                        <option value="Top Elite AI Researchers">Elite AI Researchers</option>
+                    </select>
+                    <select id="filter-status">
+                        <option value="all">All Statuses</option>
+                        <option value="not_contacted">Not Contacted</option>
+                        <option value="drafted">Drafted</option>
+                        <option value="scheduled">Scheduled</option>
+                        <option value="sent">Sent</option>
+                        <option value="replied">Replied</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Scrollable List -->
+            <div class="researchers-list" id="researchers-list-container">
+                <!-- Dynamic cards here -->
+            </div>
+        </div>
+        
+        <!-- Workspace (Main Panel) -->
+        <div class="workspace" id="workspace-container">
+            
+            <!-- Empty State (Welcome) -->
+            <div class="empty-state" id="empty-state">
+                <div class="empty-icon">
+                    <svg class="icon" style="width: 40px; height: 40px" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                </div>
+                <h2>Cortogen User Outreach Assistant</h2>
+                <p>Welcome to your student and developer outreach dashboard. Select a target student or developer from the left sidebar to generate a highly personalized email promoting <strong>Cortogen</strong> (the free long-term memory Chrome extension for ChatGPT).</p>
+                
+                <div class="research-summary-box">
+                    <h3>
+                        <svg class="icon" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                        What is Cortogen?
+                    </h3>
+                    <ul>
+                        <li><strong>Long-Term Semantic Memory:</strong> A lightweight browser extension that connects ChatGPT, Claude, and Gemini with a local semantic memory database.</li>
+                        <li><strong>Context Auto-Retrieval:</strong> Automatically indexes conversation turns and surfaces matching past context in real time to prevent starting chats from scratch.</li>
+                        <li><strong>Student & Developer Pitch:</strong> Ideal for students managing coding projects, class syllabus instructions, study guides, and research logs across days and sessions. Free and secure.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Outreach Panel (Active Researcher Details) -->
+            <div class="outreach-panel" id="outreach-panel" style="display: none;">
+                
+                <!-- Profile & Contact Row -->
+                <div class="panel-row">
+                    
+                    <!-- Left: Details & Background -->
+                    <div class="glass-card">
+                        <div class="card-header-row">
+                            <div>
+                                <h2 class="profile-name" id="prof-name">Ali Behrouz</h2>
+                                <div class="profile-position" id="prof-position">
+                                    <span>Research Scientist</span>
+                                    <div class="inst-dot"></div>
+                                    <span id="prof-inst">Google Research</span>
+                                </div>
+                            </div>
+                            <div class="card-sources" id="prof-sources">
+                                <!-- Dynamic tags -->
+                            </div>
+                        </div>
+                        
+                        <div class="profile-links">
+                            <a href="#" target="_blank" class="btn-link" id="prof-homepage-link">
+                                <svg class="icon" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                Homepage / Scholar
+                            </a>
+                        </div>
+                        
+                        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 1.25rem 0;">
+                        
+                        <div class="info-block" id="prof-papers-block">
+                            <div class="info-label">Target Focus / Major</div>
+                            <div class="info-value paper-highlight" id="prof-papers">Computer Science</div>
+                        </div>
+                        
+                        <div class="info-block">
+                            <div class="info-label">Personalization Angle / Custom Notes</div>
+                            <div class="info-value" id="prof-overlap" style="font-weight: 400; color: var(--text-secondary);">
+                                ChatGPT usage for assignments and coding projects.
+                            </div>
+                        </div>
+                        
+                        <!-- Dynamic Recommended Schedule Send Time -->
+                        <div class="info-block" id="prof-schedule-block" style="margin-top: 1.25rem; padding: 0.75rem 1rem; background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.15); border-radius: 8px;">
+                            <div class="info-label" style="color: var(--color-warning); display: flex; align-items: center; gap: 0.4rem; font-weight: 600;">
+                                <svg class="icon" viewBox="0 0 24 24" style="width: 14px; height: 14px; color: var(--color-warning);"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                Recommended Schedule Send (IST)
+                            </div>
+                            <div class="info-value" id="prof-schedule-time" style="font-weight: 600; font-size: 0.85rem; color: #fef08a; margin-top: 0.25rem;">
+                                Tuesday - Thursday, 6:00 PM – 7:00 PM IST
+                            </div>
+                            <div class="info-value" id="prof-schedule-zone" style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 0.15rem;">
+                                (Arrives 8:30 AM – 9:30 AM EDT in recipient's local time zone)
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right: Contact Form & Notes -->
+                    <div class="glass-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <div class="form-group">
+                                <label for="input-email">Professional Email</label>
+                                <div class="input-with-actions">
+                                    <input type="email" id="input-email" class="text-input" placeholder="Enter or paste email...">
+                                    <button class="btn-action" id="btn-predict-email" title="Predict email address using university schemas">
+                                        <svg class="icon" viewBox="0 0 24 24"><path d="M2 16.1A5 5 0 0 1 5.9 20M2 12.05A9 9 0 0 1 9.95 20M2 8V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6"></path><circle cx="18" cy="8" r="2"></circle><path d="M22 12h-4"></path></svg>
+                                        Predict
+                                    </button>
+                                    <button class="btn-action secondary" id="btn-google-search" title="Search Google for this researcher's email">
+                                        <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                        Find
+                                    </button>
+                                </div>
+                                <div id="prediction-hint" style="font-size: 0.7rem; color: var(--color-primary); margin-top: 0.35rem; display: none;"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="input-notes">Outreach Notes / Custom Angle</label>
+                                <textarea id="input-notes" class="text-input" style="height: 100px; resize: none;" placeholder="Add custom notes about your connection, their latest tweet, specific ideas to discuss..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <div style="font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.4rem; justify-content: flex-end;">
+                            <svg class="icon" style="width: 14px; height: 14px" viewBox="0 0 24 24"><path d="M20 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            Edits auto-save to researchers.json
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                <!-- Email Composer Card -->
+                <div class="glass-card composer-card">
+                    <div class="composer-header">
+                        <div class="composer-title">
+                            <svg class="icon" style="color: var(--color-primary)" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                            Email outreach editor
+                        </div>
+                        
+                        <div class="template-selector">
+                            <label style="font-size: 0.75rem; color: var(--text-secondary); margin-right: 0.5rem; font-weight: 500;">Template Focus:</label>
+                            <select id="email-template-type">
+                                <option value="student_study">1. College Students (Study, Code & Research Context)</option>
+                                <option value="developer_coding">2. Developers & Software Engineers (Codebase & Debugging)</option>
+                                <option value="general_poweruser">3. AI Power Users (General Productivity & Lifelong Context)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="input-subject">Email Subject</label>
+                        <input type="text" id="input-subject" class="text-input" style="font-weight: 500;" placeholder="Enter email subject...">
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="input-body">Email Body</label>
+                        <textarea id="input-body" class="email-body-area" placeholder="Write email body..."></textarea>
+                    </div>
+                    
+                    <div class="composer-footer">
+                        <div class="composer-actions-left">
+                            <select id="input-status" class="status-select">
+                                <option value="not_contacted">Not Contacted</option>
+                                <option value="drafted">Drafted</option>
+                                <option value="scheduled">Scheduled (in Gmail)</option>
+                                <option value="sent">Sent</option>
+                                <option value="replied">Replied</option>
+                            </select>
+                            
+                            <button class="btn-copy" id="btn-copy-email">
+                                <svg class="icon" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                Copy Body
+                            </button>
+                            <button class="btn-copy" id="btn-skip-next" style="border-color: rgba(239, 68, 68, 0.2); color: #f87171;" title="Skip to next target">
+                                Skip Target
+                            </button>
+                        </div>
+                        
+                        <button class="btn-gmail-compose" id="btn-gmail-compose">
+                            <svg class="icon" viewBox="0 0 24 24" style="stroke: none; fill: currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"></path></svg>
+                            Draft in Gmail
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast-notification">
+        <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <span id="toast-message">Changes saved and synchronized!</span>
+    </div>
+
+    <!-- Campaign Progress Modal Overlay -->
+    <div id="campaign-modal" class="campaign-modal-overlay" style="display: none;">
+        <div class="campaign-modal-card">
+            <div class="campaign-modal-header">
+                <h2>Daily Batch Email Campaign</h2>
+                <button id="btn-close-campaign" class="btn-close-icon">&times;</button>
+            </div>
+            <div class="campaign-modal-body">
+                <div class="campaign-progress-container">
+                    <div class="campaign-progress-bar-wrapper">
+                        <div id="campaign-progress-bar" class="campaign-progress-bar"></div>
+                    </div>
+                    <div class="campaign-progress-text">
+                        <span id="campaign-progress-count">0 / 0 sent</span>
+                        <span id="campaign-progress-percent">0%</span>
+                    </div>
+                </div>
+                <div class="campaign-status-message" id="campaign-status-msg">
+                    Initializing batch campaign...
+                </div>
+                <div class="campaign-console" id="campaign-console-logs">
+                    <!-- Logs will appear here in real-time -->
+                </div>
+            </div>
+            <div class="campaign-modal-footer">
+                <button id="btn-stop-campaign" class="btn-danger" style="padding: 0.5rem 1.25rem;">Stop Campaign</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Logic JS -->
+    <script>
+        let researchers = [];
+        let activeId = null;
+        let isSyncing = false;
+
+        // Dom Elements
+        const listContainer = document.getElementById('researchers-list-container');
+        const emptyState = document.getElementById('empty-state');
+        const outreachPanel = document.getElementById('outreach-panel');
+        const searchInput = document.getElementById('search-input');
+        const filterSource = document.getElementById('filter-source');
+        const filterStatus = document.getElementById('filter-status');
+        
+        // Profile DOM
+        const profName = document.getElementById('prof-name');
+        const profPosition = document.getElementById('prof-position');
+        const profInst = document.getElementById('prof-inst');
+        const profSources = document.getElementById('prof-sources');
+        const profHomepageLink = document.getElementById('prof-homepage-link');
+        const profPapers = document.getElementById('prof-papers');
+        const profPapersBlock = document.getElementById('prof-papers-block');
+        const profOverlap = document.getElementById('prof-overlap');
+        
+        // Forms & Composer DOM
+        const inputEmail = document.getElementById('input-email');
+        const inputNotes = document.getElementById('input-notes');
+        const emailTemplateType = document.getElementById('email-template-type');
+        const inputSubject = document.getElementById('input-subject');
+        const inputBody = document.getElementById('input-body');
+        const inputStatus = document.getElementById('input-status');
+        const predictionHint = document.getElementById('prediction-hint');
+        
+        // Buttons
+        const btnPredictEmail = document.getElementById('btn-predict-email');
+        const btnGoogleSearch = document.getElementById('btn-google-search');
+        const btnCopyEmail = document.getElementById('btn-copy-email');
+        const btnGmailCompose = document.getElementById('btn-gmail-compose');
+        
+        // Campaign DOM
+        const btnStartBatch = document.getElementById('btn-start-batch');
+        const campaignModal = document.getElementById('campaign-modal');
+        const btnCloseCampaign = document.getElementById('btn-close-campaign');
+        const campaignProgressBar = document.getElementById('campaign-progress-bar');
+        const campaignProgressCount = document.getElementById('campaign-progress-count');
+        const campaignProgressPercent = document.getElementById('campaign-progress-percent');
+        const campaignStatusMsg = document.getElementById('campaign-status-msg');
+        const campaignConsoleLogs = document.getElementById('campaign-console-logs');
+        const btnStopCampaign = document.getElementById('btn-stop-campaign');
+        
+        // Stats
+        const statTotal = document.getElementById('stat-total');
+        const statDrafted = document.getElementById('stat-drafted');
+        const statScheduled = document.getElementById('stat-scheduled');
+        const statSent = document.getElementById('stat-sent');
+        const statReplies = document.getElementById('stat-replies');
+        const syncStatus = document.getElementById('sync-status');
+        const syncText = document.getElementById('sync-text');
+
+        // Initial Load
+        async function loadResearchers() {
+            setSyncState('syncing', 'Loading data...');
+            try {
+                const csvFile = getActiveFileName();
+                const res = await fetch(`/api/researchers?file=${encodeURIComponent(csvFile)}`);
+                if (res.ok) {
+                    researchers = await res.json();
+                    
+                    // Add default ID and statuses if not exists
+                    researchers = researchers.map((r, index) => ({
+                        id: `res_${index}`,
+                        status: r.status || 'not_contacted',
+                        email: r.email || '',
+                        notes: r.notes || '',
+                        custom_subject: r.custom_subject || '',
+                        custom_body: r.custom_body || '',
+                        template_type: r.template_type || 'adaptive_memory',
+                        ...r
+                    }));
+                    
+                    renderList();
+                    updateStats();
+                    setSyncState('success', 'Synced with disk');
+                } else {
+                    showToast('Failed to fetch from server', true);
+                    setSyncState('error', 'Sync Failed');
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Server offline. Running in sandbox mode.', true);
+                setSyncState('error', 'Sandbox Mode');
+            }
+        }
+
+        function setSyncState(state, message) {
+            syncStatus.className = 'sync-indicator ' + state;
+            syncText.textContent = message;
+        }
+
+        // Save back to Python server
+        async function syncWithServer() {
+            setSyncState('syncing', 'Syncing edits...');
+            try {
+                const csvFile = getActiveFileName();
+                const res = await fetch(`/api/researchers?file=${encodeURIComponent(csvFile)}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(researchers)
+                });
+                
+                if (res.ok) {
+                    setSyncState('success', 'Synced with disk');
+                    updateStats();
+                } else {
+                    setSyncState('error', 'Sync failed');
+                    showToast('Failed to sync changes to server disk', true);
+                }
+            } catch (err) {
+                console.error(err);
+                setSyncState('error', 'Offline');
+            }
+        }
+
+        // Stats calculation
+        function updateStats() {
+            statTotal.textContent = researchers.length;
+            statDrafted.textContent = researchers.filter(r => r.status === 'drafted').length;
+            statScheduled.textContent = researchers.filter(r => r.status === 'scheduled').length;
+            statSent.textContent = researchers.filter(r => r.status === 'sent').length;
+            statReplies.textContent = researchers.filter(r => r.status === 'replied').length;
+        }
+
+        // Render Sidebar List
+        function renderList() {
+            const query = searchInput.value.toLowerCase();
+            const sourceFilter = filterSource.value;
+            const statusFilter = filterStatus.value;
+            
+            const filtered = researchers.filter(r => {
+                const matchesSearch = 
+                    r.name.toLowerCase().includes(query) ||
+                    r.institution.toLowerCase().includes(query) ||
+                    r.position.toLowerCase().includes(query) ||
+                    r.research_overlap.toLowerCase().includes(query) ||
+                    (r.relevant_papers && r.relevant_papers.toLowerCase().includes(query));
+                
+                const matchesSource = sourceFilter === 'all' || r.sources.includes(sourceFilter);
+                const matchesStatus = statusFilter === 'all' || r.status === statusFilter;
+                
+                return matchesSearch && matchesSource && matchesStatus;
+            });
+            
+            listContainer.innerHTML = '';
+            
+            if (filtered.length === 0) {
+                listContainer.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 2rem;">No researchers found.</div>';
+                return;
+            }
+            
+            filtered.forEach(r => {
+                const isActive = r.id === activeId;
+                const card = document.createElement('div');
+                card.className = `researcher-card ${isActive ? 'active' : ''}`;
+                card.onclick = () => selectResearcher(r.id);
+                
+                // Construct source tags HTML
+                const sourceTagsHtml = r.sources.map(s => {
+                    let cls = 'outreach';
+                    let label = 'Outreach';
+                    if (s === 'Related Work Authors') { cls = 'authors'; label = 'Author'; }
+                    if (s === 'Top Elite AI Researchers') { cls = 'elite'; label = 'Elite'; }
+                    return `<span class="source-tag ${cls}">${label}</span>`;
+                }).join(' ');
+                
+                card.innerHTML = `
+                    <div class="card-header-info">
+                        <div class="card-name">${r.name}</div>
+                        <span class="status-dot ${r.status}"></span>
+                    </div>
+                    <div class="card-institution">${r.position ? r.position + ' • ' : ''}${r.institution}</div>
+                    <div class="card-footer">
+                        <div class="card-sources">${sourceTagsHtml}</div>
+                        <span class="status-badge ${r.status}">${r.status.replace('_', ' ')}</span>
+                    </div>
+                `;
+                listContainer.appendChild(card);
+            });
+        }
+
+        // Predict Email using common schemas
+        function getEmailPrediction(name, institution) {
+            const clean = name.toLowerCase().replace(/[^a-z ]/g, '');
+            const parts = clean.split(' ').filter(p => p.length > 1);
+            if (parts.length === 0) return '';
+            
+            const first = parts[0];
+            const last = parts[parts.length - 1];
+            
+            const inst = institution.toLowerCase();
+            let domain = 'domain.edu';
+            
+            if (inst.includes('princeton')) domain = 'princeton.edu';
+            else if (inst.includes('stanford')) domain = 'cs.stanford.edu';
+            else if (inst.includes('carnegie') || inst.includes('cmu')) domain = 'cs.cmu.edu';
+            else if (inst.includes('harvard')) domain = 'seas.harvard.edu';
+            else if (inst.includes('mit')) domain = 'mit.edu';
+            else if (inst.includes('berkeley')) domain = 'eecs.berkeley.edu';
+            else if (inst.includes('cornell')) domain = 'cornell.edu';
+            else if (inst.includes('toronto')) domain = 'cs.toronto.edu';
+            else if (inst.includes('google')) domain = 'google.com';
+            else if (inst.includes('microsoft')) domain = 'microsoft.com';
+            else if (inst.includes('allen') || inst.includes('ai2')) domain = 'allenai.org';
+            else if (inst.includes('mila') || inst.includes('montreal')) domain = 'mila.quebec';
+            else if (inst.includes('oxford')) domain = 'cs.ox.ac.uk';
+            else if (inst.includes('cambridge')) domain = 'cl.cam.ac.uk';
+            else if (inst.includes('nyu') || inst.includes('new york')) domain = 'nyu.edu';
+            else if (inst.includes('washington')) domain = 'cs.washington.edu';
+            
+            // Format predicted list
+            return {
+                primary: `${first[0]}${last}@${domain}`,
+                alternatives: [
+                    `${first}.${last}@${domain}`,
+                    `${first}${last}@${domain}`,
+                    `${last}@${domain}`
+                ]
+            };
+        }
+
+        // Email templates generator
+        function generateEmailDraft(r, type) {
+            let firstName = r.name.split(' ')[0];
+            // Safe fallback if name is username-like or empty
+            if (!firstName || !/^[A-Za-z]+$/.test(firstName) || firstName.length > 15) {
+                firstName = "there";
+            }
+            
+            const university = r.institution || "your university";
+
+            let subject = "";
+            let body = "";
+
+            if (type === 'student_study' || type === 'adaptive_memory') {
+                subject = `Stop starting ChatGPT from scratch at ${university}`;
+                body = `Hi ${firstName},
+
+As a student at ${university}, you probably use ChatGPT regularly for assignments, study guides, and research. 
+
+A common frustration is having to start new conversations from scratch—frequently copy-pasting the same guidelines, course syllabus, or background reference material over and over because ChatGPT's session memory is either stateless or gets bloated.
+
+To solve this, we built Cortogen (https://cortogen.com). It is a free browser extension that adds a local, semantic memory layer to ChatGPT. It automatically captures key context from your active chats and surfaces the most relevant past blocks in real time so you can reuse them in new sessions instantly.
+
+Since you are studying/working at ${university}, we would love to get your thoughts on it. It is completely free and secure.
+
+You can try it out here: https://cortogen.com
+
+Best regards,
+The Cortogen Team`;
+            } else if (type === 'developer_coding' || type === 'grpo_rl') {
+                subject = `ChatGPT context manager for developers at ${university}`;
+                body = `Hi ${firstName},
+
+If you use ChatGPT to write, debug, or refactor code for your projects at ${university}, you have likely run into its context limitations. 
+
+When starting a new session, you lose your active file structure, instructions, and error logs, forcing you to re-upload files or copy-paste code blocks to get the model back up to speed.
+
+Cortogen (https://cortogen.com) is a free browser extension that solves this by adding a local semantic memory engine to ChatGPT. It automatically indexes code snippets, database schemas, and session context, retrieving them dynamically based on your current prompt so you can reuse them across chat tabs.
+
+It is completely free and helps developers maintain continuous coding sessions without manually re-explaining context.
+
+If you find it useful for your coding workflow, we would love to hear your feedback. Try it here: https://cortogen.com
+
+Best regards,
+The Cortogen Team`;
+            } else {
+                subject = `Save and reuse ChatGPT context across tabs`;
+                body = `Hi ${firstName},
+
+Standard AI chat interfaces are completely stateless. Every new tab is a clean slate, meaning your custom guidelines, background research, and reference logs are lost, forcing you to re-introduce context repeatedly.
+
+We created Cortogen (https://cortogen.com) to bridge this gap. It is a free, local-first browser extension that provides ChatGPT with long-term memory. It captures important context and semantically retrieves relevant pieces as you type, allowing you to maintain workflow continuity across separate chats.
+
+It is free, secure, and designed to eliminate repetitive prompt preparation.
+
+You can install the extension here: https://cortogen.com
+
+If you have any feedback or suggestions, please let us know.
+
+Best regards,
+The Cortogen Team`;
+            }
+
+            return { subject, body };
+        }
+
+        // Select Researcher
+        function selectResearcher(id) {
+            activeId = id;
+            const r = researchers.find(x => x.id === id);
+            if (!r) return;
+            
+            // Toggle panel visibility
+            emptyState.style.display = 'none';
+            outreachPanel.style.display = 'flex';
+            
+            // Populate details
+            profName.textContent = r.name;
+            profPosition.textContent = r.position || 'Researcher';
+            profInst.textContent = r.institution;
+            
+            // Set homepage links
+            if (r.homepage && r.homepage !== 'nan') {
+                profHomepageLink.href = r.homepage;
+                profHomepageLink.style.display = 'flex';
+            } else {
+                profHomepageLink.style.display = 'none';
+            }
+            
+            // Set papers & overlap
+            if (r.relevant_papers && r.relevant_papers !== 'nan' && r.relevant_papers.trim() !== '') {
+                profPapers.textContent = r.relevant_papers;
+                profPapersBlock.style.display = 'block';
+            } else {
+                profPapersBlock.style.display = 'none';
+            }
+            
+            profOverlap.textContent = r.research_overlap || 'AI Research & Foundation Models';
+            
+            // Dynamically calculate and display recommended schedule send time
+            const scheduleTime = document.getElementById('prof-schedule-time');
+            const scheduleZone = document.getElementById('prof-schedule-zone');
+            const inst = (r.institution || '').toLowerCase();
+            if (inst.includes('princeton') || inst.includes('harvard') || inst.includes('mit') || inst.includes('cmu') || inst.includes('carnegie') || inst.includes('cornell') || inst.includes('nyu') || inst.includes('toronto') || inst.includes('mila') || inst.includes('montreal') || inst.includes('columbia') || inst.includes('yale') || inst.includes('penn') || inst.includes('brown') || inst.includes('georgia tech') || inst.includes('gatech')) {
+                // US East Coast (EST/EDT)
+                scheduleTime.textContent = 'Tuesday - Thursday, 6:00 PM – 7:00 PM IST';
+                scheduleZone.textContent = '(Arrives 8:30 AM – 9:30 AM EDT in recipient\'s Eastern time zone)';
+            } else if (inst.includes('stanford') || inst.includes('berkeley') || inst.includes('washington') || inst.includes('seattle') || inst.includes('allen') || inst.includes('ai2') || inst.includes('microsoft') || inst.includes('google') || inst.includes('ucla') || inst.includes('usc') || inst.includes('caltech')) {
+                // US West Coast (PST/PDT)
+                scheduleTime.textContent = 'Tuesday - Thursday, 9:00 PM – 10:00 PM IST';
+                scheduleZone.textContent = '(Arrives 8:30 AM – 9:30 AM PDT in recipient\'s Pacific time zone)';
+            } else if (inst.includes('oxford') || inst.includes('cambridge') || inst.includes('london') || inst.includes('uk') || inst.includes('edinburgh') || inst.includes('imperial') || inst.includes('cl.cam.ac.uk') || inst.includes('cs.ox.ac.uk')) {
+                // United Kingdom (BST)
+                scheduleTime.textContent = 'Tuesday - Thursday, 1:00 PM – 2:00 PM IST';
+                scheduleZone.textContent = '(Arrives 8:30 AM – 9:30 AM BST in recipient\'s UK time zone)';
+            } else {
+                // Default fallback (US Business hours standard)
+                scheduleTime.textContent = 'Tuesday - Thursday, 6:00 PM – 7:00 PM IST';
+                scheduleZone.textContent = '(Arrives standard morning hours in recipient\'s local time zone)';
+            }
+            
+            // Populate source tags
+            profSources.innerHTML = r.sources.map(s => {
+                let cls = 'outreach';
+                let label = 'Outreach';
+                if (s === 'Related Work Authors') { cls = 'authors'; label = 'Author'; }
+                if (s === 'Top Elite AI Researchers') { cls = 'elite'; label = 'Elite'; }
+                return `<span class="source-tag ${cls}">${label}</span>`;
+            }).join(' ');
+            
+            // Populate forms
+            inputEmail.value = r.email || '';
+            inputNotes.value = r.notes || '';
+            inputStatus.value = r.status || 'not_contacted';
+            emailTemplateType.value = r.template_type || 'student_study';
+            
+            // Show custom drafts if user modified them, otherwise auto-generate
+            if (r.custom_subject) {
+                inputSubject.value = r.custom_subject;
+            } else {
+                const draft = generateEmailDraft(r, r.template_type || 'student_study');
+                inputSubject.value = draft.subject;
+            }
+            
+            if (r.custom_body) {
+                inputBody.value = r.custom_body;
+            } else {
+                const draft = generateEmailDraft(r, r.template_type || 'student_study');
+                inputBody.value = draft.body;
+            }
+            
+            // Predict email hint
+            const pred = getEmailPrediction(r.name, r.institution);
+            if (pred) {
+                predictionHint.style.display = 'block';
+                predictionHint.innerHTML = `Predicted: <strong>${pred.primary}</strong> (Alternatives: ${pred.alternatives.join(', ')})`;
+            } else {
+                predictionHint.style.display = 'none';
+            }
+            
+            // Re-render sidebar to highlight active
+            renderList();
+        }
+
+        // Trigger updates when inputs are modified
+        function updateActiveResearcherData() {
+            if (!activeId) return;
+            const rIndex = researchers.findIndex(x => x.id === activeId);
+            if (rIndex === -1) return;
+            
+            researchers[rIndex].email = inputEmail.value;
+            researchers[rIndex].notes = inputNotes.value;
+            researchers[rIndex].status = inputStatus.value;
+            researchers[rIndex].template_type = emailTemplateType.value;
+            researchers[rIndex].custom_subject = inputSubject.value;
+            researchers[rIndex].custom_body = inputBody.value;
+            
+            // Auto sync to disk backend!
+            syncWithServer();
+        }
+
+        // Event Listeners
+        searchInput.oninput = renderList;
+        filterSource.onchange = renderList;
+        filterStatus.onchange = renderList;
+        
+        // Form updates
+        inputEmail.oninput = updateActiveResearcherData;
+        inputNotes.oninput = updateActiveResearcherData;
+        inputStatus.onchange = () => {
+            updateActiveResearcherData();
+            renderList(); // Reflect status color instantly
+        };
+        
+        inputSubject.oninput = updateActiveResearcherData;
+        inputBody.oninput = updateActiveResearcherData;
+        
+        emailTemplateType.onchange = () => {
+            if (!activeId) return;
+            const r = researchers.find(x => x.id === activeId);
+            const draft = generateEmailDraft(r, emailTemplateType.value);
+            inputSubject.value = draft.subject;
+            inputBody.value = draft.body;
+            updateActiveResearcherData();
+        };
+
+        // Heuristic Email Prediction Button
+        btnPredictEmail.onclick = () => {
+            if (!activeId) return;
+            const r = researchers.find(x => x.id === activeId);
+            const pred = getEmailPrediction(r.name, r.institution);
+            if (pred) {
+                inputEmail.value = pred.primary;
+                updateActiveResearcherData();
+                showToast(`Filled predicted email: ${pred.primary}`);
+            } else {
+                showToast('Could not predict email for this institution.', true);
+            }
+        };
+
+        // Find Email via Google Search
+        btnGoogleSearch.onclick = () => {
+            if (!activeId) return;
+            const r = researchers.find(x => x.id === activeId);
+            const query = `${r.name} ${r.institution} email contact cs`;
+            const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+            window.open(searchUrl, '_blank');
+            showToast('Searching Google in a new tab...');
+        };
+
+        // Copy Email Body to clipboard
+        btnCopyEmail.onclick = () => {
+            inputBody.select();
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+            showToast('Email body copied to clipboard!');
+        };
+
+        // Open in Gmail Compose tab
+        btnGmailCompose.onclick = () => {
+            if (!activeId) return;
+            const r = researchers.find(x => x.id === activeId);
+            
+            const to = inputEmail.value;
+            const subject = inputSubject.value;
+            const body = inputBody.value;
+            
+            const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(to)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            
+            window.open(gmailUrl, '_blank');
+            
+            // Mark as drafted/scheduled automatically if not already sent
+            if (r.status === 'not_contacted') {
+                inputStatus.value = 'drafted';
+                updateActiveResearcherData();
+                renderList();
+            }
+            
+            showToast('Gmail Compose opened! Auto-advancing in dashboard...');
+            
+            // Auto-advance to the next pending target
+            setTimeout(() => {
+                const nextTarget = researchers.find(x => x.id !== activeId && (x.status === 'not_contacted' || x.status === 'drafted'));
+                if (nextTarget) {
+                    selectResearcher(nextTarget.id);
+                } else {
+                    showToast('All targets in list processed! Great job!');
+                }
+            }, 600);
+        };
+
+        // Skip to next button
+        const btnSkipNext = document.getElementById('btn-skip-next');
+        btnSkipNext.onclick = () => {
+            const nextTarget = researchers.find(x => x.id !== activeId && (x.status === 'not_contacted' || x.status === 'drafted'));
+            if (nextTarget) {
+                selectResearcher(nextTarget.id);
+                showToast('Advanced to next target.');
+            } else {
+                showToast('No more pending targets in the list.');
+            }
+        };
+
+        // Toast Helper
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast-notification');
+            const msgSpan = document.getElementById('toast-message');
+            
+            msgSpan.textContent = message;
+            toast.className = 'toast ' + (isError ? 'toast-error' : 'toast-success') + ' show';
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Campaign Client Logic
+        let campaignPollingInterval = null;
+
+        function getActiveFileName() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('file') || 'github_developers.csv';
+        }
+
+        async function startBatchCampaign() {
+            const csvFile = getActiveFileName();
+            btnStartBatch.disabled = true;
+            btnStartBatch.style.opacity = '0.5';
+            
+            try {
+                const res = await fetch(`/api/send-batch?file=${encodeURIComponent(csvFile)}&limit=100`, {
+                    method: 'POST'
+                });
+                const data = await res.json();
+                
+                if (res.ok) {
+                    showToast('Daily batch campaign started!');
+                    openCampaignModal();
+                } else {
+                    showToast(data.message || 'Failed to start campaign', true);
+                    btnStartBatch.disabled = false;
+                    btnStartBatch.style.opacity = '1';
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Failed to connect to outreach server', true);
+                btnStartBatch.disabled = false;
+                btnStartBatch.style.opacity = '1';
+            }
+        }
+
+        async function stopBatchCampaign() {
+            btnStopCampaign.disabled = true;
+            btnStopCampaign.textContent = 'Stopping...';
+            try {
+                const res = await fetch('/api/stop-campaign', { method: 'POST' });
+                if (res.ok) {
+                    showToast('Stop campaign request sent.');
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function openCampaignModal() {
+            campaignModal.style.display = 'flex';
+            if (!campaignPollingInterval) {
+                pollCampaignStatus();
+                campaignPollingInterval = setInterval(pollCampaignStatus, 2000);
+            }
+        }
+
+        function closeCampaignModal() {
+            campaignModal.style.display = 'none';
+        }
+
+        async function pollCampaignStatus() {
+            try {
+                const res = await fetch('/api/campaign-status');
+                if (!res.ok) return;
+                const data = await res.json();
+                
+                // Update progress bar
+                const percent = data.total > 0 ? Math.round((data.current / data.total) * 100) : 0;
+                campaignProgressBar.style.width = percent + '%';
+                campaignProgressCount.textContent = `${data.current} / ${data.total} sent`;
+                campaignProgressPercent.textContent = percent + '%';
+                campaignStatusMsg.textContent = data.status;
+                
+                // Update Console Logs
+                campaignConsoleLogs.innerHTML = '';
+                data.logs.forEach(log => {
+                    const logLine = document.createElement('div');
+                    logLine.className = 'console-line';
+                    if (log.type === 'error') logLine.style.color = '#ef4444';
+                    else if (log.type === 'success') logLine.style.color = '#10b981';
+                    else logLine.style.color = '#94a3b8';
+                    
+                    logLine.textContent = `[${log.time}] [${log.type.toUpperCase()}] ${log.message}`;
+                    campaignConsoleLogs.appendChild(logLine);
+                });
+                
+                // Auto-scroll console
+                campaignConsoleLogs.scrollTop = campaignConsoleLogs.scrollHeight;
+                
+                // Handle stop/finished
+                if (data.running) {
+                    btnStartBatch.disabled = true;
+                    btnStartBatch.style.opacity = '0.5';
+                    btnStopCampaign.disabled = false;
+                    btnStopCampaign.textContent = 'Stop Campaign';
+                } else {
+                    btnStartBatch.disabled = false;
+                    btnStartBatch.style.opacity = '1';
+                    btnStopCampaign.disabled = true;
+                    btnStopCampaign.textContent = 'Campaign Ended';
+                    
+                    if (campaignPollingInterval) {
+                        clearInterval(campaignPollingInterval);
+                        campaignPollingInterval = null;
+                    }
+                    loadResearchers();
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function checkCampaignOnStartup() {
+            try {
+                const res = await fetch('/api/campaign-status');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.running) {
+                        openCampaignModal();
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // Attach campaign event listeners
+        btnStartBatch.onclick = startBatchCampaign;
+        btnCloseCampaign.onclick = closeCampaignModal;
+        btnStopCampaign.onclick = stopBatchCampaign;
+        
+        checkCampaignOnStartup();
+
+        // Start App
+        loadResearchers();
+    </script>
+</body>
+</html>
