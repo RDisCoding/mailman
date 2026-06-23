@@ -17,3 +17,6 @@ __pycache__/
 # Local media/recordings
 *.png
 *.webp
+
+#email templates
+templates/*
