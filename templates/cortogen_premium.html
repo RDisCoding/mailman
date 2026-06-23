@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cortogen - Giving AI a memory</title>
+    <style>
+        /* CSS Reset for Email Clients */
+        body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+        table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+        img { -ms-interpolation-mode: bicubic; }
+        img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+        table { border-collapse: collapse !important; }
+        body { height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important; }
+        a[x-apple-data-detectors] { color: inherit !important; text-decoration: none !important; font-size: inherit !important; font-family: inherit !important; font-weight: inherit !important; line-height: inherit !important; }
+
+        /* Brand Styles */
+        body {
+            background-color: #121212;
+            color: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #121212;
+            padding: 40px 20px;
+        }
+        .hero {
+            text-align: center;
+            padding-bottom: 30px;
+        }
+        .logo-glow {
+            width: 140px;
+            height: 140px;
+            background: radial-gradient(circle, rgba(251, 133, 0, 0.3) 0%, rgba(18, 18, 18, 0) 70%);
+            margin: 0 auto;
+            text-align: center;
+            line-height: 140px;
+            border-radius: 50%;
+        }
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            display: inline-block;
+            vertical-align: middle;
+            line-height: normal;
+        }
+        .logo-text span {
+            color: #FB8500;
+        }
+        h1 {
+            font-size: 34px;
+            font-weight: 600;
+            line-height: 1.2;
+            margin: 0 0 15px 0;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+        .subheadline {
+            font-size: 20px;
+            color: #a0a0a0;
+            margin: 0;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, rgba(18,18,18,0) 0%, rgba(251,133,0,0.5) 50%, rgba(18,18,18,0) 100%);
+            margin: 40px 0;
+        }
+        .content {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #d0d0d0;
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 0 20px;
+        }
+        .content p {
+            margin-bottom: 10px;
+        }
+        .sub-text {
+            font-size: 14px;
+            color: #777777;
+            font-style: italic;
+            letter-spacing: 0.3px;
+        }
+        .video-container {
+            margin: 40px 0;
+            text-align: center;
+        }
+        .video-thumbnail {
+            position: relative;
+            display: inline-block;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(251, 133, 0, 0.3);
+            box-shadow: 0 8px 30px rgba(251, 133, 0, 0.1);
+            text-decoration: none;
+            background-color: #000;
+        }
+        .video-thumbnail img {
+            display: block;
+            width: 100%;
+            max-width: 560px;
+            height: auto;
+            opacity: 0.75;
+            transition: opacity 0.3s ease;
+        }
+        .video-thumbnail:hover img {
+            opacity: 1;
+        }
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: rgba(251, 133, 0, 0.9);
+            border-radius: 50%;
+            /* Flex fallback */
+            display: table;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .play-icon {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
+        }
+        .play-icon-triangle {
+            display: inline-block;
+            width: 0; 
+            height: 0; 
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-left: 16px solid #121212;
+            margin-left: 5px;
+        }
+        .video-caption {
+            font-size: 12px;
+            color: #666666;
+            margin-top: 15px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .features-grid {
+            margin-bottom: 40px;
+        }
+        .feature-card {
+            background-color: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(251, 133, 0, 0.15);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(251, 133, 0, 0.04);
+        }
+        .feature-title {
+            color: #FFB703;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .feature-desc {
+            color: #e0e0e0;
+            font-size: 15px;
+            margin: 0;
+            line-height: 1.6;
+        }
+        .feature-sub {
+            display: block;
+            margin-top: 8px;
+            font-size: 13px;
+            color: #777777;
+        }
+        .cta-section {
+            text-align: center;
+            margin: 50px 0;
+        }
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #FFB703 0%, #FB8500 100%);
+            color: #121212 !important;
+            text-decoration: none;
+            padding: 18px 40px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 30px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 8px 24px rgba(251, 133, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .footer {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .footer-logo {
+            font-size: 18px;
+            font-weight: 700;
+            color: #555555;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+        .footer-tagline {
+            font-size: 12px;
+            color: #FB8500;
+            margin-bottom: 20px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+        .footer-links a {
+            color: #777777;
+            text-decoration: none;
+            font-size: 13px;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+        }
+        .footer-links a:hover {
+            color: #d0d0d0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero">
+            <div class="logo-glow">
+                <div class="logo-text">CORTO<span>GEN</span></div>
+            </div>
+            <h1>Your conversations deserve a memory.</h1>
+            <p class="subheadline">Persistent context for the modern AI.</p>
+        </div>
+
+        <!-- Visual Divider -->
+        <div class="divider"></div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <p>Welcome to the next evolution of personal intelligence. Cortogen seamlessly integrates with your workflow, providing your AI assistant with the exact context it needs to truly understand you—without ever repeating yourself.</p>
+            <p class="sub-text">Because the most profound interactions don't start from scratch.</p>
+        </div>
+
+        <!-- Feature Card Section -->
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-title">Universal Compatibility</div>
+                <p class="feature-desc">Works flawlessly with ChatGPT, Claude, and Gemini.</p>
+                <span class="feature-sub">Your memory layer isn't locked into a single ecosystem.</span>
+            </div>
+            <div class="feature-card">
+                <div class="feature-title">Granular Memory Control</div>
+                <p class="feature-desc">You dictate what gets remembered.</p>
+                <span class="feature-sub">Selectively control exactly which conversational turns are committed to memory.</span>
+            </div>
+            <div class="feature-card">
+                <div class="feature-title">Unified Dashboard</div>
+                <p class="feature-desc">Your personal context command center.</p>
+                <span class="feature-sub">View all conversations on the same topic, seamlessly aggregated across different LLMs.</span>
+            </div>
+            <div class="feature-card">
+                <div class="feature-title">Completely Free</div>
+                <p class="feature-desc">Enterprise-grade persistent context at zero cost.</p>
+                <span class="feature-sub">Advanced capabilities, accessible to everyone.</span>
+            </div>
+        </div>
+
+        <!-- Visual Divider -->
+        <div class="divider"></div>
+
+        <!-- Video Section -->
+        <div class="video-container">
+            <a href="https://www.youtube.com/watch?v=8JCFxjxg4FQ" class="video-thumbnail" style="display: block; max-width: 480px; margin: 0 auto; background: transparent; border: none; box-shadow: none;">
+                <!-- Using YouTube's hqdefault thumbnail -->
+                <img src="https://img.youtube.com/vi/8JCFxjxg4FQ/hqdefault.jpg" alt="Watch Cortogen Demo" style="border-radius: 12px; border: 1px solid rgba(251, 133, 0, 0.3); box-shadow: 0 8px 30px rgba(251, 133, 0, 0.1);">
+            </a>
+            <div style="margin-top: 20px;">
+                <a href="https://www.youtube.com/watch?v=8JCFxjxg4FQ" style="display: inline-block; color: #FB8500; text-decoration: none; font-size: 13px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;">
+                    ▶ See Cortogen in action with this 2-minute tutorial
+                </a>
+            </div>
+        </div>
+
+        <!-- Visual Divider -->
+        <div class="divider"></div>
+
+        <!-- CTA Section -->
+        <div class="cta-section">
+            <a href="https://cortogen.com" class="cta-button">Install Cortogen Free</a>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-logo">CORTOGEN</div>
+            <div class="footer-tagline">Giving AI a memory.</div>
+            <div class="footer-links">
+                <a href="https://cortogen.com">Website</a>
+                <a href="https://www.linkedin.com/posts/rudray-dave-95686627a_ai-llm-chatgpt-ugcPost-7461639135947182080-pM6K/?utm_source=share&utm_medium=member_android&rcm=ACoAAEQdU9IBymas8crGB5rW660KoKvO-LtxOP4">LinkedIn</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
