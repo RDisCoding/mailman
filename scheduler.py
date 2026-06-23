@@ -160,15 +160,16 @@ def send_email(config, recipient_email, subject, body):
     # Connect and send
     smtp_host = config.get("smtp_host", "smtp.gmail.com")
     smtp_port = config.get("smtp_port", 465)
+    smtp_user = config.get("smtp_username", sender)
     
     if smtp_port == 587:
         with smtplib.SMTP(smtp_host, smtp_port) as server:
             server.starttls()
-            server.login(sender, password)
+            server.login(smtp_user, password)
             server.sendmail(sender, [recipient_email], msg.as_string())
     else:
         with smtplib.SMTP_SSL(smtp_host, smtp_port) as server:
-            server.login(sender, password)
+            server.login(smtp_user, password)
             server.sendmail(sender, [recipient_email], msg.as_string())
 
 def notify_operator(config, subject, body):

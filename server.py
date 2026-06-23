@@ -237,15 +237,16 @@ Cortogen Team"""
         
         smtp_host = config.get("smtp_host", "smtp.gmail.com")
         smtp_port = config.get("smtp_port", 465)
+        smtp_user = config.get("smtp_username", sender)
         
         if smtp_port == 587:
             with smtplib.SMTP(smtp_host, smtp_port) as server:
                 server.starttls()
-                server.login(sender, password)
+                server.login(smtp_user, password)
                 server.sendmail(sender, [notification], msg.as_string())
         else:
             with smtplib.SMTP_SSL(smtp_host, smtp_port) as server:
-                server.login(sender, password)
+                server.login(smtp_user, password)
                 server.sendmail(sender, [notification], msg.as_string())
         print(f"[Summary] Notification email sent successfully to {notification}.")
     except Exception as e:
@@ -341,15 +342,16 @@ def run_campaign_thread(csv_file, limit):
                 
                 smtp_host = config.get("smtp_host", "smtp.gmail.com")
                 smtp_port = config.get("smtp_port", 465)
+                smtp_user = config.get("smtp_username", sender)
                 
                 if smtp_port == 587:
                     with smtplib.SMTP(smtp_host, smtp_port) as server:
                         server.starttls()
-                        server.login(sender, password)
+                        server.login(smtp_user, password)
                         server.sendmail(sender, [email_addr], msg.as_string())
                 else:
                     with smtplib.SMTP_SSL(smtp_host, smtp_port) as server:
-                        server.login(sender, password)
+                        server.login(smtp_user, password)
                         server.sendmail(sender, [email_addr], msg.as_string())
                 
                 lead["status"] = "sent"

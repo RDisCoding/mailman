@@ -3,6 +3,7 @@
   "app_password": "your_gmail_app_password",
   "smtp_host": "smtp.gmail.com",
   "smtp_port": 465,
+  "smtp_username": "your_gmail_address@gmail.com_or_apikey",
   "daily_limit": 50,
   "min_delay_seconds": 60,
   "max_delay_seconds": 120,
