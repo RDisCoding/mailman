@@ -136,63 +136,30 @@ def generate_email_draft(target, template_type):
 
     if target.get('custom_body') and target.get('custom_body').strip():
         body = target['custom_body']
+        is_html = False
     else:
         name = target.get('name') or target.get('username', 'there')
         first_name = name.split(' ')[0]
         if not first_name or not first_name.isalpha() or len(first_name) > 15:
             first_name = "there"
             
-        university = target.get('institution', 'your university')
+        try:
+            template_path = os.path.join(os.path.dirname(__file__), "templates", "cortogen_premium.html")
+            with open(template_path, "r", encoding="utf-8") as f:
+                html_template = f.read()
+                
+                # Inject personalized greeting
+                greeting = f'<div class="content">\n            <p style="font-weight: 600; color: #fff; font-size: 18px; margin-bottom: 20px;">Hi {first_name},</p>'
+                personalized_html = html_template.replace('<div class="content">', greeting)
+                
+                body = personalized_html
+                is_html = True
+        except Exception as e:
+            print(f"Failed to load HTML template: {e}")
+            body = f"Hi {first_name},\n\nPlease check out Cortogen: https://cortogen.com"
+            is_html = False
 
-        if template_type == 'student_study' or template_type == 'adaptive_memory':
-            body = f"""Hi {first_name},
-
-As a student at {university}, you probably use ChatGPT regularly for assignments, study guides, and research. 
-
-A common frustration is having to start new conversations from scratch—frequently copy-pasting the same guidelines, course syllabus, or background reference material over and over because ChatGPT's session memory is either stateless or gets bloated.
-
-To solve this, we built Cortogen (https://cortogen.com). It is a free browser extension that adds a local, semantic memory layer to ChatGPT. It automatically captures key context from your active chats and surfaces the most relevant past blocks in real time so you can reuse them in new sessions instantly.
-
-Since you are studying/working at {university}, we would love to get your thoughts on it. It is completely free and secure.
-
-You can try it out here: https://cortogen.com
-
-Best regards,
-The Cortogen Team"""
-
-        elif template_type == 'developer_coding' or template_type == 'grpo_rl':
-            body = f"""Hi {first_name},
-
-If you use ChatGPT to write, debug, or refactor code for your projects at {university}, you have likely run into its context limitations. 
-
-When starting a new session, you lose your active file structure, instructions, and error logs, forcing you to re-upload files or copy-paste code blocks to get the model back up to speed.
-
-Cortogen (https://cortogen.com) is a free browser extension that solves this by adding a local semantic memory engine to ChatGPT. It automatically indexes code snippets, database schemas, and session context, retrieving them dynamically based on your current prompt so you can reuse them across chat tabs.
-
-It is completely free and helps developers maintain continuous coding sessions without manually re-explaining context.
-
-If you find it useful for your coding workflow, we would love to hear your feedback. Try it here: https://cortogen.com
-
-Best regards,
-The Cortogen Team"""
-
-        else:
-            body = f"""Hi {first_name},
-
-Standard AI chat interfaces are completely stateless. Every new tab is a clean slate, meaning your custom guidelines, background research, and reference logs are lost, forcing you to re-introduce context repeatedly.
-
-We created Cortogen (https://cortogen.com) to bridge this gap. It is a free, local-first browser extension that provides ChatGPT with long-term memory. It captures important context and semantically retrieves relevant pieces as you type, allowing you to maintain workflow continuity across separate chats.
-
-It is free, secure, and designed to eliminate repetitive prompt preparation.
-
-You can install the extension here: https://cortogen.com
-
-If you have any feedback or suggestions, please let us know.
-
-Best regards,
-The Cortogen Team"""
-
-    return subject, body
+    return subject, body, is_html
 
 def send_summary_email(config, csv_file, attempted, successful, failed, failed_list):
     sender = config.get("sender_email")
@@ -328,14 +295,15 @@ def run_campaign_thread(csv_file, limit):
                 continue
 
             template_type = lead.get("template_type", "developer_coding")
-            subject, body = generate_email_draft(lead, template_type)
+            subject, body, is_html = generate_email_draft(lead, template_type)
 
             campaign_status = f"Sending email {i+1} of {campaign_total} to {name}..."
             log(f"[{i+1}/{campaign_total}] Sending email to {name} ({email_addr}) using template '{template_type}'...")
             
             attempted_count += 1
             try:
-                msg = MIMEText(body, 'plain', 'utf-8')
+                msg_type = 'html' if is_html else 'plain'
+                msg = MIMEText(body, msg_type, 'utf-8')
                 msg['Subject'] = Header(subject, 'utf-8')
                 msg['From'] = Header(f"The Cortogen Team <{sender}>", 'utf-8')
                 msg['To'] = Header(email_addr, 'utf-8')
