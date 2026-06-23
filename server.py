@@ -127,12 +127,11 @@ def generate_email_draft(target, template_type):
     if target.get('custom_subject') and target.get('custom_subject').strip():
         subject = target['custom_subject']
     else:
-        university = target.get('institution', 'your university')
-        subject = f"Stop starting ChatGPT from scratch at {university}"
+        subject = "How to give ChatGPT a permanent memory"
         if template_type == 'developer_coding':
-            subject = f"ChatGPT context manager for developers at {university}"
+            subject = "Stop copy-pasting context into ChatGPT"
         elif template_type == 'general_poweruser':
-            subject = "Save and reuse ChatGPT context across tabs"
+            subject = "ChatGPT forgets everything. We fixed it."
 
     if target.get('custom_body') and target.get('custom_body').strip():
         body = target['custom_body']

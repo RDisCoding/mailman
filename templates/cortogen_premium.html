@@ -25,7 +25,6 @@
             max-width: 600px;
             margin: 0 auto;
             background-color: #121212;
-            background-image: radial-gradient(circle at 15% 10%, rgba(251, 133, 0, 0.12) 0%, transparent 40%), radial-gradient(circle at 85% 75%, rgba(251, 133, 0, 0.08) 0%, transparent 45%);
             padding: 40px 20px;
         }
         .hero {
@@ -105,43 +104,40 @@
             text-decoration: none;
             background-color: #000;
         }
-        .video-thumbnail img {
+        .video-box {
             display: block;
             width: 100%;
-            max-width: 560px;
-            height: auto;
-            opacity: 0.75;
-            transition: opacity 0.3s ease;
+            max-width: 480px;
+            height: 270px;
+            margin: 0 auto;
+            background-color: #080808;
+            border: 1px solid rgba(251, 133, 0, 0.2);
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(251, 133, 0, 0.08);
+            text-decoration: none;
         }
-        .video-thumbnail:hover img {
-            opacity: 1;
+        .video-center-table {
+            width: 100%;
+            height: 100%;
+            border-collapse: collapse;
         }
-        .play-button {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60px;
-            height: 60px;
-            background: rgba(251, 133, 0, 0.9);
-            border-radius: 50%;
-            /* Flex fallback */
-            display: table;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-        .play-icon {
-            display: table-cell;
-            vertical-align: middle;
+        .play-button-wrapper {
             text-align: center;
+            vertical-align: middle;
         }
-        .play-icon-triangle {
+        .play-button-circle {
             display: inline-block;
-            width: 0; 
-            height: 0; 
-            border-top: 10px solid transparent;
-            border-bottom: 10px solid transparent;
-            border-left: 16px solid #121212;
-            margin-left: 5px;
+            width: 64px;
+            height: 64px;
+            line-height: 64px;
+            background: linear-gradient(135deg, #FFB703 0%, #FB8500 100%);
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(251, 133, 0, 0.4);
+            color: #121212;
+            font-size: 28px;
+            text-align: center;
+            padding-left: 6px;
+            box-sizing: border-box;
         }
         .video-caption {
             font-size: 12px;
@@ -279,16 +275,19 @@
         <div class="divider"></div>
 
         <!-- Video Section -->
-        <div class="video-container" style="text-align: center;">
-            <div style="background-color: rgba(255, 255, 255, 0.02); border: 1px solid rgba(251, 133, 0, 0.2); border-radius: 12px; padding: 30px 20px; max-width: 400px; margin: 0 auto; box-shadow: 0 4px 20px rgba(251, 133, 0, 0.05);">
-                <div style="color: #FFB703; font-size: 14px; font-weight: 600; margin-bottom: 12px; letter-spacing: 1px; text-transform: uppercase;">
-                    See Cortogen in Action
-                </div>
-                <p style="color: #a0a0a0; font-size: 14px; margin: 0 0 20px 0; line-height: 1.5;">
-                    Watch our quick 2-minute architectural demo to see how cross-session memory works.
-                </p>
-                <a href="https://www.youtube.com/watch?v=8JCFxjxg4FQ" style="display: inline-block; background: transparent; border: 1px solid rgba(251, 133, 0, 0.6); color: #FFB703; text-decoration: none; padding: 12px 30px; font-size: 14px; font-weight: 600; border-radius: 30px; letter-spacing: 0.5px;">
-                    Watch Demo
+        <div class="video-container">
+            <a href="https://www.youtube.com/watch?v=8JCFxjxg4FQ" class="video-box">
+                <table class="video-center-table">
+                    <tr>
+                        <td class="play-button-wrapper">
+                            <div class="play-button-circle">&#9658;</div>
+                        </td>
+                    </tr>
+                </table>
+            </a>
+            <div style="margin-top: 20px;">
+                <a href="https://www.youtube.com/watch?v=8JCFxjxg4FQ" style="display: inline-block; color: #FB8500; text-decoration: none; font-size: 13px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;">
+                    ▶ See Cortogen in action with this 2-minute tutorial
                 </a>
             </div>
         </div>
