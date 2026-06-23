@@ -235,7 +235,10 @@ Cortogen Team"""
         msg['From'] = Header(f"Cortogen Team <{sender}>", 'utf-8')
         msg['To'] = Header(notification, 'utf-8')
         
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+        smtp_host = config.get("smtp_host", "smtp.gmail.com")
+        smtp_port = config.get("smtp_port", 465)
+        
+        with smtplib.SMTP_SSL(smtp_host, smtp_port) as server:
             server.login(sender, password)
             server.sendmail(sender, [notification], msg.as_string())
         print(f"[Summary] Notification email sent successfully to {notification}.")
@@ -330,7 +333,10 @@ def run_campaign_thread(csv_file, limit):
                 msg['From'] = Header(f"The Cortogen Team <{sender}>", 'utf-8')
                 msg['To'] = Header(email_addr, 'utf-8')
                 
-                with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+                smtp_host = config.get("smtp_host", "smtp.gmail.com")
+                smtp_port = config.get("smtp_port", 465)
+                
+                with smtplib.SMTP_SSL(smtp_host, smtp_port) as server:
                     server.login(sender, password)
                     server.sendmail(sender, [email_addr], msg.as_string())
                 
