@@ -423,7 +423,7 @@
 
         /* Mobile First */
         @media (max-width: 768px) {
-            .header-stats { display: none; }
+            .stat-chip, .sync-indicator { display: none; }
             .app-container { flex-direction: column; }
             .sidebar { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 10; }
             .workspace { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 20; }
@@ -575,14 +575,6 @@
                                 <option value="error">Error</option>
                             </select>
                         </div>
-                        <div class="meta-item">
-                            <span class="meta-label">Template</span>
-                            <select id="email-template-type" class="compact-input">
-                                <option value="developer_coding">Developer - Coding Context</option>
-                                <option value="student_study">Student - Study Context</option>
-                                <option value="general_poweruser">General Power User</option>
-                            </select>
-                        </div>
                     </div>
                     
                     <div class="meta-item">
@@ -596,28 +588,14 @@
                     <span style="display:none;" id="prof-schedule-time"></span>
                     <span style="display:none;" id="prof-schedule-zone"></span>
                     <span style="display:none;" id="prof-sources"></span>
-                </div>
-
-                <div class="editor-container">
-                    <div class="editor-toolbar">
-                        <span class="meta-label" style="color: var(--accent-primary);"><i data-lucide="terminal" style="width: 12px; height: 12px;"></i> Composer</span>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <button id="btn-skip-next" class="btn-secondary" style="padding: 0.2rem 0.5rem; font-size: 11px;"><i data-lucide="skip-forward" style="width: 12px; height: 12px;"></i> Skip to Next</button>
-                            <button id="btn-copy-email" class="btn-secondary" style="padding: 0.2rem 0.5rem; font-size: 11px;"><i data-lucide="copy" style="width: 12px; height: 12px;"></i> Copy</button>
-                        </div>
-                    </div>
                     
-                    <input type="text" id="input-subject" class="editor-subject" placeholder="Email Subject...">
-                    <textarea id="input-body" class="editor-textarea" placeholder="Write outreach email..."></textarea>
-                    
-                    <div class="editor-footer">
-                        <div style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">
-                            <i data-lucide="info" style="width: 12px; height: 12px;"></i> Auto-saves on type.
-                        </div>
-                        <button id="btn-gmail-compose" class="btn-primary">
-                            <i data-lucide="send"></i> Open in Gmail & Next
-                        </button>
-                    </div>
+                    <!-- Stub elements to prevent JS from crashing since Composer is removed -->
+                    <select id="email-template-type" style="display:none;"></select>
+                    <input type="text" id="input-subject" style="display:none;">
+                    <textarea id="input-body" style="display:none;"></textarea>
+                    <button id="btn-skip-next" style="display:none;"></button>
+                    <button id="btn-copy-email" style="display:none;"></button>
+                    <button id="btn-gmail-compose" style="display:none;"></button>
                 </div>
                 
             </div>
