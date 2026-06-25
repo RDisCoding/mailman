@@ -703,14 +703,14 @@
                     
                     // Add default ID and statuses if not exists
                     researchers = researchers.map((r, index) => ({
-                        id: `res_${index}`,
+                        ...r,
+                        id: r.id || `res_${index}`,
                         status: r.status || 'not_contacted',
                         email: r.email || '',
                         notes: r.notes || '',
                         custom_subject: r.custom_subject || '',
                         custom_body: r.custom_body || '',
-                        template_type: r.template_type || 'adaptive_memory',
-                        ...r
+                        template_type: r.template_type || 'adaptive_memory'
                     }));
                     
                     renderList();
@@ -833,6 +833,7 @@
 
         // Predict Email using common schemas
         function getEmailPrediction(name, institution) {
+            if (!name) return '';
             const clean = name.toLowerCase().replace(/[^a-z ]/g, '');
             const parts = clean.split(' ').filter(p => p.length > 1);
             if (parts.length === 0) return '';
@@ -840,7 +841,7 @@
             const first = parts[0];
             const last = parts[parts.length - 1];
             
-            const inst = institution.toLowerCase();
+            const inst = (institution || '').toLowerCase();
             let domain = 'domain.edu';
             
             if (inst.includes('princeton')) domain = 'princeton.edu';
