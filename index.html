@@ -11,15 +11,15 @@
     
     <style>
         :root {
-            --bg-base: #020617;
-            --bg-surface: #0f172a;
-            --bg-card: rgba(30, 41, 59, 0.4);
+            --bg-base: #000000;
+            --bg-surface: #0A0A0A;
+            --bg-card: rgba(20, 20, 20, 0.8);
             --border-color: rgba(255, 255, 255, 0.08);
             --border-hover: rgba(255, 255, 255, 0.15);
             
-            --color-primary: #3b82f6;
-            --color-primary-glow: rgba(59, 130, 246, 0.15);
-            --color-secondary: #a855f7;
+            --color-primary: #FB8500;
+            --color-primary-glow: rgba(251, 133, 0, 0.2);
+            --color-secondary: #FFB703;
             --color-success: #10b981;
             --color-warning: #f59e0b;
             --color-danger: #ef4444;
@@ -623,7 +623,7 @@
         }
 
         .btn-action:hover {
-            background: var(--color-primary);
+            background: linear-gradient(135deg, #FFB703 0%, #FB8500 100%); color: #000; font-weight: 700;
             color: #fff;
             box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
         }
@@ -969,7 +969,22 @@
             justify-content: flex-end;
             background: rgba(30, 41, 59, 0.15);
         }
+    
+        @media (max-width: 768px) {
+            .layout { flex-direction: column; height: auto; overflow: visible; }
+            .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); max-height: 40vh; }
+            body { height: auto; overflow: auto; }
+            .main-content { height: auto; overflow: visible; padding: 1rem; }
+            .header-stats { display: none; }
+            .header-left h1 { font-size: 1.2rem; }
+            .top-actions { flex-direction: column; align-items: stretch; }
+            .top-actions button { width: 100%; margin-bottom: 0.5rem; }
+            .editor-area { grid-template-columns: 1fr; }
+            header { flex-direction: column; align-items: flex-start; gap: 10px; padding: 1rem; }
+            .sync-indicator { align-self: flex-end; }
+        }
     </style>
+    
 </head>
 <body>
 
@@ -1923,6 +1938,15 @@ The Cortogen Team`;
 
         // Start App
         loadResearchers();
+    
+        // Campaign Modal Toggle Logic
+        const btnViewStatus = document.getElementById('btn-view-status');
+        if(btnViewStatus) {
+            btnViewStatus.onclick = () => {
+                openCampaignModal();
+            };
+        }
     </script>
 </body>
+
 </html>
