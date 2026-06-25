@@ -459,10 +459,10 @@
             </div>
             
             <button id="btn-start-batch" class="btn-primary">
-                <i data-lucide="play"></i> Start Batch
+                <i data-lucide="play"></i> Initiate Campaign
             </button>
             <button id="btn-view-status" class="btn-secondary" style="display: none;">
-                <i data-lucide="activity"></i> Status
+                <i data-lucide="activity"></i> Mission Status
             </button>
         </div>
     </header>
@@ -474,7 +474,7 @@
             <div class="sidebar-search">
                 <div class="input-group input-icon-left">
                     <i data-lucide="search"></i>
-                    <input type="text" id="search-input" class="modern-input with-icon" placeholder="Search targets...">
+                    <input type="text" id="search-input" class="modern-input with-icon" placeholder="Locate Target...">
                 </div>
                 <div style="display: flex; gap: 0.5rem;">
                     <select id="filter-source" class="modern-select">
@@ -485,11 +485,11 @@
                     </select>
                     <select id="filter-status" class="modern-select">
                         <option value="all">All Status</option>
-                        <option value="not_contacted">Pending</option>
-                        <option value="drafted">Drafted</option>
-                        <option value="scheduled">Scheduled</option>
-                        <option value="sent">Sent</option>
-                        <option value="replied">Replied</option>
+                        <option value="not_contacted">Awaiting Orders</option>
+                        <option value="drafted">Prepared</option>
+                        <option value="scheduled">Queued</option>
+                        <option value="sent">Transmitted</option>
+                        <option value="replied">Acknowledged</option>
                     </select>
                 </div>
             </div>
@@ -509,7 +509,7 @@
                 <p class="hero-desc">Select a target from the sidebar to initiate personalized outreach operations.</p>
                 
                 <button class="btn-primary" onclick="document.querySelector('#search-input').focus()">
-                    <i data-lucide="search"></i> Search Targets
+                    <i data-lucide="search"></i> Locate Target
                 </button>
                 
                 <div class="feature-grid">
@@ -552,34 +552,34 @@
                     <div class="meta-grid">
                         <div class="meta-item">
                             <span class="meta-label">
-                                Email Target 
+                                Target Vector 
                                 <span>
                                     <button id="btn-predict-email" class="mini-btn" title="Copilot Predict"><i data-lucide="wand-2" style="width:10px;height:10px;"></i> Predict</button>
-                                    <button id="btn-google-search" class="mini-btn" title="Google Search"><i data-lucide="search" style="width:10px;height:10px;"></i> Find</button>
+                                    <button id="btn-google-search" class="mini-btn" title="Google Search"><i data-lucide="search" style="width:10px;height:10px;"></i> Acquire</button>
                                 </span>
                             </span>
                             <div class="input-group">
-                                <input type="email" id="input-email" class="compact-input" placeholder="developer@example.com">
+                                <input type="email" id="input-email" class="compact-input" placeholder="target@domain.edu">
                                 <button id="btn-verify-email" style="display:none;"></button>
                             </div>
                             <div id="prediction-hint" style="font-size: 12px; color: var(--accent-primary); display: none;"></div>
                         </div>
                         <div class="meta-item">
-                            <span class="meta-label">Status</span>
+                            <span class="meta-label">Mission Status</span>
                             <select id="input-status" class="compact-input">
-                                <option value="not_contacted">Not Contacted</option>
-                                <option value="drafted">Drafted</option>
-                                <option value="scheduled">Scheduled</option>
-                                <option value="sent">Sent</option>
-                                <option value="replied">Replied</option>
-                                <option value="error">Error</option>
+                                <option value="not_contacted">Awaiting Orders</option>
+                                <option value="drafted">Prepared</option>
+                                <option value="scheduled">Queued</option>
+                                <option value="sent">Transmitted</option>
+                                <option value="replied">Acknowledged</option>
+                                <option value="error">Failed</option>
                             </select>
                         </div>
                     </div>
                     
                     <div class="meta-item">
-                        <span class="meta-label">Personalization Notes</span>
-                        <input type="text" id="input-notes" class="compact-input" placeholder="e.g. Mentioned Next.js in bio...">
+                        <span class="meta-label">Intelligence Notes</span>
+                        <input type="text" id="input-notes" class="compact-input" placeholder="e.g. Acknowledge recent publication...">
                     </div>
                     
                     <!-- Hidden elements required by JS -->
@@ -606,7 +606,7 @@
     <div id="campaign-modal" class="modal-overlay">
         <div class="modal-card">
             <div class="modal-header">
-                <h2 style="font-family: var(--font-mono); font-size: 14px; color: var(--text-primary);"><i data-lucide="activity" style="width: 16px; vertical-align: middle; margin-right: 0.5rem;"></i> Batch Process</h2>
+                <h2 style="font-family: var(--font-mono); font-size: 14px; color: var(--text-primary);"><i data-lucide="activity" style="width: 16px; vertical-align: middle; margin-right: 0.5rem;"></i> Deployment Protocol</h2>
                 <button id="btn-close-campaign" style="background: none; border: none; color: var(--text-muted); cursor: pointer;"><i data-lucide="x"></i></button>
             </div>
             <div class="modal-body">
@@ -617,11 +617,11 @@
                         <span id="campaign-progress-percent">0%</span>
                     </div>
                 </div>
-                <div id="campaign-status-msg" style="font-size: 12px; font-family: var(--font-mono); color: var(--accent-primary);">Initializing...</div>
+                <div id="campaign-status-msg" style="font-size: 12px; font-family: var(--font-mono); color: var(--accent-primary);">Systems initializing...</div>
                 <div class="console-logs" id="campaign-console-logs"></div>
             </div>
             <div class="modal-footer">
-                <button id="btn-stop-campaign" class="btn-secondary" style="color: var(--color-error); border-color: var(--border-subtle);"><i data-lucide="square" style="width: 14px; fill: currentColor;"></i> Stop</button>
+                <button id="btn-stop-campaign" class="btn-secondary" style="color: var(--color-error); border-color: var(--border-subtle);"><i data-lucide="square" style="width: 14px; fill: currentColor;"></i> Abort</button>
             </div>
         </div>
     </div>
@@ -716,15 +716,15 @@
                     
                     renderList();
                     updateStats();
-                    setSyncState('success', 'Synced with disk');
+                    setSyncState('success', 'Neural link established with local storage');
                 } else {
-                    showToast('Failed to fetch from server', true);
-                    setSyncState('error', 'Sync Failed');
+                    showToast('Connection to neural net failed.', true);
+                    setSyncState('error', 'Neural link failure');
                 }
             } catch (err) {
                 console.error(err);
-                showToast('Server offline. Running in sandbox mode.', true);
-                setSyncState('error', 'Sandbox Mode');
+                showToast('Server offline. Operating in sandbox protocol.', true);
+                setSyncState('error', 'Offline. Running in sandbox protocol.');
             }
         }
 
@@ -735,7 +735,7 @@
 
         // Save back to Python server
         async function syncWithServer() {
-            setSyncState('syncing', 'Syncing edits...');
+            setSyncState('syncing', 'Synchronizing intelligence data...');
             try {
                 const csvFile = getActiveFileName();
                 const res = await fetch(`/api/researchers?file=${encodeURIComponent(csvFile)}`, {
@@ -745,15 +745,15 @@
                 }); setTimeout(() => lucide.createIcons(), 10);
                 
                 if (res.ok) {
-                    setSyncState('success', 'Synced with disk');
+                    setSyncState('success', 'Neural link established with local storage');
                     updateStats();
                 } else {
-                    setSyncState('error', 'Sync failed');
-                    showToast('Failed to sync changes to server disk', true);
+                    setSyncState('error', 'Synchronization failed. Awaiting further instructions.');
+                    showToast('Unable to establish connection with local storage. Retrying.', true);
                 }
             } catch (err) {
                 console.error(err);
-                setSyncState('error', 'Offline');
+                setSyncState('error', 'Comms offline');
             }
         }
 
@@ -795,6 +795,15 @@
             
             filtered.forEach(r => {
                 const isActive = r.id === activeId;
+                const statusMap = {
+                            'not_contacted': 'AWAITING ORDERS',
+                            'drafted': 'PREPARED',
+                            'scheduled': 'QUEUED',
+                            'sent': 'TRANSMITTED',
+                            'replied': 'ACKNOWLEDGED',
+                            'error': 'FAILED'
+                        };
+                        const displayStatus = statusMap[r.status] || r.status.toUpperCase();
                 const card = document.createElement('div');
                 card.className = `researcher-card ${isActive ? 'active' : ''}`;
                 card.onclick = () => selectResearcher(r.id);
@@ -816,7 +825,7 @@
                     <div class="card-institution">${r.position ? r.position + ' • ' : ''}${r.institution}</div>
                     <div class="card-footer">
                         <div class="card-sources">${sourceTagsHtml}</div>
-                        <span class="status-badge ${r.status}">${r.status.replace('_', ' ')}</span>
+                        <span class="status-badge ${r.status}">${displayStatus}</span>
                     </div>
                 `;
                 listContainer.appendChild(card);
@@ -1079,7 +1088,7 @@ The Cortogen Team`;
                 updateActiveResearcherData();
                 showToast(`Filled predicted email: ${pred.primary}`);
             } else {
-                showToast('Could not predict email for this institution.', true);
+                showToast('Insufficient data to synthesize vector.', true);
             }
         };
 
@@ -1090,7 +1099,7 @@ The Cortogen Team`;
             const query = `${r.name} ${r.institution} email contact cs`;
             const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
             window.open(searchUrl, '_blank');
-            showToast('Searching Google in a new tab...');
+            showToast('Initializing global query protocol...');
         };
 
         // Copy Email Body to clipboard
@@ -1098,7 +1107,7 @@ The Cortogen Team`;
             inputBody.select();
             document.execCommand('copy');
             window.getSelection().removeAllRanges();
-            showToast('Email body copied to clipboard!');
+            showToast('Transmission copied to clipboard.');
         };
 
         // Open in Gmail Compose tab
@@ -1121,7 +1130,7 @@ The Cortogen Team`;
                 renderList();
             }
             
-            showToast('Gmail Compose opened! Auto-advancing in dashboard...');
+            showToast('External transmission terminal launched. Advancing queue.');
             
             // Auto-advance to the next pending target
             setTimeout(() => {
@@ -1129,7 +1138,7 @@ The Cortogen Team`;
                 if (nextTarget) {
                     selectResearcher(nextTarget.id);
                 } else {
-                    showToast('All targets in list processed! Great job!');
+                    showToast('All pending objectives have been completed, Master.');
                 }
             }, 600);
         };
