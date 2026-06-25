@@ -12,8 +12,8 @@ import smtplib
 from email.mime.text import MIMEText
 from email.header import Header
 
-PORT = 8000
-DEFAULT_CSV = "github_developers.csv"
+PORT = int(os.environ.get("PORT", 8000))
+DEFAULT_CSV = "active_dev_leads.csv"
 
 FIELDNAMES = [
     "id", "username", "profile_url", "type", "email", 
