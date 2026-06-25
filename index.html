@@ -2,53 +2,46 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cortogen Publicity & Student Outreach Suite</title>
-    <!-- Google Fonts -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI Outreach Mission Control</title>
+    <!-- Modern Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     
     <style>
         :root {
-            --bg-base: #050505;
-            --bg-surface: #0B0F14;
-            --bg-card: #111827;
-            --border-color: rgba(255, 255, 255, 0.08);
-            --border-hover: rgba(0, 255, 255, 0.3);
+            --bg-base: #060606;
+            --bg-surface: #111111;
+            --bg-surface-elevated: #171717;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-focus: rgba(255, 106, 0, 0.4);
             
-            --color-primary: #00f0ff; /* Neon Cyan */
-            --color-primary-glow: rgba(0, 240, 255, 0.2);
-            --color-secondary: #7000ff; /* Purple */
-            --color-accent: #0051ff; /* Electric Blue */
-            --color-success: #00ff88; /* Emerald Green */
-            --color-warning: #f59e0b;
-            --color-danger: #ff003c; /* Cyberpunk Red */
-            --color-info: #06b6d4;
+            --accent-primary: #FF6A00;
+            --accent-amber: #FF9900;
+            --color-success: #10b981;
+            --color-error: #ef4444;
             
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --text-muted: #4b5563;
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --text-muted: #52525b;
             
-            --font-display: 'Inter', sans-serif;
             --font-sans: 'Inter', sans-serif;
-            --font-mono: 'JetBrains Mono', 'Courier New', monospace;
-            --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            --shadow-premium: 0 10px 30px -10px rgba(0,0,0,0.8), 0 0 15px var(--color-primary-glow);
+            --font-mono: 'JetBrains Mono', monospace;
+            
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        /* Import JetBrains Mono */
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             background-color: var(--bg-base);
-            background-image: 
-                radial-gradient(circle at 15% 50%, rgba(0, 240, 255, 0.03), transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(112, 0, 255, 0.03), transparent 25%);
             color: var(--text-primary);
             font-family: var(--font-sans);
+            font-size: 14px;
             overflow: hidden;
             height: 100vh;
             display: flex;
@@ -57,144 +50,88 @@
         }
 
         ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: var(--bg-base); }
-        ::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.2); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--color-primary); }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--bg-surface-elevated); border-radius: 2px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--border-subtle); }
 
+        /* Header / Navbar */
         header {
-            background: rgba(11, 15, 20, 0.7);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border-color);
-            padding: 1rem 1.5rem;
+            background: var(--bg-base);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 0.75rem 1.5rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            z-index: 10;
+            height: 56px;
+            flex-shrink: 0;
         }
 
-        .header-left h1 {
-            font-family: var(--font-display);
-            font-size: 1.25rem;
-            font-weight: 700;
-            letter-spacing: -0.03em;
-            color: var(--text-primary);
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .header-brand i { color: var(--accent-primary); width: 18px; height: 18px; }
+
+        .header-stats {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .stat-chip {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-        }
-
-        .header-left h1 svg { color: var(--color-primary); filter: drop-shadow(0 0 8px var(--color-primary-glow)); }
-        
-        .header-left p {
-            font-size: 0.75rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            padding: 0.25rem 0.5rem;
+            font-size: 12px;
+            font-family: var(--font-mono);
             color: var(--text-secondary);
-            margin-top: 0.2rem;
-            font-family: var(--font-mono);
         }
 
-        .header-stats { display: flex; gap: 1rem; align-items: center; }
+        .stat-val { color: var(--text-primary); font-weight: 500; }
 
-        .stat-card {
-            background: rgba(17, 24, 39, 0.6);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 0.3rem 0.6rem;
-            text-align: center;
-            min-width: 70px;
-        }
-
-        .stat-value {
-            font-family: var(--font-mono);
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--color-primary);
-            text-shadow: 0 0 10px var(--color-primary-glow);
-        }
-
-        .stat-label {
-            font-size: 0.55rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-muted);
-        }
-
-        .sync-indicator {
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            font-size: 0.65rem;
-            font-family: var(--font-mono);
-            text-transform: uppercase;
-            background: rgba(0, 255, 136, 0.05);
-            color: var(--color-success);
-            padding: 0.3rem 0.6rem;
-            border-radius: 4px;
-            border: 1px solid rgba(0, 255, 136, 0.2);
-            box-shadow: 0 0 10px rgba(0, 255, 136, 0.1);
-        }
-        .sync-indicator.syncing {
-            background: rgba(0, 240, 255, 0.05);
-            color: var(--color-primary);
-            border-color: rgba(0, 240, 255, 0.2);
-        }
-
-        .sync-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background-color: currentColor;
-            box-shadow: 0 0 8px currentColor;
-        }
-
-        /* Buttons */
-        button {
-            font-family: var(--font-sans);
-            cursor: pointer;
-            outline: none;
-            transition: var(--transition);
-            border-radius: 6px;
-        }
-
-        .btn-primary, #btn-start-batch {
-            background: rgba(0, 240, 255, 0.1);
-            border: 1px solid var(--color-primary);
-            color: var(--color-primary);
-            padding: 0.5rem 1rem;
-            font-size: 0.8rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            box-shadow: 0 0 15px var(--color-primary-glow);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        .btn-primary:hover, #btn-start-batch:hover {
-            background: var(--color-primary);
+        .btn-primary {
+            background: var(--accent-primary);
             color: #000;
-            box-shadow: 0 0 25px var(--color-primary-glow);
-        }
-
-        .btn-secondary, #btn-view-status {
-            background: rgba(112, 0, 255, 0.1);
-            border: 1px solid var(--color-secondary);
-            color: var(--color-secondary);
-            padding: 0.5rem 1rem;
-            font-size: 0.8rem;
-            font-weight: 600;
+            border: none;
+            padding: 0.4rem 0.75rem;
+            border-radius: 4px;
+            font-family: var(--font-sans);
+            font-weight: 500;
+            font-size: 13px;
+            cursor: pointer;
             display: flex;
             align-items: center;
             gap: 0.4rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            transition: var(--transition-fast);
         }
-        .btn-secondary:hover, #btn-view-status:hover {
-            background: var(--color-secondary);
-            color: #fff;
-            box-shadow: 0 0 20px rgba(112, 0, 255, 0.4);
-        }
+        .btn-primary:hover { background: var(--accent-amber); transform: translateY(-1px); }
 
-        /* App Layout */
+        .btn-secondary {
+            background: var(--bg-surface);
+            color: var(--text-primary);
+            border: 1px solid var(--border-subtle);
+            padding: 0.4rem 0.75rem;
+            border-radius: 4px;
+            font-family: var(--font-sans);
+            font-weight: 500;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: var(--transition-fast);
+        }
+        .btn-secondary:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+
+        /* Layout */
         .app-container {
             display: flex;
             flex: 1;
@@ -204,501 +141,468 @@
 
         /* Sidebar */
         .sidebar {
-            width: 340px;
-            border-right: 1px solid var(--border-color);
-            background: var(--bg-surface);
+            width: 320px;
+            border-right: 1px solid var(--border-subtle);
+            background: var(--bg-base);
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-            z-index: 5;
+            flex-shrink: 0;
+            transition: var(--transition-normal);
         }
 
-        .sidebar-controls {
+        .sidebar-search {
             padding: 1rem;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-subtle);
             display: flex;
             flex-direction: column;
-            gap: 0.6rem;
+            gap: 0.75rem;
             background: var(--bg-surface);
         }
 
-        .search-box input {
+        .input-group { position: relative; display: flex; align-items: center; }
+        .input-group i { position: absolute; left: 0.75rem; width: 14px; height: 14px; color: var(--text-muted); }
+        
+        .modern-input {
             width: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 0.5rem 1rem 0.5rem 2rem;
+            background: var(--bg-base);
+            border: 1px solid var(--border-subtle);
+            border-radius: 4px;
+            padding: 0.4rem 0.75rem 0.4rem 2.25rem;
             color: var(--text-primary);
             font-family: var(--font-sans);
-            font-size: 0.8rem;
-            transition: var(--transition);
-        }
-        .search-box input:focus {
-            border-color: var(--color-primary);
-            box-shadow: 0 0 10px var(--color-primary-glow);
-            background: rgba(0, 240, 255, 0.02);
-        }
-        .search-box svg {
-            position: absolute; left: 0.6rem; top: 50%; transform: translateY(-50%);
-            width: 14px; height: 14px; color: var(--text-secondary);
-        }
-
-        .filter-row { display: flex; gap: 0.5rem; }
-        .filter-row select {
-            flex: 1;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            padding: 0.4rem;
-            color: var(--text-secondary);
-            font-size: 0.7rem;
-            font-family: var(--font-sans);
+            font-size: 13px;
             outline: none;
-            transition: var(--transition);
+            transition: var(--transition-fast);
         }
-        .filter-row select:focus { border-color: var(--color-primary); color: var(--color-primary); }
+        .modern-input:focus { border-color: var(--border-focus); }
+        
+        .modern-select {
+            background: var(--bg-base);
+            border: 1px solid var(--border-subtle);
+            border-radius: 4px;
+            padding: 0.3rem 0.5rem;
+            color: var(--text-secondary);
+            font-size: 12px;
+            outline: none;
+            flex: 1;
+            cursor: pointer;
+        }
+        .modern-select:focus { border-color: var(--border-focus); color: var(--text-primary); }
 
-        .researchers-list { flex: 1; overflow-y: auto; padding: 0.5rem; }
+        .researchers-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
 
         .researcher-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 0.8rem;
-            margin-bottom: 0.5rem;
+            padding: 0.75rem;
+            border-radius: 6px;
             cursor: pointer;
-            transition: var(--transition);
-            position: relative;
+            transition: var(--transition-fast);
+            border: 1px solid transparent;
+            margin-bottom: 2px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
         }
-        .researcher-card:hover { border-color: var(--border-hover); background: rgba(17, 24, 39, 0.9); }
+        .researcher-card:hover { background: var(--bg-surface); }
         .researcher-card.active {
-            background: rgba(0, 240, 255, 0.03);
-            border-color: var(--color-primary);
-            box-shadow: 0 0 15px var(--color-primary-glow);
+            background: var(--bg-surface-elevated);
+            border-color: var(--border-subtle);
+            box-shadow: inset 2px 0 0 var(--accent-primary);
         }
 
-        .card-header-info { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.3rem; }
-        .card-name { font-family: var(--font-sans); font-size: 0.85rem; font-weight: 600; color: var(--text-primary); }
-        .card-institution { font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 0.4rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .rc-header { display: flex; justify-content: space-between; align-items: center; }
+        .rc-name { font-weight: 500; font-size: 13px; color: var(--text-primary); }
+        .rc-inst { font-size: 11px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
-        .card-footer { display: flex; justify-content: space-between; align-items: center; }
-        .card-sources { display: flex; gap: 0.2rem; flex-wrap: wrap; }
-        
-        .source-tag { font-size: 0.55rem; padding: 0.15rem 0.3rem; border-radius: 3px; font-family: var(--font-mono); text-transform: uppercase; background: rgba(255,255,255,0.05); color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.1); }
-        .source-tag.outreach { background: rgba(112,0,255,0.1); color: #b070ff; border-color: rgba(112,0,255,0.2); }
-
-        .status-badge { font-size: 0.55rem; padding: 0.15rem 0.4rem; border-radius: 3px; font-weight: 600; text-transform: uppercase; font-family: var(--font-mono); letter-spacing: 0.05em; }
-        .status-badge.not_contacted { background: rgba(75, 85, 99, 0.2); color: #9ca3af; border: 1px solid rgba(156, 163, 175, 0.2); }
-        .status-badge.drafted { background: rgba(0, 240, 255, 0.1); color: var(--color-primary); border: 1px solid rgba(0, 240, 255, 0.2); }
-        .status-badge.scheduled { background: rgba(245, 158, 11, 0.1); color: var(--color-warning); border: 1px solid rgba(245, 158, 11, 0.2); }
-        .status-badge.sent { background: rgba(0, 255, 136, 0.1); color: var(--color-success); border: 1px solid rgba(0, 255, 136, 0.2); }
-        .status-badge.replied { background: rgba(112, 0, 255, 0.1); color: #b070ff; border: 1px solid rgba(112, 0, 255, 0.2); }
         .status-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
-        .status-dot.not_contacted { background-color: #9ca3af; }
-        .status-dot.drafted { background-color: var(--color-primary); box-shadow: 0 0 8px var(--color-primary); }
-        .status-dot.scheduled { background-color: var(--color-warning); }
-        .status-dot.sent { background-color: var(--color-success); box-shadow: 0 0 8px var(--color-success); }
-        .status-dot.replied { background-color: #b070ff; }
+        .status-not_contacted { background-color: var(--text-muted); }
+        .status-drafted { background-color: var(--accent-primary); }
+        .status-scheduled { background-color: var(--accent-amber); }
+        .status-sent { background-color: var(--color-success); }
+        .status-replied { background-color: #a855f7; }
 
-        /* Main Workspace */
+        /* Workspace */
         .workspace {
             flex: 1;
             display: flex;
             flex-direction: column;
+            background: var(--bg-base);
             overflow-y: auto;
-            padding: 1.5rem;
             position: relative;
         }
 
-        .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; text-align: center; }
-        .empty-icon { width: 60px; height: 60px; border-radius: 12px; background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.2); display: flex; align-items: center; justify-content: center; color: var(--color-primary); margin-bottom: 1rem; box-shadow: 0 0 20px var(--color-primary-glow); }
-        .empty-state h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem; color: #fff; }
-        .empty-state p { color: var(--text-secondary); font-size: 0.85rem; max-width: 400px; line-height: 1.5; }
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 2rem;
+            text-align: center;
+        }
 
-        .outreach-panel { display: flex; flex-direction: column; gap: 1rem; max-width: 1000px; margin: 0 auto; width: 100%; animation: fadeSlideUp 0.4s ease forwards; }
-        @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .hero-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+        .hero-desc {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 2rem;
+            max-width: 400px;
+        }
 
-        .panel-row { display: grid; grid-template-columns: 1fr; gap: 1rem; }
-        @media(min-width: 1024px) { .panel-row { grid-template-columns: 5fr 4fr; } }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            max-width: 700px;
+            margin-top: 2rem;
+        }
+        .feature-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: left;
+        }
+        .feature-card i { color: var(--accent-primary); margin-bottom: 0.5rem; width: 18px; height: 18px; }
+        .feature-card h4 { font-size: 13px; margin-bottom: 0.25rem; font-weight: 500; }
+        .feature-card p { font-size: 12px; color: var(--text-secondary); line-height: 1.4; }
 
-        .glass-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.25rem; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        /* Outreach Panel */
+        .outreach-panel {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .panel-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+            background: var(--bg-surface);
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .profile-row { display: flex; justify-content: space-between; align-items: flex-start; }
         
-        .profile-name { font-family: var(--font-sans); font-size: 1.4rem; font-weight: 700; color: #fff; }
-        .profile-position { font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.2rem; font-family: var(--font-mono); }
-        
-        .profile-links { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
-        .btn-link { display: flex; align-items: center; gap: 0.3rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); padding: 0.3rem 0.6rem; border-radius: 6px; font-size: 0.7rem; font-family: var(--font-mono); color: var(--text-secondary); text-decoration: none; transition: var(--transition); }
-        .btn-link:hover { background: rgba(0, 240, 255, 0.1); border-color: var(--color-primary); color: var(--color-primary); box-shadow: 0 0 10px var(--color-primary-glow); }
+        .profile-info h2 { font-size: 18px; font-weight: 600; margin-bottom: 0.2rem; display: flex; align-items: center; gap: 0.5rem; }
+        .profile-info p { font-size: 13px; color: var(--text-secondary); font-family: var(--font-mono); }
 
-        .info-block { margin-bottom: 1rem; }
-        .info-label { font-size: 0.65rem; font-family: var(--font-mono); text-transform: uppercase; color: var(--color-primary); margin-bottom: 0.3rem; }
-        .info-value { font-size: 0.85rem; color: var(--text-primary); line-height: 1.5; }
-
-        .form-group { margin-bottom: 1rem; }
-        .form-group label { display: block; font-size: 0.65rem; font-family: var(--font-mono); color: var(--text-secondary); margin-bottom: 0.3rem; text-transform: uppercase; }
-        .text-input { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); border-radius: 6px; padding: 0.5rem 0.75rem; color: var(--text-primary); font-family: var(--font-sans); font-size: 0.8rem; outline: none; transition: var(--transition); }
-        .text-input:focus { border-color: var(--color-primary); box-shadow: 0 0 10px var(--color-primary-glow); }
-
-        .btn-action { background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.2); color: var(--color-primary); border-radius: 6px; padding: 0.5rem 0.8rem; font-size: 0.75rem; font-family: var(--font-mono); text-transform: uppercase; cursor: pointer; transition: var(--transition); }
-        .btn-action:hover { background: rgba(0, 240, 255, 0.15); box-shadow: 0 0 15px var(--color-primary-glow); }
-
-        .composer-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; margin-bottom: 1rem; }
-        .composer-title { font-size: 1rem; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 0.4rem; }
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+        .meta-item { display: flex; flex-direction: column; gap: 0.2rem; }
+        .meta-label { font-size: 10px; text-transform: uppercase; color: var(--text-muted); font-family: var(--font-mono); font-weight: 600; }
+        .meta-val { font-size: 13px; color: var(--text-primary); }
         
-        .template-selector select { background: rgba(0,0,0,0.8); border: 1px solid var(--border-color); border-radius: 4px; padding: 0.3rem 0.6rem; color: var(--text-primary); font-family: var(--font-mono); font-size: 0.7rem; outline: none; }
-        
-        .email-body-area { width: 100%; height: 300px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); border-radius: 6px; padding: 1rem; color: var(--text-primary); font-family: var(--font-sans); font-size: 0.85rem; line-height: 1.6; resize: vertical; outline: none; transition: var(--transition); }
-        .email-body-area:focus { border-color: var(--color-primary); box-shadow: 0 0 10px var(--color-primary-glow); }
+        .compact-input {
+            background: var(--bg-base); border: 1px solid var(--border-subtle); border-radius: 4px; padding: 0.3rem 0.5rem; color: var(--text-primary); font-size: 12px; outline: none; width: 100%;
+        }
+        .compact-input:focus { border-color: var(--border-focus); }
 
-        .composer-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; border-top: 1px solid var(--border-color); padding-top: 1rem; gap: 1rem; flex-wrap: wrap; }
-        
-        .status-select { background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); border-radius: 4px; padding: 0.4rem 0.6rem; color: var(--text-primary); font-family: var(--font-mono); font-size: 0.75rem; outline: none; }
-        
-        .btn-gmail-compose { background: rgba(255, 0, 60, 0.1); color: var(--color-danger); border: 1px solid var(--color-danger); padding: 0.6rem 1.2rem; border-radius: 6px; font-family: var(--font-mono); font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: var(--transition); text-transform: uppercase; box-shadow: 0 0 10px rgba(255, 0, 60, 0.1); }
-        .btn-gmail-compose:hover { background: var(--color-danger); color: #fff; box-shadow: 0 0 20px rgba(255, 0, 60, 0.4); }
+        /* IDE-like Email Editor */
+        .editor-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-base);
+            padding: 1.5rem;
+        }
+
+        .editor-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .editor-subject {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 0.5rem 0;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-primary);
+            outline: none;
+            margin-bottom: 1rem;
+        }
+        .editor-subject:focus { border-bottom-color: var(--accent-primary); }
+
+        .editor-textarea {
+            flex: 1;
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            font-size: 14px;
+            line-height: 1.6;
+            resize: none;
+            outline: none;
+        }
+
+        .editor-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-subtle);
+            margin-top: 1rem;
+        }
 
         /* Modal */
-        .campaign-modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 1000; display: flex; align-items: center; justify-content: center; }
-        .campaign-modal-card { background: var(--bg-card); border: 1px solid var(--color-primary); box-shadow: 0 0 40px var(--color-primary-glow); border-radius: 12px; width: 500px; max-width: 95vw; display: flex; flex-direction: column; overflow: hidden; }
-        .campaign-modal-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; background: rgba(0, 240, 255, 0.05); }
-        .campaign-modal-header h2 { font-family: var(--font-mono); font-size: 1rem; font-weight: 600; color: var(--color-primary); text-transform: uppercase; letter-spacing: 0.05em; }
-        .btn-close-icon { background: none; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; transition: var(--transition); }
-        .btn-close-icon:hover { color: var(--color-danger); text-shadow: 0 0 10px var(--color-danger); }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 100; }
+        .modal-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 8px; width: 480px; max-width: 90vw; display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--shadow-premium); }
+        .modal-header { padding: 1rem; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; background: var(--bg-surface-elevated); }
+        .modal-body { padding: 1rem; display: flex; flex-direction: column; gap: 1rem; }
+        .modal-footer { padding: 1rem; border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end; }
         
-        .campaign-modal-body { padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; }
-        .campaign-progress-bar-wrapper { width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
-        .campaign-progress-bar { height: 100%; width: 0%; background: var(--color-primary); box-shadow: 0 0 10px var(--color-primary); transition: width 0.3s ease; }
-        .campaign-progress-text { display: flex; justify-content: space-between; font-size: 0.7rem; font-family: var(--font-mono); color: var(--text-secondary); margin-top: 0.4rem; }
+        .progress-track { width: 100%; height: 4px; background: var(--bg-base); border-radius: 2px; overflow: hidden; }
+        .progress-bar { height: 100%; width: 0%; background: var(--accent-primary); transition: width 0.3s ease; }
         
-        .campaign-status-msg { font-size: 0.8rem; color: var(--text-primary); font-family: var(--font-mono); background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 4px; border-left: 2px solid var(--color-primary); }
-        
-        .campaign-console { background: #000; border: 1px solid var(--border-color); border-radius: 6px; height: 180px; padding: 0.75rem; overflow-y: auto; font-family: var(--font-mono); font-size: 0.65rem; color: var(--color-success); display: flex; flex-direction: column; gap: 0.3rem; box-shadow: inset 0 0 20px rgba(0,0,0,1); }
-        .campaign-modal-footer { padding: 0.75rem 1.25rem; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; background: rgba(0,0,0,0.3); }
+        .console-logs { background: #000; border: 1px solid var(--border-subtle); border-radius: 4px; height: 160px; padding: 0.5rem; overflow-y: auto; font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); }
 
-        .btn-danger { background: rgba(255, 0, 60, 0.1); border: 1px solid var(--color-danger); color: var(--color-danger); padding: 0.5rem 1rem; border-radius: 4px; font-family: var(--font-mono); font-weight: 600; font-size: 0.75rem; cursor: pointer; text-transform: uppercase; }
-        .btn-danger:hover { background: var(--color-danger); color: #fff; box-shadow: 0 0 15px rgba(255, 0, 60, 0.5); }
+        #btn-mobile-back { display: none; }
 
-        .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
-        .toast { background: var(--bg-card); border: 1px solid var(--color-success); border-left: 4px solid var(--color-success); box-shadow: 0 10px 30px rgba(0,0,0,0.5); padding: 0.8rem 1.2rem; border-radius: 6px; color: #fff; font-family: var(--font-mono); font-size: 0.75rem; display: flex; align-items: center; gap: 0.5rem; pointer-events: auto; animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        .toast.error { border-color: var(--color-danger); border-left-color: var(--color-danger); }
-        @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-
-        .icon { width: 14px; height: 14px; stroke-width: 2; stroke: currentColor; fill: none; stroke-linecap: round; stroke-linejoin: round; display: inline-block; vertical-align: middle; }
-
-        /* Mobile-First Adjustments */
+        /* Mobile First */
         @media (max-width: 768px) {
-            body { height: auto; overflow: visible; display: block; }
-            .app-container { flex-direction: column; height: auto; display: block; }
-            header { flex-direction: column; align-items: flex-start; gap: 1rem; padding: 1rem; }
-            .header-stats { width: 100%; flex-wrap: wrap; justify-content: flex-start; gap: 0.5rem; display: none; /* Hide generic stats on mobile to save space */ }
-            .header-left h1 { font-size: 1.1rem; }
-            .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); height: 45vh; overflow-y: auto; }
-            .workspace { padding: 1rem; overflow: visible; }
-            .outreach-panel { gap: 1rem; }
-            .panel-row { grid-template-columns: 1fr; }
-            .composer-footer { flex-direction: column; align-items: stretch; }
-            .composer-actions-left { flex-direction: column; align-items: stretch; }
-            .btn-gmail-compose { width: 100%; justify-content: center; }
-            #btn-start-batch, #btn-view-status { width: 100%; justify-content: center; margin: 0; margin-top: 0.5rem; }
-            .sync-indicator { align-self: flex-start; margin-top: 0.5rem; }
+            .header-stats { display: none; } /* Hide generic stats on mobile */
+            .app-container { flex-direction: column; }
+            .sidebar { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 10; }
+            .workspace { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 20; }
+            
+            .mobile-hidden { display: none !important; }
+            
+            #btn-mobile-back { display: flex; margin-right: 0.5rem; background: transparent; border: none; color: var(--text-primary); cursor: pointer; }
+            
+            .feature-grid { grid-template-columns: 1fr; }
+            .meta-grid { grid-template-columns: 1fr; }
+            .editor-footer { flex-direction: column; align-items: stretch; gap: 0.5rem; }
+            .btn-primary, .btn-secondary { justify-content: center; width: 100%; }
         }
     </style>
-    
 </head>
 <body>
 
-    <!-- Header Section -->
     <header>
-        <div class="header-left">
-            <h1>
-                <svg class="icon" style="width: 24px; height: 24px; color: var(--color-primary)" viewBox="0 0 24 24"><path d="M22 2L2 8.66L11.58 12.42L15.34 22L22 2Z"></path><path d="M11.58 12.42L22 2"></path></svg>
-                Cortogen Outreach Suite
-            </h1>
-            <p>Draft & Schedule Personalized User Outreach Emails for <strong>Cortogen — The ChatGPT Context Engine</strong></p>
+        <div class="header-brand">
+            <i data-lucide="zap"></i>
+            Cortogen Mission Control
         </div>
         
         <div class="header-stats">
-            <div class="stat-card">
-                <div class="stat-value" id="stat-total">50</div>
-                <div class="stat-label">Total</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="stat-drafted" style="color: var(--color-info)">0</div>
-                <div class="stat-label">Drafted</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="stat-scheduled" style="color: var(--color-warning)">0</div>
-                <div class="stat-label">Scheduled</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="stat-sent" style="color: var(--color-success)">0</div>
-                <div class="stat-label">Sent</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value" id="stat-replies" style="color: var(--color-secondary)">0</div>
-                <div class="stat-label">Replies</div>
-            </div>
+            <div class="stat-chip"><i data-lucide="users"></i> <span id="stat-total" class="stat-val">0</span> Total</div>
+            <div class="stat-chip"><i data-lucide="mail"></i> <span id="stat-sent" class="stat-val">0</span> Sent</div>
             
             <div class="sync-indicator" id="sync-status">
-                <div class="sync-dot"></div>
-                <span id="sync-text">Synced to Disk</span>
+                <div class="sync-dot"></div> <span id="sync-text">Synced</span>
             </div>
             
-            <button id="btn-start-batch" class="btn-primary" style="margin-left: 1.25rem; padding: 0.5rem 1rem; font-size: 0.8rem; display: flex; align-items: center; gap: 0.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); border: none; color: #fff; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); transition: var(--transition);">
-                <svg class="icon" viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: currentColor;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                Start Daily Batch
+            <button id="btn-start-batch" class="btn-primary">
+                <i data-lucide="play"></i> Start Batch
+            </button>
+            <button id="btn-view-status" class="btn-secondary" style="display: none;">
+                <i data-lucide="activity"></i> Status
             </button>
         </div>
     </header>
 
-    <!-- App Container -->
     <div class="app-container">
         
         <!-- Sidebar -->
         <div class="sidebar">
-            <div class="sidebar-controls">
-                <div class="search-box">
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <input type="text" id="search-input" placeholder="Search researcher name, inst, paper...">
+            <div class="sidebar-search">
+                <div class="input-group">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="search-input" class="modern-input" placeholder="Search developers...">
                 </div>
-                
-                <div class="filter-row">
-                    <select id="filter-source">
+                <div style="display: flex; gap: 0.5rem;">
+                    <select id="filter-source" class="modern-select">
                         <option value="all">All Sources</option>
-                        <option value="GitHub Scraper">GitHub Scraper</option>
-                        <option value="Related Work Authors">Related Work Authors</option>
-                        <option value="Top Elite AI Researchers">Elite AI Researchers</option>
+                        <option value="GitHub Scraper">GitHub</option>
                     </select>
-                    <select id="filter-status">
-                        <option value="all">All Statuses</option>
-                        <option value="not_contacted">Not Contacted</option>
+                    <select id="filter-status" class="modern-select">
+                        <option value="all">All Status</option>
+                        <option value="not_contacted">Pending</option>
                         <option value="drafted">Drafted</option>
-                        <option value="scheduled">Scheduled</option>
                         <option value="sent">Sent</option>
-                        <option value="replied">Replied</option>
                     </select>
                 </div>
             </div>
             
-            <!-- Scrollable List -->
             <div class="researchers-list" id="researchers-list-container">
-                <!-- Dynamic cards here -->
+                <!-- Cards render here via JS. Wait, existing JS expects specific HTML structure to parse. -->
+                <!-- Actually the JS completely overwrites innerHTML of listContainer. -->
+                <!-- We must ensure the JS `renderList` function builds compatible HTML or we just let it build the old HTML and style it! -->
+                <!-- The existing JS builds:
+                     <div class="card-header-info">
+                         <div class="card-name">...</div>
+                         <span class="status-dot">...</span>
+                     </div>
+                     <div class="card-institution">...</div>
+                     <div class="card-footer">...</div>
+                -->
             </div>
         </div>
         
-        <!-- Workspace (Main Panel) -->
+        <!-- Workspace -->
         <div class="workspace" id="workspace-container">
             
-            <!-- Empty State (Welcome) -->
+            <!-- Empty State -->
             <div class="empty-state" id="empty-state">
-                <div class="empty-icon">
-                    <svg class="icon" style="width: 40px; height: 40px" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
-                </div>
-                <h2>Cortogen User Outreach Assistant</h2>
-                <p>Welcome to your student and developer outreach dashboard. Select a target student or developer from the left sidebar to generate a highly personalized email promoting <strong>Cortogen</strong> (the free long-term memory Chrome extension for ChatGPT).</p>
+                <i data-lucide="cpu" style="width: 48px; height: 48px; color: var(--accent-primary); margin-bottom: 1rem;"></i>
+                <h2 class="hero-title">AI Outreach Mission Control</h2>
+                <p class="hero-desc">Select a developer from the sidebar to craft a highly personalized message for Cortogen's memory layer.</p>
                 
-                <div class="research-summary-box">
-                    <h3>
-                        <svg class="icon" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-                        What is Cortogen?
-                    </h3>
-                    <ul>
-                        <li><strong>Long-Term Semantic Memory:</strong> A lightweight browser extension that connects ChatGPT, Claude, and Gemini with a local semantic memory database.</li>
-                        <li><strong>Context Auto-Retrieval:</strong> Automatically indexes conversation turns and surfaces matching past context in real time to prevent starting chats from scratch.</li>
-                        <li><strong>Student & Developer Pitch:</strong> Ideal for students managing coding projects, class syllabus instructions, study guides, and research logs across days and sessions. Free and secure.</li>
-                    </ul>
+                <button class="btn-primary" onclick="document.querySelector('.modern-input').focus()">
+                    <i data-lucide="search"></i> Find Developers
+                </button>
+                
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <i data-lucide="database"></i>
+                        <h4>Persistent Context</h4>
+                        <p>Give ChatGPT long-term semantic memory across separate sessions.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i data-lucide="code-2"></i>
+                        <h4>Developer First</h4>
+                        <p>Perfect for coding projects that require deep historical context.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i data-lucide="zap"></i>
+                        <h4>Local & Secure</h4>
+                        <p>Memory is stored entirely locally. Zero privacy compromises.</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Outreach Panel (Active Researcher Details) -->
+            <!-- Outreach Panel -->
             <div class="outreach-panel" id="outreach-panel" style="display: none;">
                 
-                <!-- Profile & Contact Row -->
-                <div class="panel-row">
-                    
-                    <!-- Left: Details & Background -->
-                    <div class="glass-card">
-                        <div class="card-header-row">
-                            <div>
-                                <h2 class="profile-name" id="prof-name">Ali Behrouz</h2>
-                                <div class="profile-position" id="prof-position">
-                                    <span>Research Scientist</span>
-                                    <div class="inst-dot"></div>
-                                    <span id="prof-inst">Google Research</span>
-                                </div>
-                            </div>
-                            <div class="card-sources" id="prof-sources">
-                                <!-- Dynamic tags -->
-                            </div>
+                <div class="panel-header">
+                    <div class="profile-row">
+                        <div class="profile-info">
+                            <h2>
+                                <button id="btn-mobile-back"><i data-lucide="arrow-left"></i></button>
+                                <span id="prof-name">Name</span>
+                            </h2>
+                            <p><span id="prof-position">Role</span> • <span id="prof-inst">Institution</span></p>
                         </div>
-                        
-                        <div class="profile-links">
-                            <a href="#" target="_blank" class="btn-link" id="prof-homepage-link">
-                                <svg class="icon" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                                Homepage / Scholar
-                            </a>
-                        </div>
-                        
-                        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 1.25rem 0;">
-                        
-                        <div class="info-block" id="prof-papers-block">
-                            <div class="info-label">Target Focus / Major</div>
-                            <div class="info-value paper-highlight" id="prof-papers">Computer Science</div>
-                        </div>
-                        
-                        <div class="info-block">
-                            <div class="info-label">Personalization Angle / Custom Notes</div>
-                            <div class="info-value" id="prof-overlap" style="font-weight: 400; color: var(--text-secondary);">
-                                ChatGPT usage for assignments and coding projects.
-                            </div>
-                        </div>
-                        
-                        <!-- Dynamic Recommended Schedule Send Time -->
-                        <div class="info-block" id="prof-schedule-block" style="margin-top: 1.25rem; padding: 0.75rem 1rem; background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.15); border-radius: 8px;">
-                            <div class="info-label" style="color: var(--color-warning); display: flex; align-items: center; gap: 0.4rem; font-weight: 600;">
-                                <svg class="icon" viewBox="0 0 24 24" style="width: 14px; height: 14px; color: var(--color-warning);"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                                Recommended Schedule Send (IST)
-                            </div>
-                            <div class="info-value" id="prof-schedule-time" style="font-weight: 600; font-size: 0.85rem; color: #fef08a; margin-top: 0.25rem;">
-                                Tuesday - Thursday, 6:00 PM – 7:00 PM IST
-                            </div>
-                            <div class="info-value" id="prof-schedule-zone" style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 0.15rem;">
-                                (Arrives 8:30 AM – 9:30 AM EDT in recipient's local time zone)
-                            </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <a href="#" id="prof-homepage-link" target="_blank" class="btn-secondary" style="display: none;"><i data-lucide="external-link"></i> GitHub</a>
+                            <button class="btn-secondary" id="btn-save"><i data-lucide="save"></i> Save</button>
                         </div>
                     </div>
                     
-                    <!-- Right: Contact Form & Notes -->
-                    <div class="glass-card" style="display: flex; flex-direction: column; justify-content: space-between;">
-                        <div>
-                            <div class="form-group">
-                                <label for="input-email">Professional Email</label>
-                                <div class="input-with-actions">
-                                    <input type="email" id="input-email" class="text-input" placeholder="Enter or paste email...">
-                                    <button class="btn-action" id="btn-predict-email" title="Predict email address using university schemas">
-                                        <svg class="icon" viewBox="0 0 24 24"><path d="M2 16.1A5 5 0 0 1 5.9 20M2 12.05A9 9 0 0 1 9.95 20M2 8V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6"></path><circle cx="18" cy="8" r="2"></circle><path d="M22 12h-4"></path></svg>
-                                        Predict
-                                    </button>
-                                    <button class="btn-action secondary" id="btn-google-search" title="Search Google for this researcher's email">
-                                        <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                                        Find
-                                    </button>
-                                </div>
-                                <div id="prediction-hint" style="font-size: 0.7rem; color: var(--color-primary); margin-top: 0.35rem; display: none;"></div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="input-notes">Outreach Notes / Custom Angle</label>
-                                <textarea id="input-notes" class="text-input" style="height: 100px; resize: none;" placeholder="Add custom notes about your connection, their latest tweet, specific ideas to discuss..."></textarea>
+                    <div class="meta-grid">
+                        <div class="meta-item">
+                            <span class="meta-label">Email</span>
+                            <div class="input-group" style="width: 100%">
+                                <input type="email" id="input-email" class="compact-input" placeholder="developer@example.com">
+                                <button id="btn-verify-email" style="display:none;"></button> <!-- Kept for JS compatibility -->
                             </div>
                         </div>
-                        
-                        <div style="font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.4rem; justify-content: flex-end;">
-                            <svg class="icon" style="width: 14px; height: 14px" viewBox="0 0 24 24"><path d="M20 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                            Edits auto-save to researchers.json
-                        </div>
-                    </div>
-                    
-                </div>
-                
-                <!-- Email Composer Card -->
-                <div class="glass-card composer-card">
-                    <div class="composer-header">
-                        <div class="composer-title">
-                            <svg class="icon" style="color: var(--color-primary)" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                            Email outreach editor
-                        </div>
-                        
-                        <div class="template-selector">
-                            <label style="font-size: 0.75rem; color: var(--text-secondary); margin-right: 0.5rem; font-weight: 500;">Template Focus:</label>
-                            <select id="email-template-type">
-                                <option value="student_study">1. College Students (Study, Code & Research Context)</option>
-                                <option value="developer_coding">2. Developers & Software Engineers (Codebase & Debugging)</option>
-                                <option value="general_poweruser">3. AI Power Users (General Productivity & Lifelong Context)</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="input-subject">Email Subject</label>
-                        <input type="text" id="input-subject" class="text-input" style="font-weight: 500;" placeholder="Enter email subject...">
-                    </div>
-                    
-                    <div class="form-group" style="margin-bottom: 0;">
-                        <label for="input-body">Email Body</label>
-                        <textarea id="input-body" class="email-body-area" placeholder="Write email body..."></textarea>
-                    </div>
-                    
-                    <div class="composer-footer">
-                        <div class="composer-actions-left">
-                            <select id="input-status" class="status-select">
+                        <div class="meta-item">
+                            <span class="meta-label">Status</span>
+                            <select id="input-status" class="compact-input">
                                 <option value="not_contacted">Not Contacted</option>
                                 <option value="drafted">Drafted</option>
-                                <option value="scheduled">Scheduled (in Gmail)</option>
+                                <option value="scheduled">Scheduled</option>
                                 <option value="sent">Sent</option>
                                 <option value="replied">Replied</option>
+                                <option value="error">Error</option>
                             </select>
-                            
-                            <button class="btn-copy" id="btn-copy-email">
-                                <svg class="icon" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                                Copy Body
-                            </button>
-                            <button class="btn-copy" id="btn-skip-next" style="border-color: rgba(239, 68, 68, 0.2); color: #f87171;" title="Skip to next target">
-                                Skip Target
-                            </button>
                         </div>
-                        
-                        <button class="btn-gmail-compose" id="btn-gmail-compose">
-                            <svg class="icon" viewBox="0 0 24 24" style="stroke: none; fill: currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"></path></svg>
-                            Draft in Gmail
+                        <div class="meta-item">
+                            <span class="meta-label">Template</span>
+                            <select id="email-template-type" class="compact-input">
+                                <option value="developer_coding">Developer - Coding Context</option>
+                                <option value="student_study">Student - Study Context</option>
+                                <option value="general_poweruser">General Power User</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="meta-item">
+                        <span class="meta-label">Personalization Notes</span>
+                        <input type="text" id="input-notes" class="compact-input" placeholder="e.g. Mentioned Next.js in bio...">
+                    </div>
+                    
+                    <div style="display:none;" id="prediction-hint"></div>
+                    <div style="display:none;" id="prof-papers-block">
+                        <span id="prof-papers"></span>
+                    </div>
+                    <span style="display:none;" id="prof-overlap"></span>
+                    <span style="display:none;" id="prof-schedule-time"></span>
+                    <span style="display:none;" id="prof-schedule-zone"></span>
+                    <span style="display:none;" id="prof-sources"></span>
+                </div>
+
+                <div class="editor-container">
+                    <div class="editor-toolbar">
+                        <span class="meta-label" style="color: var(--accent-primary);"><i data-lucide="terminal" style="width: 12px; height: 12px;"></i> Composer</span>
+                        <button id="btn-copy-email" class="btn-secondary" style="padding: 0.2rem 0.5rem; font-size: 11px;"><i data-lucide="copy" style="width: 12px; height: 12px;"></i> Copy</button>
+                    </div>
+                    
+                    <input type="text" id="input-subject" class="editor-subject" placeholder="Email Subject...">
+                    <textarea id="input-body" class="editor-textarea" placeholder="Write outreach email..."></textarea>
+                    
+                    <div class="editor-footer">
+                        <div style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">
+                            <i data-lucide="info" style="width: 12px; height: 12px;"></i> Auto-saves on type.
+                        </div>
+                        <button id="btn-gmail-compose" class="btn-primary">
+                            <i data-lucide="send"></i> Open in Gmail
                         </button>
                     </div>
                 </div>
-
+                
             </div>
-
         </div>
-
     </div>
 
-    <!-- Toast Notification -->
-    <div class="toast" id="toast-notification">
-        <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
-        <span id="toast-message">Changes saved and synchronized!</span>
-    </div>
-
-    <!-- Campaign Progress Modal Overlay -->
-    <div id="campaign-modal" class="campaign-modal-overlay" style="display: none;">
-        <div class="campaign-modal-card">
-            <div class="campaign-modal-header">
-                <h2>Daily Batch Email Campaign</h2>
-                <button id="btn-close-campaign" class="btn-close-icon">&times;</button>
+    <!-- Modals -->
+    <div id="campaign-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2 style="font-family: var(--font-mono); font-size: 14px; color: var(--text-primary);"><i data-lucide="activity" style="width: 16px; vertical-align: middle; margin-right: 0.5rem;"></i> Batch Process</h2>
+                <button id="btn-close-campaign" style="background: none; border: none; color: var(--text-muted); cursor: pointer;"><i data-lucide="x"></i></button>
             </div>
-            <div class="campaign-modal-body">
-                <div class="campaign-progress-container">
-                    <div class="campaign-progress-bar-wrapper">
-                        <div id="campaign-progress-bar" class="campaign-progress-bar"></div>
-                    </div>
-                    <div class="campaign-progress-text">
-                        <span id="campaign-progress-count">0 / 0 sent</span>
+            <div class="modal-body">
+                <div>
+                    <div class="progress-track"><div id="campaign-progress-bar" class="progress-bar"></div></div>
+                    <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-secondary); margin-top: 0.4rem; font-family: var(--font-mono);">
+                        <span id="campaign-progress-count">0 / 0</span>
                         <span id="campaign-progress-percent">0%</span>
                     </div>
                 </div>
-                <div class="campaign-status-message" id="campaign-status-msg">
-                    Initializing batch campaign...
-                </div>
-                <div class="campaign-console" id="campaign-console-logs">
-                    <!-- Logs will appear here in real-time -->
-                </div>
+                <div id="campaign-status-msg" style="font-size: 12px; font-family: var(--font-mono); color: var(--accent-primary);">Initializing...</div>
+                <div class="console-logs" id="campaign-console-logs"></div>
             </div>
-            <div class="campaign-modal-footer">
-                <button id="btn-stop-campaign" class="btn-danger" style="padding: 0.5rem 1.25rem;">Stop Campaign</button>
+            <div class="modal-footer">
+                <button id="btn-stop-campaign" class="btn-secondary" style="color: var(--color-error); border-color: var(--border-subtle);"><i data-lucide="square" style="width: 14px; fill: currentColor;"></i> Stop</button>
             </div>
         </div>
     </div>
 
-    <!-- App Logic JS -->
     <script>
+
         let researchers = [];
         let activeId = null;
         let isSyncing = false;
@@ -805,7 +709,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(researchers)
-                });
+                }); setTimeout(() => lucide.createIcons(), 10);
                 
                 if (res.ok) {
                     setSyncState('success', 'Synced with disk');
@@ -847,7 +751,7 @@
                 const matchesStatus = statusFilter === 'all' || r.status === statusFilter;
                 
                 return matchesSearch && matchesSource && matchesStatus;
-            });
+            }); setTimeout(() => lucide.createIcons(), 10);
             
             listContainer.innerHTML = '';
             
@@ -883,7 +787,7 @@
                     </div>
                 `;
                 listContainer.appendChild(card);
-            });
+            }); setTimeout(() => lucide.createIcons(), 10);
         }
 
         // Predict Email using common schemas
@@ -1238,7 +1142,7 @@ The Cortogen Team`;
             try {
                 const res = await fetch(`/api/send-batch?file=${encodeURIComponent(csvFile)}&limit=100`, {
                     method: 'POST'
-                });
+                }); setTimeout(() => lucide.createIcons(), 10);
                 const data = await res.json();
                 
                 if (res.ok) {
@@ -1261,7 +1165,7 @@ The Cortogen Team`;
             btnStopCampaign.disabled = true;
             btnStopCampaign.textContent = 'Stopping...';
             try {
-                const res = await fetch('/api/stop-campaign', { method: 'POST' });
+                const res = await fetch('/api/stop-campaign', { method: 'POST' }); setTimeout(() => lucide.createIcons(), 10);
                 if (res.ok) {
                     showToast('Stop campaign request sent.');
                 }
@@ -1306,7 +1210,7 @@ The Cortogen Team`;
                     
                     logLine.textContent = `[${log.time}] [${log.type.toUpperCase()}] ${log.message}`;
                     campaignConsoleLogs.appendChild(logLine);
-                });
+                }); setTimeout(() => lucide.createIcons(), 10);
                 
                 // Auto-scroll console
                 campaignConsoleLogs.scrollTop = campaignConsoleLogs.scrollHeight;
@@ -1365,7 +1269,7 @@ The Cortogen Team`;
                 openCampaignModal();
             };
         }
+    
     </script>
 </body>
-
 </html>
