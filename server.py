@@ -145,12 +145,21 @@ def generate_email_draft(target, template_type):
             first_name = "there"
             
         try:
-            template_path = os.path.join(os.path.dirname(__file__), "templates", "cortogen_direct.html")
+            if template_type == "premium":
+                template_file = "cortogen_premium.html"
+            else:
+                template_file = "cortogen_direct.html"
+                
+            template_path = os.path.join(os.path.dirname(__file__), "templates", template_file)
             with open(template_path, "r", encoding="utf-8") as f:
                 html_template = f.read()
                 
                 # Inject personalized greeting
-                personalized_html = html_template.replace('{{first_name}}', first_name)
+                if template_type == "premium":
+                    greeting = f'<div class="content">\n            <p style="font-weight: 600; color: #fff; font-size: 18px; margin-bottom: 20px;">Hi {first_name},</p>'
+                    personalized_html = html_template.replace('<div class="content">', greeting)
+                else:
+                    personalized_html = html_template.replace('{{first_name}}', first_name)
                 
                 # Inject email for tracking
                 target_email = target.get('email', '')
@@ -223,7 +232,7 @@ Cortogen Team"""
     except Exception as e:
         print(f"[Summary] Failed to send notification email: {e}")
 
-def run_campaign_thread(csv_file, limit):
+def run_campaign_thread(csv_file, limit, selected_template="direct"):
     global campaign_running, campaign_status, campaign_current, campaign_total, campaign_logs, stop_requested
     
     with campaign_lock:
@@ -298,7 +307,8 @@ def run_campaign_thread(csv_file, limit):
                 campaign_current += 1
                 continue
 
-            template_type = lead.get("template_type", "developer_coding")
+            lead["template_type"] = selected_template
+            template_type = lead.get("template_type", "direct")
             subject, body, is_html = generate_email_draft(lead, template_type)
 
             campaign_status = f"Sending email {i+1} of {campaign_total} to {name}..."
@@ -467,7 +477,7 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
         if self.path.startswith('/api/send-batch'):
             csv_file = get_target_file(self.path)
             
-            # Parse limit parameter
+            # Parse limit and template parameter
             parsed_url = urllib.parse.urlparse(self.path)
             query_params = urllib.parse.parse_qs(parsed_url.query)
             limit = 100
@@ -476,6 +486,10 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
                     limit = int(query_params['limit'][0])
                 except:
                     pass
+                    
+            selected_template = "direct"
+            if 'template' in query_params:
+                selected_template = query_params['template'][0]
 
             if campaign_running:
                 self.send_response(400)
@@ -485,7 +499,7 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
                 return
 
             # Start thread
-            t = threading.Thread(target=run_campaign_thread, args=(csv_file, limit))
+            t = threading.Thread(target=run_campaign_thread, args=(csv_file, limit, selected_template))
             t.daemon = True
             t.start()
 

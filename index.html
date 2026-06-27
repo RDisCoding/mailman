@@ -461,6 +461,11 @@
                 <div class="sync-dot"></div> <span id="sync-text">Synced</span>
             </div>
             
+            <select id="campaign-template" class="modern-select" style="max-width: 150px; background: var(--bg-surface); color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: 4px; padding: 0.4rem 0.5rem; font-size: 12px; margin-right: 0.5rem; cursor: pointer;">
+                <option value="direct">Direct (Plain Text)</option>
+                <option value="premium">Premium (HTML)</option>
+            </select>
+            
             <button id="btn-start-batch" class="btn-primary">
                 <i data-lucide="play"></i> Initiate Campaign
             </button>
@@ -1213,11 +1218,14 @@ The Cortogen Team`;
 
         async function startBatchCampaign() {
             const csvFile = getActiveFileName();
+            const templateSelect = document.getElementById('campaign-template');
+            const selectedTemplate = templateSelect ? templateSelect.value : 'direct';
+            
             btnStartBatch.disabled = true;
             btnStartBatch.style.opacity = '0.5';
             
             try {
-                const res = await fetch(`/api/send-batch?file=${encodeURIComponent(csvFile)}&limit=100`, {
+                const res = await fetch(`/api/send-batch?file=${encodeURIComponent(csvFile)}&limit=100&template=${selectedTemplate}`, {
                     method: 'POST'
                 }); setTimeout(() => lucide.createIcons(), 10);
                 const data = await res.json();
