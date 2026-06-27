@@ -48,6 +48,10 @@ def load_csv_as_json(csv_file):
                 if not sources_list:
                     sources_list = ["GitHub Scraper"]
 
+                status_val = row.get("status", "not_contacted")
+                if status_val == "awaiting_orders":
+                    status_val = "not_contacted"
+
                 lead = {
                     "id": row.get("id", ""),
                     "username": row.get("username", ""),
@@ -60,7 +64,7 @@ def load_csv_as_json(csv_file):
                     "relevant_papers": row.get("relevant_papers", ""),
                     "research_overlap": row.get("research_overlap", ""),
                     "homepage": row.get("homepage", ""),
-                    "status": row.get("status", "not_contacted"),
+                    "status": status_val,
                     "notes": row.get("notes", ""),
                     "template_type": row.get("template_type", "developer_coding"),
                     "custom_subject": row.get("custom_subject", ""),
