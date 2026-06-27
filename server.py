@@ -145,13 +145,12 @@ def generate_email_draft(target, template_type):
             first_name = "there"
             
         try:
-            template_path = os.path.join(os.path.dirname(__file__), "templates", "cortogen_premium.html")
+            template_path = os.path.join(os.path.dirname(__file__), "templates", "cortogen_direct.html")
             with open(template_path, "r", encoding="utf-8") as f:
                 html_template = f.read()
                 
                 # Inject personalized greeting
-                greeting = f'<div class="content">\n            <p style="font-weight: 600; color: #fff; font-size: 18px; margin-bottom: 20px;">Hi {first_name},</p>'
-                personalized_html = html_template.replace('<div class="content">', greeting)
+                personalized_html = html_template.replace('{{first_name}}', first_name)
                 
                 # Inject email for tracking
                 target_email = target.get('email', '')
