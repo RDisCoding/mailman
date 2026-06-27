@@ -5,6 +5,8 @@ import os
 import csv
 import io
 import urllib.parse
+import urllib.request
+import urllib.error
 import threading
 import time
 import random
@@ -407,6 +409,26 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
                 "logs": campaign_logs
             }
             self.wfile.write(json.dumps(status_data).encode('utf-8'))
+            return
+            
+        # API Route: Fetch analytics from production backend
+        if self.path == '/api/analytics':
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            
+            try:
+                # Use a specific admin key (in a real setup this would come from local config)
+                req = urllib.request.Request(
+                    'https://cortogen.com/api/admin/email-stats',
+                    headers={'X-Admin-Key': 'CORTOGEN_ADMIN_SECURE_123'}
+                )
+                with urllib.request.urlopen(req, timeout=5) as response:
+                    stats_data = response.read()
+                    self.wfile.write(stats_data)
+            except Exception as e:
+                # Return empty/default stats if offline or fails
+                self.wfile.write(json.dumps({"error": str(e), "total_opens": 0, "unique_opens": 0, "recent_opens": []}).encode('utf-8'))
             return
             
         # Default: Serve static files

@@ -463,6 +463,9 @@
             <button id="btn-view-status" class="btn-secondary" style="display: none;">
                 <i data-lucide="activity"></i> Mission Status
             </button>
+            <button id="btn-analytics" class="btn-secondary" title="View Analytics">
+                <i data-lucide="bar-chart-2"></i> Intelligence
+            </button>
         </div>
     </header>
 
@@ -625,7 +628,35 @@
         </div>
     </div>
 
-    <!-- Toasts -->
+    <!-- Analytics Modal -->
+    <div id="analytics-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2 style="font-family: var(--font-mono); font-size: 14px; color: var(--text-primary);"><i data-lucide="bar-chart-2" style="width: 16px; vertical-align: middle; margin-right: 0.5rem;"></i> Operation Intelligence</h2>
+                <button id="btn-close-analytics" style="background: none; border: none; color: var(--text-muted); cursor: pointer;"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body" style="min-height: 200px;">
+                <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div style="flex: 1; background: var(--bg-surface-elevated); padding: 1rem; border-radius: 6px; border: 1px solid var(--border-subtle); text-align: center;">
+                        <div style="font-size: 24px; font-weight: 600; color: var(--text-primary);" id="analytics-total-opens">...</div>
+                        <div style="font-size: 11px; color: var(--text-secondary); text-transform: uppercase; font-family: var(--font-mono);">Total Opens</div>
+                    </div>
+                    <div style="flex: 1; background: var(--bg-surface-elevated); padding: 1rem; border-radius: 6px; border: 1px solid var(--border-subtle); text-align: center;">
+                        <div style="font-size: 24px; font-weight: 600; color: var(--accent-primary);" id="analytics-unique-opens">...</div>
+                        <div style="font-size: 11px; color: var(--text-secondary); text-transform: uppercase; font-family: var(--font-mono);">Unique Targets</div>
+                    </div>
+                </div>
+                
+                <h3 style="font-size: 13px; font-weight: 600; margin-bottom: 0.75rem; color: var(--text-secondary);">Recent Open Events</h3>
+                <div id="analytics-recent-list" style="background: var(--bg-base); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.5rem; max-height: 250px; overflow-y: auto;">
+                    <div style="color: var(--text-muted); text-align: center; padding: 1rem; font-family: var(--font-mono); font-size: 12px;">Initializing uplink...</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-refresh-analytics" class="btn-primary"><i data-lucide="refresh-cw"></i> Refresh Data</button>
+            </div>
+        </div>
+    </div>
     <div class="toast-container">
         <div id="toast-notification" class="toast">
             <i data-lucide="check-circle" style="width: 16px; height: 16px;"></i>
@@ -1312,6 +1343,57 @@ The Cortogen Team`;
             };
         }
     
+        // Analytics Modal Logic
+        const btnAnalytics = document.getElementById('btn-analytics');
+        const modalAnalytics = document.getElementById('analytics-modal');
+        const btnCloseAnalytics = document.getElementById('btn-close-analytics');
+        const btnRefreshAnalytics = document.getElementById('btn-refresh-analytics');
+        
+        async function fetchAnalytics() {
+            try {
+                document.getElementById('analytics-recent-list').innerHTML = '<div style="color: var(--text-muted); text-align: center; padding: 1rem; font-family: var(--font-mono); font-size: 12px;">Fetching from production...</div>';
+                
+                const res = await fetch('/api/analytics');
+                const data = await res.json();
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                document.getElementById('analytics-total-opens').textContent = data.total_opens || 0;
+                document.getElementById('analytics-unique-opens').textContent = data.unique_opens || 0;
+                
+                let listHtml = '';
+                if (data.recent_opens && data.recent_opens.length > 0) {
+                    data.recent_opens.forEach(item => {
+                        const date = new Date(item.opened_at).toLocaleString();
+                        listHtml += `
+                            <div style="padding: 0.5rem; border-bottom: 1px solid var(--border-subtle); font-size: 12px; font-family: var(--font-mono); display: flex; justify-content: space-between;">
+                                <span style="color: var(--accent-primary);">${item.email}</span>
+                                <span style="color: var(--text-muted);">${date}</span>
+                            </div>
+                        `;
+                    });
+                } else {
+                    listHtml = '<div style="color: var(--text-muted); text-align: center; padding: 1rem; font-family: var(--font-mono); font-size: 12px;">No opens detected yet.</div>';
+                }
+                document.getElementById('analytics-recent-list').innerHTML = listHtml;
+            } catch (err) {
+                console.error("Failed to fetch analytics", err);
+                document.getElementById('analytics-recent-list').innerHTML = `<div style="color: var(--color-error); text-align: center; padding: 1rem; font-family: var(--font-mono); font-size: 12px;">Error connecting to production backend.<br>${err.message}</div>`;
+            }
+        }
+        
+        btnAnalytics.onclick = () => {
+            modalAnalytics.style.display = 'flex';
+            fetchAnalytics();
+        };
+        
+        btnCloseAnalytics.onclick = () => {
+            modalAnalytics.style.display = 'none';
+        };
+        
+        btnRefreshAnalytics.onclick = fetchAnalytics;
 
         // Mobile UI Transitions
         const btnMobileBack = document.getElementById('btn-mobile-back');
