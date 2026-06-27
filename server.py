@@ -420,7 +420,7 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
             try:
                 # Use a specific admin key (in a real setup this would come from local config)
                 req = urllib.request.Request(
-                    'https://cortogen.com/api/admin/email-stats',
+                    'https://api.cortogen.com/api/admin/email-stats',
                     headers={'X-Admin-Key': 'CORTOGEN_ADMIN_SECURE_123'}
                 )
                 with urllib.request.urlopen(req, timeout=5) as response:
