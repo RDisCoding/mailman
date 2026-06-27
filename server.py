@@ -147,6 +147,10 @@ def generate_email_draft(target, template_type):
                 greeting = f'<div class="content">\n            <p style="font-weight: 600; color: #fff; font-size: 18px; margin-bottom: 20px;">Hi {first_name},</p>'
                 personalized_html = html_template.replace('<div class="content">', greeting)
                 
+                # Inject email for tracking
+                target_email = target.get('email', '')
+                personalized_html = personalized_html.replace('{{email}}', target_email)
+                
                 body = personalized_html
                 is_html = True
         except Exception as e:
