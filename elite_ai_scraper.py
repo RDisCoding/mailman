@@ -4,8 +4,11 @@ import time
 import os
 import argparse
 from datetime import datetime
+from dotenv import load_dotenv
+load_dotenv()
 
 # --- CONFIGURATION ---
+
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", "")
 headers = {
     "Accept": "application/vnd.github.v3+json",
@@ -15,21 +18,12 @@ if GITHUB_TOKEN:
 
 # Organizations and Universities to target
 TARGET_ENTITIES = [
-    "Anthropic", 
-    "DeepMind", 
-    "OpenAI", 
-    "Meta AI", 
-    "FAIR",
-    "Stanford", 
-    "MIT", 
-    "UC Berkeley", 
-    "Carnegie Mellon", 
-    "CMU",
-    "Mila",
-    "Allen Institute for AI",
-    "AI2",
-    "Princeton",
-    "Harvard"
+    ("Anthropic", "anthropicai"),
+    ("DeepMind", "google-deepmind"),
+    ("OpenAI", "openai"),
+    ("Meta AI", "facebookresearch"),
+    ("Allen Institute for AI", "allenai"),
+    ("Mila", "mila-iqia")
 ]
 
 FIELDNAMES = [
@@ -40,7 +34,7 @@ FIELDNAMES = [
 ]
 
 def safe_print(text):
-    print(text.encode('ascii', 'replace').decode('ascii'))
+    print(text.encode('ascii', 'replace').decode('ascii'), flush=True)
 
 def check_rate_limit(response):
     if response.status_code == 403:
@@ -57,28 +51,26 @@ def fetch_elite_researchers(max_leads=500):
     leads = []
     seen_users = set()
 
-    for entity in TARGET_ENTITIES:
+    for display_name, org_id in TARGET_ENTITIES:
         if len(leads) >= max_leads:
             break
             
-        safe_print(f"\nScanning for researchers at: {entity}")
+        safe_print(f"\nScanning for researchers at: {display_name} ({org_id})")
         
         page = 1
-        query = f'company:"{entity}" followers:>10'
         
         while page <= 10:
-            url = f"https://api.github.com/search/users?q={query}&per_page=30&page={page}"
+            url = f"https://api.github.com/orgs/{org_id}/members?per_page=100&page={page}"
             response = requests.get(url, headers=headers)
             
             if check_rate_limit(response):
                 continue
                 
             if response.status_code != 200:
-                safe_print(f"Error searching users: {response.status_code}")
+                safe_print(f"Error fetching org members for {org_id}: {response.status_code}")
                 break
                 
-            data = response.json()
-            users = data.get("items", [])
+            users = response.json()
             
             if not users:
                 break
@@ -105,10 +97,10 @@ def fetch_elite_researchers(max_leads=500):
                     profile = profile_resp.json()
                     email = profile.get("email")
                     name = profile.get("name") or username
-                    company = profile.get("company") or entity
+                    company = profile.get("company") or display_name
                     
                     if email and "@" in email and "noreply" not in email:
-                        leads.append({
+                        lead = {
                             "id": f"elite_{len(leads)}",
                             "username": username,
                             "profile_url": profile.get("html_url"),
@@ -117,41 +109,40 @@ def fetch_elite_researchers(max_leads=500):
                             "name": name,
                             "location": profile.get("location", ""),
                             "status": "not_contacted",
-                            "notes": f"Scraped from elite query: {entity}. Followers: {profile.get('followers')}",
+                            "notes": f"Scraped from elite org: {display_name}. Followers: {profile.get('followers', 0)}",
                             "template_type": "direct", # Use the direct networking template
                             "position": "AI Researcher / Engineer",
-                            "institution": company.strip('@'),
-                            "relevant_papers": f"GitHub Followers: {profile.get('followers')}",
+                            "institution": company.strip('@') if company else display_name,
+                            "relevant_papers": f"GitHub Followers: {profile.get('followers', 0)}",
                             "research_overlap": "Deep Learning & Foundation Models",
                             "homepage": profile.get("blog") or profile.get("html_url"),
                             "sources": "Elite AI Scraper"
-                        })
+                        }
+                        leads.append(lead)
                         safe_print(f"Found Elite Target: {name} | {email} | {company}")
+                        
+                        # Append to CSV immediately
+                        file_exists = os.path.isfile("elite_ai_leads.csv")
+                        with open("elite_ai_leads.csv", mode="a", newline="", encoding="utf-8") as f:
+                            writer = csv.DictWriter(f, fieldnames=FIELDNAMES)
+                            if not file_exists:
+                                writer.writeheader()
+                            row = {field: lead.get(field, "") for field in FIELDNAMES}
+                            writer.writerow(row)
                 
-                time.sleep(0.5)
+                time.sleep(0.1) # Faster parsing with token
             page += 1
 
     return leads
-
-def save_to_csv(leads, filename="elite_ai_leads.csv"):
-    if not leads:
-        safe_print("No elite leads found with public emails.")
-        return
-        
-    with open(filename, mode="w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=FIELDNAMES)
-        writer.writeheader()
-        for lead in leads:
-            # fill missing fields
-            row = {field: lead.get(field, "") for field in FIELDNAMES}
-            writer.writerow(row)
-            
-    safe_print(f"\nSuccessfully saved {len(leads)} elite AI leads to {filename}")
 
 if __name__ == "__main__":
     if not GITHUB_TOKEN:
         print("WARNING: No GITHUB_TOKEN found. The API limit is 60 requests/hour without a token.")
         print("Set it using: $env:GITHUB_TOKEN='your_token'")
     
-    leads = fetch_elite_researchers(max_leads=100)
-    save_to_csv(leads, "elite_ai_leads.csv")
+    # Remove old file to start fresh
+    if os.path.exists("elite_ai_leads.csv"):
+        os.remove("elite_ai_leads.csv")
+        
+    fetch_elite_researchers(max_leads=100)
+    safe_print("\nDone parsing.")
