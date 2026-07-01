@@ -322,6 +322,10 @@ def run_campaign_thread(csv_file, limit, selected_template="direct"):
                 msg['From'] = Header(f"The Cortogen Team <{sender}>", 'utf-8')
                 msg['To'] = Header(email_addr, 'utf-8')
                 
+                reply_to = config.get("reply_to_email")
+                if reply_to:
+                    msg['Reply-To'] = Header(reply_to, 'utf-8')
+                
                 smtp_host = config.get("smtp_host", "smtp.gmail.com")
                 smtp_port = config.get("smtp_port", 465)
                 smtp_user = config.get("smtp_username", sender)

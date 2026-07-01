@@ -10,19 +10,21 @@ with open('config.json') as f:
     config = json.load(f)
 
 # Load template
-with open('templates/cortogen_premium.html', 'r', encoding='utf-8') as f:
+with open('templates/cortogen_direct.html', 'r', encoding='utf-8') as f:
     html = f.read()
 
 # Generate personalized HTML
-greeting = '<div class="content">\n            <p style="font-weight: 600; color: #fff; font-size: 18px; margin-bottom: 20px;">Hi Rudray,</p>'
-html = html.replace('<div class="content">', greeting)
+html = html.replace('{{first_name}}', 'Rudray')
 html = html.replace('{{email}}', config['notification_email'])
 
 # Send email
 msg = MIMEMultipart('alternative')
-msg['Subject'] = Header('Test Email: Cortogen Premium Template', 'utf-8')
+msg['Subject'] = Header('Test Email: Cortogen Direct Template', 'utf-8')
 msg['From'] = Header(f"Cortogen Team <{config['sender_email']}>", 'utf-8')
 msg['To'] = Header(config['notification_email'], 'utf-8')
+reply_to = config.get("reply_to_email")
+if reply_to:
+    msg['Reply-To'] = Header(reply_to, 'utf-8')
 
 msg.attach(MIMEText('Please view in HTML', 'plain', 'utf-8'))
 msg.attach(MIMEText(html, 'html', 'utf-8'))
