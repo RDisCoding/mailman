@@ -147,6 +147,8 @@ def generate_email_draft(target, template_type):
         try:
             if template_type == "premium":
                 template_file = "cortogen_premium.html"
+            elif template_type == "sales":
+                template_file = "cortogen_sales.html"
             else:
                 template_file = "cortogen_direct.html"
                 
@@ -155,7 +157,7 @@ def generate_email_draft(target, template_type):
                 html_template = f.read()
                 
                 # Inject personalized greeting
-                if template_type == "premium":
+                if template_type in ["premium", "sales"]:
                     greeting = f'<div class="content">\n            <p style="font-weight: 600; color: #fff; font-size: 18px; margin-bottom: 20px;">Hi {first_name},</p>'
                     personalized_html = html_template.replace('<div class="content">', greeting)
                 else:
