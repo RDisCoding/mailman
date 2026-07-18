@@ -731,10 +731,15 @@
         
         const mainContent = document.querySelector('.main-content');
         mainContent.addEventListener('touchstart', e => {
+            if (e.target.closest('.table-wrapper')) {
+                touchStartX = null;
+                return;
+            }
             touchStartX = e.changedTouches[0].screenX;
         }, {passive: true});
         
         mainContent.addEventListener('touchend', e => {
+            if (touchStartX === null || e.target.closest('.table-wrapper')) return;
             touchEndX = e.changedTouches[0].screenX;
             handleSwipe();
         }, {passive: true});
