@@ -323,6 +323,9 @@
         <div class="nav-item" onclick="switchView('templates')">
             <i data-lucide="file-text"></i> Email Templates
         </div>
+        <div class="nav-item" onclick="switchView('advisor')">
+            <i data-lucide="brain"></i> AI Advisor
+        </div>
     </div>
 
     <!-- Main Content -->
@@ -472,6 +475,22 @@
             </div>
         </div>
 
+        <!-- View: Advisor -->
+        <div id="view-advisor" class="view">
+            <div style="background: var(--bg-surface); padding: 2rem; border-radius: 8px; border: 1px solid var(--border-subtle);">
+                <h3 style="font-size: 14px; margin-bottom: 1rem;">AI Strategy Advisor Prompt</h3>
+                <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 1.5rem;">
+                    This automatically compiles your real-time campaign metrics. Copy this and paste it into Claude or ChatGPT to get expert marketing advice on what to improve next.
+                </p>
+                <div class="form-group">
+                    <textarea id="advisor-prompt" class="form-control" rows="15" style="font-family: var(--font-sans); font-size: 13px; line-height: 1.6; resize: vertical; padding: 1rem; color: #fff;" readonly></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="copyPrompt()">
+                    <i data-lucide="copy"></i> Copy to Clipboard
+                </button>
+            </div>
+        </div>
+
     </div>
 
     <!-- Toast Notification -->
@@ -495,12 +514,14 @@
                 'dashboard': 'Overview Dashboard', 
                 'config': 'System Configuration', 
                 'audience': 'Audience Database',
-                'templates': 'Email Templates'
+                'templates': 'Email Templates',
+                'advisor': 'AI Strategy Advisor'
             };
             document.getElementById('view-title').textContent = titles[viewId];
 
             if (viewId === 'config') loadConfig();
             if (viewId === 'audience') loadAudience();
+            if (viewId === 'advisor') generateAdvisorPrompt();
         }
 
         function showToast(msg) {
@@ -740,10 +761,52 @@
             reader.readAsText(file);
         }
 
+        // --- Advisor API ---
+        async function generateAdvisorPrompt() {
+            try {
+                const res = await fetch('/api/analytics');
+                const data = await res.json();
+                
+                const sent = data.total_emails_sent || 0;
+                const opens = data.total_opens || 0;
+                const openRate = (data.avg_open_rate_percent || 0).toFixed(1);
+                const newUsers = data.ga4_new_users || 0;
+                const installs = data.ga4_installs || 0;
+                
+                const prompt = `Act as an elite Growth Hacker and B2B SaaS Marketer. 
+
+I am currently running an automated cold email outreach campaign for my software product, and I need strategic advice on how to improve my conversion funnel and drastically increase my user base.
+
+Here are my real-time campaign metrics from my server:
+- Total Emails Sent: ${sent}
+- Total Opens: ${opens}
+- Average Open Rate: ${openRate}%
+- New Website Users (Last 7 Days): ${newUsers}
+- Total Conversions/Installs (Last 7 Days): ${installs}
+
+Based on these specific metrics:
+1. Diagnose the current bottleneck in my funnel. Are my subject lines failing to get opens, or is the landing page failing to convert the traffic into installs?
+2. Give me 3 highly actionable A/B tests I should run on my email copy tomorrow.
+3. What 3 specific psychological triggers or changes should I add to my website's landing page to boost the conversion rate of those who do click?
+4. Provide a step-by-step, 7-day tactical growth plan tailored to these numbers to aggressively ramp up my user count.`;
+
+                document.getElementById('advisor-prompt').value = prompt;
+            } catch(e) {
+                document.getElementById('advisor-prompt').value = "Error loading metrics from server. Please refresh the page.";
+            }
+        }
+        
+        function copyPrompt() {
+            const promptText = document.getElementById('advisor-prompt');
+            promptText.select();
+            document.execCommand('copy');
+            showToast('Prompt copied to clipboard! Paste it into Claude or ChatGPT.');
+        }
+
         // --- Swipe Navigation ---
         let touchStartX = 0;
         let touchEndX = 0;
-        const tabOrder = ['dashboard', 'config', 'audience', 'templates'];
+        const tabOrder = ['dashboard', 'config', 'audience', 'templates', 'advisor'];
         
         function handleSwipe() {
             const swipeDistance = touchEndX - touchStartX;
