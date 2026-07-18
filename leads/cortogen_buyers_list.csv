@@ -1,0 +1,301 @@
+email,name,institution,location,status
+robert.gonzalez@quantum.ai,Jennifer Davis,Acme AI,"London, UK",not_contacted
+mary.davis@dataflow.io,Karen Miller,Pinnacle Labs,"San Francisco, CA",not_contacted
+jennifer.brown@innovate.ai,Barbara Brown,Apex Software,"Berlin, DE",not_contacted
+michael.rodriguez@securenet.com,Michael Hernandez,Nexus Labs,"London, UK",not_contacted
+linda.jones@techcorp.io,Jennifer Brown,Pinnacle Tech,"San Francisco, CA",not_contacted
+john.brown@bytecraft.io,Thomas Jones,Apex Tech,"London, UK",not_contacted
+richard.jones@devsolutions.com,Richard Martinez,Acme Systems,"Berlin, DE",not_contacted
+susan.williams@quantum.ai,David Anderson,Vertex Tech,"London, UK",not_contacted
+michael.martinez@nextgen.dev,Elizabeth Anderson,Vertex AI,"London, UK",not_contacted
+joseph.martinez@devsolutions.com,Jessica Johnson,Vertex Tech,"Austin, TX",not_contacted
+john.rodriguez@techcorp.io,Mary Martinez,Zenith Systems,"New York, NY",not_contacted
+jennifer.hernandez@quantum.ai,Karen Williams,Vertex Tech,"Bangalore, IN",not_contacted
+sarah.davis@securenet.com,Patricia Jones,Acme Systems,"Seattle, WA",not_contacted
+linda.martinez@devsolutions.com,Susan Wilson,Vertex Systems,"New York, NY",not_contacted
+sarah.davis@nextgen.dev,Michael Jones,Nexus Systems,"Berlin, DE",not_contacted
+william.brown@nextgen.dev,Jessica Hernandez,Zenith Tech,"Seattle, WA",not_contacted
+john.brown@nextgen.dev,Robert Gonzalez,Zenith Software,"Austin, TX",not_contacted
+karen.johnson@dataflow.io,Jessica Davis,Vertex Labs,"San Francisco, CA",not_contacted
+mary.davis@bytecraft.io,Robert Brown,Nexus Labs,"New York, NY",not_contacted
+richard.hernandez@nextgen.dev,William Lopez,Nova Systems,"Toronto, ON",not_contacted
+patricia.miller@nextgen.dev,Barbara Johnson,Acme Systems,"Bangalore, IN",not_contacted
+barbara.lopez@techcorp.io,James Anderson,Apex Labs,"San Francisco, CA",not_contacted
+david.davis@techcorp.io,Barbara Johnson,Vertex Systems,"Toronto, ON",not_contacted
+linda.hernandez@bytecraft.io,David Smith,Acme Software,"Seattle, WA",not_contacted
+mary.davis@devsolutions.com,Richard Johnson,Nexus Tech,"Austin, TX",not_contacted
+karen.davis@innovate.ai,Linda Gonzalez,Nova Systems,"Toronto, ON",not_contacted
+john.davis@agileworks.co,Karen Davis,Apex Software,"San Francisco, CA",not_contacted
+jennifer.jones@agileworks.co,Mary Gonzalez,Nova Software,"London, UK",not_contacted
+david.rodriguez@bytecraft.io,Michael Smith,Nova Labs,"Seattle, WA",not_contacted
+jennifer.johnson@innovate.ai,Sarah Jones,Nova Labs,"Seattle, WA",not_contacted
+jessica.wilson@quantum.ai,Jessica Wilson,Vertex Labs,"Austin, TX",not_contacted
+robert.wilson@techcorp.io,Sarah Anderson,Nexus Systems,"Toronto, ON",not_contacted
+richard.brown@nextgen.dev,Linda Gonzalez,Nexus Labs,"Berlin, DE",not_contacted
+susan.hernandez@bytecraft.io,Linda Wilson,Pinnacle AI,"San Francisco, CA",not_contacted
+michael.williams@techcorp.io,Karen Lopez,Nova Systems,"London, UK",not_contacted
+joseph.martinez@techcorp.io,Robert Jones,Vertex Tech,"Toronto, ON",not_contacted
+david.anderson@nextgen.dev,Mary Wilson,Vertex Systems,"San Francisco, CA",not_contacted
+john.jones@innovate.ai,John Gonzalez,Vertex Labs,"New York, NY",not_contacted
+joseph.davis@cloudsystems.net,Susan Lopez,Pinnacle Systems,"Berlin, DE",not_contacted
+jennifer.hernandez@innovate.ai,Charles Davis,Vertex AI,"Toronto, ON",not_contacted
+karen.johnson@securenet.com,Mary Brown,Vertex Software,"Austin, TX",not_contacted
+jessica.wilson@agileworks.co,Charles Rodriguez,Nexus Systems,"Toronto, ON",not_contacted
+thomas.davis@bytecraft.io,Richard Smith,Acme Systems,"Berlin, DE",not_contacted
+linda.jones@bytecraft.io,David Anderson,Apex Software,"San Francisco, CA",not_contacted
+karen.hernandez@agileworks.co,Jennifer Martinez,Nexus Tech,"Bangalore, IN",not_contacted
+sarah.hernandez@techcorp.io,William Johnson,Vertex Tech,"San Francisco, CA",not_contacted
+elizabeth.jones@securenet.com,Patricia Wilson,Zenith AI,"Austin, TX",not_contacted
+robert.jones@quantum.ai,Thomas Hernandez,Vertex Software,"Berlin, DE",not_contacted
+michael.martinez@quantum.ai,Jessica Wilson,Vertex Labs,"San Francisco, CA",not_contacted
+susan.gonzalez@cloudsystems.net,Richard Davis,Nexus Labs,"New York, NY",not_contacted
+sarah.miller@dataflow.io,Charles Johnson,Zenith AI,"San Francisco, CA",not_contacted
+patricia.williams@nextgen.dev,Charles Garcia,Vertex Labs,"Berlin, DE",not_contacted
+jennifer.martinez@cloudsystems.net,Joseph Wilson,Vertex Software,"San Francisco, CA",not_contacted
+james.johnson@techcorp.io,Susan Davis,Pinnacle Tech,"San Francisco, CA",not_contacted
+john.rodriguez@dataflow.io,Michael Smith,Pinnacle AI,"Austin, TX",not_contacted
+david.miller@dataflow.io,Susan Rodriguez,Apex Tech,"Austin, TX",not_contacted
+linda.garcia@techcorp.io,William Hernandez,Nova Tech,"New York, NY",not_contacted
+sarah.martinez@dataflow.io,Karen Lopez,Vertex Labs,"Seattle, WA",not_contacted
+thomas.garcia@dataflow.io,Sarah Miller,Nova Labs,"New York, NY",not_contacted
+david.brown@agileworks.co,William Lopez,Zenith Software,"Bangalore, IN",not_contacted
+joseph.wilson@nextgen.dev,Michael Jones,Nova AI,"Berlin, DE",not_contacted
+barbara.brown@quantum.ai,Michael Gonzalez,Acme Tech,"San Francisco, CA",not_contacted
+karen.miller@innovate.ai,William Wilson,Pinnacle Software,"Bangalore, IN",not_contacted
+jennifer.martinez@devsolutions.com,Linda Anderson,Vertex Tech,"Berlin, DE",not_contacted
+susan.hernandez@techcorp.io,Michael Jones,Vertex AI,"San Francisco, CA",not_contacted
+patricia.lopez@innovate.ai,Jennifer Rodriguez,Apex Systems,"London, UK",not_contacted
+barbara.smith@quantum.ai,Robert Miller,Nexus AI,"Toronto, ON",not_contacted
+james.garcia@bytecraft.io,Patricia Brown,Zenith AI,"London, UK",not_contacted
+michael.johnson@cloudsystems.net,James Martinez,Acme AI,"New York, NY",not_contacted
+thomas.garcia@nextgen.dev,Robert Garcia,Nova Systems,"San Francisco, CA",not_contacted
+charles.martinez@dataflow.io,Sarah Anderson,Apex Labs,"London, UK",not_contacted
+barbara.davis@cloudsystems.net,James Smith,Apex Systems,"Bangalore, IN",not_contacted
+richard.smith@dataflow.io,Charles Rodriguez,Apex AI,"New York, NY",not_contacted
+william.johnson@devsolutions.com,David Johnson,Nexus Software,"Bangalore, IN",not_contacted
+william.hernandez@quantum.ai,John Lopez,Pinnacle Labs,"Toronto, ON",not_contacted
+linda.johnson@agileworks.co,Richard Martinez,Nexus Systems,"San Francisco, CA",not_contacted
+karen.garcia@nextgen.dev,David Smith,Pinnacle Tech,"Seattle, WA",not_contacted
+james.davis@nextgen.dev,Jessica Hernandez,Acme Tech,"San Francisco, CA",not_contacted
+william.hernandez@innovate.ai,Michael Miller,Acme Tech,"San Francisco, CA",not_contacted
+mary.jones@agileworks.co,Joseph Wilson,Pinnacle Labs,"London, UK",not_contacted
+james.lopez@bytecraft.io,Richard Johnson,Apex Systems,"Berlin, DE",not_contacted
+linda.williams@nextgen.dev,Elizabeth Rodriguez,Apex Labs,"San Francisco, CA",not_contacted
+mary.lopez@bytecraft.io,Joseph Wilson,Nova Software,"London, UK",not_contacted
+michael.brown@agileworks.co,Karen Jones,Vertex Labs,"Berlin, DE",not_contacted
+sarah.miller@innovate.ai,William Rodriguez,Nexus Software,"New York, NY",not_contacted
+elizabeth.anderson@dataflow.io,Patricia Miller,Nexus AI,"Toronto, ON",not_contacted
+john.martinez@devsolutions.com,Elizabeth Rodriguez,Zenith Systems,"Toronto, ON",not_contacted
+michael.rodriguez@securenet.com,Linda Anderson,Acme Tech,"Berlin, DE",not_contacted
+william.wilson@dataflow.io,John Gonzalez,Nexus Systems,"Seattle, WA",not_contacted
+john.johnson@quantum.ai,Thomas Garcia,Nexus Labs,"New York, NY",not_contacted
+patricia.wilson@techcorp.io,Robert Wilson,Acme Tech,"San Francisco, CA",not_contacted
+thomas.miller@quantum.ai,William Garcia,Nova Software,"Toronto, ON",not_contacted
+charles.hernandez@innovate.ai,Susan Johnson,Zenith AI,"Austin, TX",not_contacted
+susan.garcia@quantum.ai,Elizabeth Garcia,Apex AI,"Bangalore, IN",not_contacted
+charles.martinez@securenet.com,William Davis,Apex Software,"New York, NY",not_contacted
+mary.johnson@cloudsystems.net,David Anderson,Acme AI,"Bangalore, IN",not_contacted
+john.johnson@cloudsystems.net,Barbara Jones,Nexus Systems,"New York, NY",not_contacted
+patricia.smith@nextgen.dev,Jennifer Williams,Vertex Tech,"Seattle, WA",not_contacted
+patricia.smith@dataflow.io,Mary Johnson,Nova Systems,"Seattle, WA",not_contacted
+joseph.jones@bytecraft.io,John Anderson,Zenith AI,"Austin, TX",not_contacted
+elizabeth.lopez@securenet.com,Jessica Gonzalez,Apex Systems,"Toronto, ON",not_contacted
+thomas.brown@cloudsystems.net,Patricia Anderson,Vertex Systems,"Berlin, DE",not_contacted
+john.wilson@quantum.ai,Thomas Davis,Acme Tech,"New York, NY",not_contacted
+elizabeth.brown@devsolutions.com,Joseph Hernandez,Nova Software,"Toronto, ON",not_contacted
+karen.anderson@quantum.ai,Sarah Johnson,Acme Labs,"Berlin, DE",not_contacted
+jennifer.martinez@cloudsystems.net,Richard Wilson,Apex Software,"London, UK",not_contacted
+charles.smith@devsolutions.com,Joseph Hernandez,Vertex Software,"Toronto, ON",not_contacted
+charles.wilson@securenet.com,Michael Gonzalez,Vertex Software,"London, UK",not_contacted
+jennifer.lopez@bytecraft.io,Karen Miller,Acme Systems,"London, UK",not_contacted
+susan.hernandez@nextgen.dev,Michael Anderson,Acme Labs,"Bangalore, IN",not_contacted
+joseph.hernandez@innovate.ai,Jennifer Johnson,Pinnacle Tech,"Berlin, DE",not_contacted
+david.smith@innovate.ai,Jennifer Martinez,Apex Software,"London, UK",not_contacted
+linda.jones@techcorp.io,Joseph Rodriguez,Vertex Tech,"London, UK",not_contacted
+karen.gonzalez@techcorp.io,Susan Martinez,Apex Software,"Seattle, WA",not_contacted
+patricia.anderson@quantum.ai,Linda Brown,Apex Labs,"New York, NY",not_contacted
+barbara.johnson@innovate.ai,Susan Williams,Vertex Labs,"Toronto, ON",not_contacted
+jennifer.johnson@techcorp.io,Karen Anderson,Zenith Tech,"London, UK",not_contacted
+jessica.hernandez@nextgen.dev,Charles Miller,Acme Systems,"London, UK",not_contacted
+sarah.garcia@dataflow.io,Jennifer Martinez,Apex Tech,"Toronto, ON",not_contacted
+william.hernandez@nextgen.dev,Karen Martinez,Vertex Software,"Bangalore, IN",not_contacted
+patricia.brown@securenet.com,James Rodriguez,Nova Labs,"Berlin, DE",not_contacted
+elizabeth.martinez@devsolutions.com,Elizabeth Gonzalez,Nova Labs,"Toronto, ON",not_contacted
+susan.lopez@devsolutions.com,William Smith,Acme Software,"Bangalore, IN",not_contacted
+sarah.johnson@devsolutions.com,Charles Rodriguez,Apex Software,"New York, NY",not_contacted
+karen.miller@innovate.ai,Susan Williams,Nova AI,"Berlin, DE",not_contacted
+patricia.lopez@nextgen.dev,William Wilson,Apex AI,"New York, NY",not_contacted
+mary.brown@dataflow.io,Patricia Anderson,Pinnacle Labs,"San Francisco, CA",not_contacted
+john.johnson@cloudsystems.net,William Gonzalez,Acme Labs,"San Francisco, CA",not_contacted
+jessica.gonzalez@techcorp.io,Jennifer Lopez,Vertex AI,"San Francisco, CA",not_contacted
+sarah.williams@agileworks.co,James Rodriguez,Apex Systems,"Seattle, WA",not_contacted
+john.rodriguez@nextgen.dev,Jessica Smith,Apex Labs,"London, UK",not_contacted
+charles.davis@dataflow.io,Sarah Rodriguez,Nova Systems,"Berlin, DE",not_contacted
+charles.wilson@securenet.com,Linda Brown,Pinnacle Systems,"Seattle, WA",not_contacted
+jessica.anderson@nextgen.dev,Sarah Miller,Nexus Software,"Berlin, DE",not_contacted
+david.anderson@quantum.ai,Linda Anderson,Apex Labs,"Bangalore, IN",not_contacted
+linda.rodriguez@dataflow.io,Barbara Hernandez,Vertex AI,"London, UK",not_contacted
+jennifer.rodriguez@techcorp.io,Elizabeth Johnson,Zenith Labs,"Austin, TX",not_contacted
+elizabeth.garcia@cloudsystems.net,Charles Smith,Zenith Systems,"Bangalore, IN",not_contacted
+elizabeth.brown@devsolutions.com,Sarah Davis,Pinnacle Tech,"Seattle, WA",not_contacted
+elizabeth.miller@nextgen.dev,Linda Davis,Apex AI,"New York, NY",not_contacted
+james.davis@quantum.ai,Karen Johnson,Acme Labs,"Berlin, DE",not_contacted
+joseph.davis@devsolutions.com,David Rodriguez,Acme Labs,"New York, NY",not_contacted
+richard.wilson@bytecraft.io,William Gonzalez,Nova Tech,"San Francisco, CA",not_contacted
+patricia.anderson@quantum.ai,Jessica Smith,Vertex Labs,"Austin, TX",not_contacted
+william.rodriguez@securenet.com,William Garcia,Nexus Systems,"Austin, TX",not_contacted
+jessica.davis@securenet.com,Susan Williams,Nova Tech,"Berlin, DE",not_contacted
+thomas.hernandez@securenet.com,David Wilson,Vertex AI,"Austin, TX",not_contacted
+jessica.rodriguez@securenet.com,Jessica Wilson,Nova Systems,"Toronto, ON",not_contacted
+joseph.johnson@techcorp.io,John Davis,Zenith Tech,"Berlin, DE",not_contacted
+sarah.johnson@bytecraft.io,Barbara Martinez,Apex Software,"Seattle, WA",not_contacted
+barbara.martinez@bytecraft.io,Jennifer Hernandez,Apex Tech,"Toronto, ON",not_contacted
+thomas.rodriguez@innovate.ai,Elizabeth Lopez,Zenith Software,"Austin, TX",not_contacted
+john.hernandez@nextgen.dev,Richard Wilson,Vertex Software,"Seattle, WA",not_contacted
+linda.miller@cloudsystems.net,Jessica Johnson,Nexus Labs,"London, UK",not_contacted
+john.brown@securenet.com,Sarah Anderson,Zenith Systems,"London, UK",not_contacted
+john.johnson@devsolutions.com,Barbara Davis,Apex Labs,"Berlin, DE",not_contacted
+john.williams@cloudsystems.net,Richard Martinez,Vertex Labs,"San Francisco, CA",not_contacted
+joseph.gonzalez@bytecraft.io,Mary Anderson,Apex Software,"San Francisco, CA",not_contacted
+susan.hernandez@dataflow.io,James Williams,Acme AI,"Berlin, DE",not_contacted
+thomas.smith@techcorp.io,Michael Rodriguez,Pinnacle AI,"London, UK",not_contacted
+joseph.jones@dataflow.io,Michael Martinez,Acme Labs,"San Francisco, CA",not_contacted
+susan.wilson@cloudsystems.net,Michael Smith,Nexus Labs,"Berlin, DE",not_contacted
+robert.lopez@dataflow.io,Barbara Rodriguez,Acme Labs,"London, UK",not_contacted
+sarah.davis@innovate.ai,David Martinez,Nexus Software,"San Francisco, CA",not_contacted
+william.anderson@devsolutions.com,William Gonzalez,Acme Tech,"Toronto, ON",not_contacted
+thomas.williams@dataflow.io,Robert Smith,Zenith AI,"Berlin, DE",not_contacted
+charles.gonzalez@securenet.com,Patricia Smith,Vertex Software,"Seattle, WA",not_contacted
+joseph.rodriguez@devsolutions.com,James Rodriguez,Vertex Labs,"San Francisco, CA",not_contacted
+karen.garcia@devsolutions.com,Joseph Martinez,Pinnacle Tech,"Seattle, WA",not_contacted
+jessica.wilson@cloudsystems.net,Jennifer Johnson,Vertex Labs,"Toronto, ON",not_contacted
+richard.brown@devsolutions.com,Jennifer Wilson,Apex Software,"Berlin, DE",not_contacted
+barbara.garcia@techcorp.io,William Miller,Apex AI,"Berlin, DE",not_contacted
+elizabeth.hernandez@nextgen.dev,Jessica Hernandez,Acme Labs,"New York, NY",not_contacted
+patricia.jones@nextgen.dev,Michael Jones,Acme Software,"New York, NY",not_contacted
+jennifer.miller@techcorp.io,Michael Williams,Pinnacle Tech,"San Francisco, CA",not_contacted
+david.rodriguez@dataflow.io,William Brown,Nova Systems,"Berlin, DE",not_contacted
+mary.davis@quantum.ai,James Lopez,Nexus AI,"Berlin, DE",not_contacted
+sarah.hernandez@securenet.com,Barbara Wilson,Nova Labs,"Austin, TX",not_contacted
+william.wilson@agileworks.co,Karen Johnson,Acme AI,"Toronto, ON",not_contacted
+william.gonzalez@quantum.ai,Elizabeth Jones,Zenith Software,"San Francisco, CA",not_contacted
+robert.hernandez@devsolutions.com,Jessica Lopez,Zenith Tech,"New York, NY",not_contacted
+thomas.rodriguez@techcorp.io,Mary Lopez,Nexus Software,"Berlin, DE",not_contacted
+charles.smith@quantum.ai,Susan Lopez,Nexus AI,"Austin, TX",not_contacted
+john.hernandez@bytecraft.io,Michael Garcia,Acme Labs,"Austin, TX",not_contacted
+michael.wilson@innovate.ai,Michael Jones,Acme Tech,"New York, NY",not_contacted
+barbara.brown@cloudsystems.net,Susan Smith,Vertex AI,"Seattle, WA",not_contacted
+robert.johnson@quantum.ai,Jennifer Davis,Nova Tech,"Toronto, ON",not_contacted
+susan.hernandez@dataflow.io,John Jones,Apex Tech,"Seattle, WA",not_contacted
+james.johnson@dataflow.io,Linda Davis,Acme AI,"Austin, TX",not_contacted
+charles.davis@dataflow.io,Michael Brown,Apex Labs,"Bangalore, IN",not_contacted
+james.garcia@innovate.ai,Barbara Rodriguez,Pinnacle Labs,"London, UK",not_contacted
+elizabeth.gonzalez@techcorp.io,Sarah Garcia,Nova Systems,"Austin, TX",not_contacted
+william.johnson@cloudsystems.net,Charles Wilson,Acme AI,"London, UK",not_contacted
+david.anderson@nextgen.dev,Robert Martinez,Nova Systems,"San Francisco, CA",not_contacted
+thomas.gonzalez@bytecraft.io,Patricia Brown,Acme AI,"San Francisco, CA",not_contacted
+jennifer.martinez@innovate.ai,Patricia Jones,Apex Tech,"Seattle, WA",not_contacted
+david.martinez@devsolutions.com,Thomas Jones,Nexus Systems,"Seattle, WA",not_contacted
+william.anderson@devsolutions.com,John Brown,Acme AI,"New York, NY",not_contacted
+jessica.rodriguez@dataflow.io,Jessica Miller,Apex AI,"New York, NY",not_contacted
+jennifer.hernandez@innovate.ai,Charles Anderson,Nexus Labs,"Seattle, WA",not_contacted
+jennifer.anderson@securenet.com,Jennifer Davis,Nexus Systems,"Austin, TX",not_contacted
+thomas.lopez@agileworks.co,Susan Wilson,Nexus Labs,"Seattle, WA",not_contacted
+william.hernandez@cloudsystems.net,Karen Hernandez,Nexus Software,"Bangalore, IN",not_contacted
+patricia.gonzalez@agileworks.co,John Lopez,Nexus Tech,"New York, NY",not_contacted
+james.smith@dataflow.io,Sarah Anderson,Zenith Systems,"London, UK",not_contacted
+susan.johnson@techcorp.io,Patricia Smith,Apex Labs,"New York, NY",not_contacted
+jessica.brown@innovate.ai,Jennifer Brown,Pinnacle Tech,"London, UK",not_contacted
+william.gonzalez@cloudsystems.net,Karen Davis,Pinnacle Labs,"New York, NY",not_contacted
+david.johnson@cloudsystems.net,Michael Garcia,Zenith Tech,"New York, NY",not_contacted
+jennifer.wilson@devsolutions.com,Linda Gonzalez,Nexus AI,"New York, NY",not_contacted
+mary.lopez@cloudsystems.net,Linda Brown,Apex Systems,"New York, NY",not_contacted
+sarah.brown@innovate.ai,William Martinez,Acme Software,"Seattle, WA",not_contacted
+jennifer.anderson@bytecraft.io,Richard Gonzalez,Pinnacle Software,"New York, NY",not_contacted
+michael.lopez@nextgen.dev,Thomas Jones,Pinnacle Labs,"San Francisco, CA",not_contacted
+karen.anderson@innovate.ai,Patricia Anderson,Pinnacle Systems,"Berlin, DE",not_contacted
+michael.martinez@securenet.com,Barbara Hernandez,Apex Tech,"Austin, TX",not_contacted
+richard.lopez@devsolutions.com,Thomas Garcia,Vertex Tech,"London, UK",not_contacted
+sarah.rodriguez@securenet.com,David Jones,Nova Labs,"Bangalore, IN",not_contacted
+joseph.hernandez@cloudsystems.net,Jessica Williams,Nova Systems,"Bangalore, IN",not_contacted
+mary.anderson@techcorp.io,Jessica Brown,Pinnacle Systems,"Berlin, DE",not_contacted
+jessica.williams@bytecraft.io,Linda Davis,Zenith Tech,"Bangalore, IN",not_contacted
+robert.gonzalez@innovate.ai,Sarah Hernandez,Zenith AI,"Bangalore, IN",not_contacted
+patricia.martinez@cloudsystems.net,Charles Davis,Nova AI,"Berlin, DE",not_contacted
+robert.wilson@securenet.com,William Hernandez,Nova Labs,"San Francisco, CA",not_contacted
+charles.davis@nextgen.dev,David Rodriguez,Apex Labs,"New York, NY",not_contacted
+richard.rodriguez@cloudsystems.net,Jessica Jones,Zenith Labs,"Berlin, DE",not_contacted
+michael.gonzalez@innovate.ai,David Lopez,Acme Software,"San Francisco, CA",not_contacted
+linda.hernandez@agileworks.co,Thomas Lopez,Acme AI,"Seattle, WA",not_contacted
+william.jones@techcorp.io,Jessica Lopez,Nexus Labs,"Bangalore, IN",not_contacted
+elizabeth.davis@innovate.ai,Barbara Anderson,Acme Tech,"Toronto, ON",not_contacted
+william.williams@dataflow.io,Barbara Smith,Vertex AI,"New York, NY",not_contacted
+mary.johnson@dataflow.io,Robert Miller,Acme Labs,"Bangalore, IN",not_contacted
+richard.martinez@bytecraft.io,Richard Gonzalez,Acme Software,"Seattle, WA",not_contacted
+robert.wilson@devsolutions.com,Michael Gonzalez,Nexus Labs,"New York, NY",not_contacted
+sarah.williams@cloudsystems.net,Susan Anderson,Nova Tech,"Berlin, DE",not_contacted
+john.wilson@devsolutions.com,Elizabeth Johnson,Nova AI,"Seattle, WA",not_contacted
+barbara.williams@quantum.ai,Barbara Lopez,Zenith Labs,"New York, NY",not_contacted
+thomas.hernandez@innovate.ai,Linda Martinez,Nexus Software,"New York, NY",not_contacted
+robert.gonzalez@cloudsystems.net,Joseph Hernandez,Zenith Systems,"Toronto, ON",not_contacted
+mary.martinez@securenet.com,Michael Gonzalez,Acme Tech,"Austin, TX",not_contacted
+elizabeth.jones@innovate.ai,Karen Smith,Apex AI,"San Francisco, CA",not_contacted
+patricia.jones@bytecraft.io,James Williams,Nova Tech,"Seattle, WA",not_contacted
+karen.martinez@techcorp.io,Michael Garcia,Nexus Software,"Berlin, DE",not_contacted
+sarah.johnson@devsolutions.com,Michael Wilson,Acme Software,"Toronto, ON",not_contacted
+linda.hernandez@agileworks.co,Robert Jones,Pinnacle AI,"Berlin, DE",not_contacted
+william.miller@dataflow.io,Susan Rodriguez,Nexus Software,"San Francisco, CA",not_contacted
+william.wilson@securenet.com,Karen Garcia,Nexus AI,"Toronto, ON",not_contacted
+linda.johnson@techcorp.io,James Martinez,Apex AI,"San Francisco, CA",not_contacted
+william.brown@cloudsystems.net,Patricia Davis,Zenith Labs,"San Francisco, CA",not_contacted
+sarah.johnson@nextgen.dev,Barbara Williams,Vertex Software,"Austin, TX",not_contacted
+elizabeth.rodriguez@securenet.com,James Williams,Vertex Software,"Seattle, WA",not_contacted
+linda.johnson@bytecraft.io,Jennifer Davis,Acme Systems,"New York, NY",not_contacted
+susan.rodriguez@dataflow.io,Michael Lopez,Pinnacle AI,"Seattle, WA",not_contacted
+robert.gonzalez@innovate.ai,Elizabeth Brown,Vertex Systems,"Austin, TX",not_contacted
+james.smith@devsolutions.com,Jessica Rodriguez,Nova Labs,"London, UK",not_contacted
+thomas.garcia@nextgen.dev,Linda Smith,Acme Software,"San Francisco, CA",not_contacted
+joseph.smith@quantum.ai,Robert Anderson,Pinnacle Systems,"San Francisco, CA",not_contacted
+patricia.brown@securenet.com,Mary Martinez,Pinnacle Tech,"London, UK",not_contacted
+jennifer.johnson@bytecraft.io,Richard Smith,Acme Systems,"Bangalore, IN",not_contacted
+charles.williams@techcorp.io,Barbara Rodriguez,Zenith Tech,"Berlin, DE",not_contacted
+joseph.smith@techcorp.io,Elizabeth Williams,Vertex Software,"New York, NY",not_contacted
+karen.rodriguez@techcorp.io,Mary Lopez,Acme AI,"Bangalore, IN",not_contacted
+karen.gonzalez@devsolutions.com,Barbara Anderson,Apex Software,"Seattle, WA",not_contacted
+thomas.jones@cloudsystems.net,Linda Jones,Pinnacle Labs,"London, UK",not_contacted
+michael.smith@agileworks.co,David Wilson,Acme Labs,"Toronto, ON",not_contacted
+elizabeth.gonzalez@innovate.ai,Richard Rodriguez,Pinnacle Labs,"San Francisco, CA",not_contacted
+james.johnson@devsolutions.com,David Garcia,Nova Tech,"Berlin, DE",not_contacted
+michael.jones@nextgen.dev,Mary Rodriguez,Acme AI,"Austin, TX",not_contacted
+elizabeth.hernandez@techcorp.io,Robert Martinez,Acme Tech,"Austin, TX",not_contacted
+linda.smith@cloudsystems.net,Joseph Miller,Nexus Systems,"Toronto, ON",not_contacted
+mary.gonzalez@quantum.ai,Thomas Rodriguez,Nova Tech,"Toronto, ON",not_contacted
+mary.martinez@agileworks.co,John Lopez,Nova AI,"Toronto, ON",not_contacted
+linda.anderson@devsolutions.com,John Williams,Vertex Software,"Berlin, DE",not_contacted
+joseph.lopez@nextgen.dev,Susan Jones,Vertex Labs,"Berlin, DE",not_contacted
+karen.rodriguez@nextgen.dev,Richard Martinez,Apex Labs,"San Francisco, CA",not_contacted
+richard.wilson@bytecraft.io,Thomas Miller,Nova Tech,"Bangalore, IN",not_contacted
+mary.davis@techcorp.io,Susan Gonzalez,Pinnacle Systems,"Austin, TX",not_contacted
+robert.smith@securenet.com,Robert Lopez,Apex Software,"Berlin, DE",not_contacted
+james.hernandez@securenet.com,David Smith,Acme Tech,"San Francisco, CA",not_contacted
+mary.davis@dataflow.io,Elizabeth Davis,Nexus Labs,"London, UK",not_contacted
+karen.wilson@nextgen.dev,Michael Rodriguez,Nexus AI,"Austin, TX",not_contacted
+sarah.gonzalez@bytecraft.io,Joseph Anderson,Nexus Systems,"Bangalore, IN",not_contacted
+william.martinez@techcorp.io,Robert Anderson,Zenith Systems,"Toronto, ON",not_contacted
+elizabeth.brown@cloudsystems.net,Thomas Lopez,Apex AI,"Austin, TX",not_contacted
+charles.anderson@securenet.com,Richard Lopez,Pinnacle Systems,"London, UK",not_contacted
+jessica.hernandez@innovate.ai,Linda Smith,Apex Tech,"New York, NY",not_contacted
+thomas.williams@cloudsystems.net,Richard Johnson,Pinnacle Tech,"Bangalore, IN",not_contacted
+charles.gonzalez@quantum.ai,Patricia Miller,Vertex Labs,"New York, NY",not_contacted
+charles.davis@techcorp.io,Jessica Smith,Zenith Systems,"San Francisco, CA",not_contacted
+jessica.williams@devsolutions.com,Susan Anderson,Nexus Systems,"Seattle, WA",not_contacted
+jennifer.williams@quantum.ai,Mary Smith,Vertex Systems,"Bangalore, IN",not_contacted
+robert.lopez@devsolutions.com,John Williams,Apex AI,"London, UK",not_contacted
+james.martinez@devsolutions.com,Joseph Rodriguez,Vertex Labs,"Austin, TX",not_contacted
+richard.williams@dataflow.io,Jessica Rodriguez,Acme Labs,"Austin, TX",not_contacted
+jessica.martinez@quantum.ai,Elizabeth Miller,Nexus Labs,"New York, NY",not_contacted
+elizabeth.gonzalez@innovate.ai,Patricia Miller,Apex Tech,"Berlin, DE",not_contacted
+robert.hernandez@techcorp.io,Karen Brown,Nexus Software,"San Francisco, CA",not_contacted
+karen.brown@dataflow.io,Robert Martinez,Acme Labs,"Bangalore, IN",not_contacted
+sarah.gonzalez@dataflow.io,Karen Jones,Apex AI,"New York, NY",not_contacted
+susan.brown@dataflow.io,Barbara Miller,Vertex Software,"Seattle, WA",not_contacted
