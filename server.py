@@ -427,6 +427,12 @@ def run_campaign_thread(csv_file, limit, selected_template="direct", campaign_id
         log(f"Sending campaign summary email to {config.get('notification_email')}...")
         send_summary_email(config, csv_file, attempted_count, success_count, failed_count, failed_list)
 
+        if campaign_id:
+            try:
+                finish_campaign(campaign_id, success_count, failed_count, f"Completed with {success_count} sent.")
+            except:
+                pass
+
     except Exception as e:
         log(f"Fatal error in campaign thread: {e}", "error")
         campaign_status = f"Error: {e}"
@@ -591,7 +597,14 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
                 return
 
             # Start thread
-            t = threading.Thread(target=run_campaign_thread, args=(csv_file, limit, selected_template))
+            def manual_runner():
+                try:
+                    c_id = start_campaign(csv_file, "Manual", "UI", selected_template, limit)
+                except:
+                    c_id = None
+                run_campaign_thread(csv_file, limit, selected_template, campaign_id=c_id)
+
+            t = threading.Thread(target=manual_runner)
             t.daemon = True
             t.start()
 

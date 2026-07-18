@@ -97,13 +97,6 @@ def job_send_email_batch():
 
         def _run():
             run_campaign_thread(csv_path, daily_limit, template, campaign_id=campaign_id)
-            # Mark finished (approximation — server.py logs the real count in its summary email)
-            finish_campaign(
-                campaign_id  = campaign_id,
-                total_sent   = daily_limit,
-                total_failed = 0,
-                notes        = f"Autonomous batch at {datetime.now().isoformat()}"
-            )
             print(f"[Scheduler] Batch complete. campaign_id={campaign_id}")
 
         t = threading.Thread(target=_run, daemon=True)
