@@ -634,18 +634,24 @@
         }
 
         async function saveConfig() {
-            const cfg = {
-                active_csv: document.getElementById('cfg-csv').value,
-                active_template: document.getElementById('cfg-template').value,
-                send_times: document.getElementById('cfg-times').value.split(',').map(s => s.trim()),
-                daily_limit_per_window: parseInt(document.getElementById('cfg-limit').value),
-                timezone: document.getElementById('cfg-timezone').value
-            };
             try {
+                // First get existing config to preserve hidden fields like ga4_property_id
+                const existRes = await fetch('/api/agent-config');
+                const existCfg = await existRes.json();
+                
+                const newCfg = {
+                    ...existCfg,
+                    active_csv: document.getElementById('cfg-csv').value,
+                    active_template: document.getElementById('cfg-template').value,
+                    send_times: document.getElementById('cfg-times').value.split(',').map(s => s.trim()),
+                    daily_limit_per_window: parseInt(document.getElementById('cfg-limit').value),
+                    timezone: document.getElementById('cfg-timezone').value
+                };
+                
                 await fetch('/api/agent-config', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(cfg)
+                    body: JSON.stringify(newCfg)
                 });
                 showToast('Configuration saved successfully. Scheduler will use new settings.');
             } catch(e) {
