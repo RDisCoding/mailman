@@ -15,6 +15,8 @@ import smtplib
 from email.mime.text import MIMEText
 from email.header import Header
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # Metrics logger (graceful fallback if not present)
 try:
     from metrics_logger import record_open, start_campaign, finish_campaign
