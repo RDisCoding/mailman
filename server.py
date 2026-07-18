@@ -12,6 +12,7 @@ import threading
 import time
 import random
 import smtplib
+import sys
 from email.mime.text import MIMEText
 from email.header import Header
 
@@ -806,7 +807,7 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
             return
 
         # API Route: Scheduler status (check if autonomous_scheduler is running)
-        if self.path == '/api/scheduler-status':
+        if self.path == '/api/scheduler/status':
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
