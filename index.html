@@ -364,9 +364,15 @@
         <!-- View: Configuration -->
         <div id="view-config" class="view">
             <div style="background: var(--bg-surface); padding: 2rem; border-radius: 8px; border: 1px solid var(--border-subtle);">
-                <div class="form-group">
-                    <label class="form-label">Active Leads CSV</label>
-                    <select id="cfg-csv" class="form-control" style="font-family: var(--font-sans);"></select>
+                <div class="form-group" style="display: flex; gap: 1rem; align-items: flex-end;">
+                    <div style="flex: 1;">
+                        <label class="form-label">Active Leads CSV</label>
+                        <select id="cfg-csv" class="form-control" style="font-family: var(--font-sans);"></select>
+                    </div>
+                    <button class="btn btn-primary" onclick="document.getElementById('csv-upload').click()">
+                        <i data-lucide="upload"></i> Upload CSV
+                    </button>
+                    <input type="file" id="csv-upload" accept=".csv" style="display: none;" onchange="uploadCSV(event)">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Active Email Template</label>
@@ -650,9 +656,35 @@
                 showToast('Template saved successfully!');
                 document.getElementById('tpl-name').value = '';
                 document.getElementById('tpl-content').value = '';
+                loadConfig(); // refresh template dropdown
             } catch(e) {
                 showToast('Error saving template.');
             }
+        }
+
+        // --- CSV Upload API ---
+        async function uploadCSV(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    await fetch('/api/upload-csv', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            name: file.name,
+                            content: e.target.result
+                        })
+                    });
+                    showToast('CSV uploaded successfully!');
+                    loadConfig(); // refresh CSV dropdown
+                } catch(err) {
+                    showToast('Error uploading CSV.');
+                }
+            };
+            reader.readAsText(file);
         }
 
         // Init

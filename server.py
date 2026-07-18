@@ -144,7 +144,10 @@ def get_target_file(path):
         requested_file = query_params['file'][0]
         if requested_file.endswith('.csv') and '/' not in requested_file and '\\' not in requested_file:
             csv_file = requested_file
-    return csv_file
+
+    leads_dir = os.path.join(BASE_DIR, 'leads')
+    os.makedirs(leads_dir, exist_ok=True)
+    return os.path.join(leads_dir, csv_file)
 
 def _inject_utm(html: str, campaign_id: str, template: str) -> str:
     """
@@ -754,12 +757,40 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
                 self.wfile.write(json.dumps(default).encode())
             return
 
+        # API Route: Upload CSV
+        if self.path == '/api/upload-csv':
+            content_length = int(self.headers.get('Content-Length', 0))
+            post_data = self.rfile.read(content_length)
+            try:
+                data = json.loads(post_data.decode('utf-8'))
+                name = data.get('name')
+                content = data.get('content')
+                if name and content:
+                    leads_dir = os.path.join(BASE_DIR, 'leads')
+                    os.makedirs(leads_dir, exist_ok=True)
+                    if not name.endswith('.csv'):
+                        name += '.csv'
+                    with open(os.path.join(leads_dir, name), 'w', encoding='utf-8') as f:
+                        f.write(content)
+                self.send_response(200)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({"status": "ok"}).encode())
+            except Exception as e:
+                self.send_response(500)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({"status": "error", "message": str(e)}).encode())
+            return
+
         # API Route: List available CSV files
         if self.path == '/api/list-csvs':
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
-            csvs = [f for f in os.listdir(BASE_DIR) if f.endswith('.csv')]
+            leads_dir = os.path.join(BASE_DIR, 'leads')
+            os.makedirs(leads_dir, exist_ok=True)
+            csvs = [f for f in os.listdir(leads_dir) if f.endswith('.csv')]
             self.wfile.write(json.dumps(csvs).encode())
             return
 

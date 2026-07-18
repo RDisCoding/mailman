@@ -74,10 +74,10 @@ def job_send_email_batch():
         print("[Scheduler] No active_csv set in agent_config.json. Skipping.")
         return
 
-    csv_path = os.path.join(BASE_DIR, active_csv)
+    csv_path = os.path.join(BASE_DIR, 'leads', active_csv)
     if not os.path.exists(csv_path):
         print(f"[Scheduler] CSV not found: {csv_path}")
-        print(f"[Scheduler] Drop your CSV into the email agent folder and update active_csv in agent_config.json.")
+        print(f"[Scheduler] Drop your CSV into the 'leads' folder and update active_csv in agent_config.json.")
         return
 
     print(f"[Scheduler] Sending up to {daily_limit} emails from '{active_csv}' "
