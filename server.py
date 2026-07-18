@@ -611,8 +611,16 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
         if self.path == '/api/scheduler/start':
             try:
                 import subprocess
-                # Start as background process
-                proc = subprocess.Popen([sys.executable, "autonomous_scheduler.py"], cwd=BASE_DIR)
+                # Start as background process, redirecting I/O to avoid stream init errors
+                log_path = os.path.join(BASE_DIR, 'scheduler.log')
+                log_file = open(log_path, 'a')
+                proc = subprocess.Popen(
+                    [sys.executable, "autonomous_scheduler.py"], 
+                    cwd=BASE_DIR,
+                    stdout=log_file,
+                    stderr=subprocess.STDOUT,
+                    stdin=subprocess.DEVNULL
+                )
                 pid_file = os.path.join(BASE_DIR, 'scheduler.pid')
                 with open(pid_file, 'w') as f:
                     f.write(str(proc.pid))
