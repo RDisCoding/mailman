@@ -476,7 +476,10 @@
             document.querySelectorAll('.nav-item').forEach(v => v.classList.remove('active'));
             
             document.getElementById('view-' + viewId).classList.add('active');
-            event.currentTarget.classList.add('active');
+            
+            // Programmatically find the nav-item
+            const navItem = document.querySelector(`.nav-item[onclick*="${viewId}"]`);
+            if (navItem) navItem.classList.add('active');
             
             const titles = { 
                 'dashboard': 'Overview Dashboard', 
@@ -704,6 +707,37 @@
             };
             reader.readAsText(file);
         }
+
+        // --- Swipe Navigation ---
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const tabOrder = ['dashboard', 'config', 'audience', 'templates'];
+        
+        function handleSwipe() {
+            const swipeDistance = touchEndX - touchStartX;
+            if (Math.abs(swipeDistance) < 60) return; // Ignore small accidental swipes
+            
+            let currentIdx = tabOrder.findIndex(t => document.getElementById('view-' + t).classList.contains('active'));
+            if (currentIdx === -1) currentIdx = 0;
+            
+            if (swipeDistance < -60 && currentIdx < tabOrder.length - 1) {
+                // Swipe Left -> Next Tab
+                switchView(tabOrder[currentIdx + 1]);
+            } else if (swipeDistance > 60 && currentIdx > 0) {
+                // Swipe Right -> Prev Tab
+                switchView(tabOrder[currentIdx - 1]);
+            }
+        }
+        
+        const mainContent = document.querySelector('.main-content');
+        mainContent.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, {passive: true});
+        
+        mainContent.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, {passive: true});
 
         // Init
         loadAnalytics();
