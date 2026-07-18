@@ -238,10 +238,12 @@
                 align-items: center;
                 padding: 0.5rem 0.2rem;
                 flex-direction: column;
-                font-size: 10px;
                 gap: 0.15rem;
                 border-left: none;
                 border-top: 3px solid transparent;
+            }
+            .nav-item span {
+                display: none; /* Hide labels only on mobile */
             }
             .nav-item i {
                 width: 20px;
@@ -312,19 +314,19 @@
             <i data-lucide="zap"></i> Cortogen Engine
         </div>
         <div class="nav-item active" onclick="switchView('dashboard')">
-            <i data-lucide="layout-dashboard"></i>
+            <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
         </div>
         <div class="nav-item" onclick="switchView('config')">
-            <i data-lucide="settings"></i>
+            <i data-lucide="settings"></i> <span>Configuration</span>
         </div>
         <div class="nav-item" onclick="switchView('audience')">
-            <i data-lucide="users"></i>
+            <i data-lucide="users"></i> <span>Audience / Leads</span>
         </div>
         <div class="nav-item" onclick="switchView('templates')">
-            <i data-lucide="file-text"></i>
+            <i data-lucide="file-text"></i> <span>Email Templates</span>
         </div>
         <div class="nav-item" onclick="switchView('advisor')">
-            <i data-lucide="brain"></i>
+            <i data-lucide="brain"></i> <span>AI Advisor</span>
         </div>
     </div>
 

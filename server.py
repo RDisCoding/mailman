@@ -748,8 +748,11 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
+        parsed = urllib.parse.urlparse(self.path)
+        path = parsed.path
+
         # API Route: Get agent config
-        if self.path == '/api/agent-config':
+        if path == '/api/agent-config':
             agent_cfg_path = os.path.join(BASE_DIR, 'agent_config.json')
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
@@ -773,7 +776,7 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
             return
 
         # API Route: Upload CSV
-        if self.path == '/api/upload-csv':
+        if path == '/api/upload-csv':
             content_length = int(self.headers.get('Content-Length', 0))
             post_data = self.rfile.read(content_length)
             try:
@@ -799,7 +802,7 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
             return
 
         # API Route: List available CSV files
-        if self.path == '/api/list-csvs':
+        if path == '/api/list-csvs':
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
@@ -810,7 +813,7 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
             return
 
         # API Route: List available templates
-        if self.path == '/api/list-templates':
+        if path == '/api/list-templates':
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
@@ -821,7 +824,7 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
             return
 
         # API Route: Scheduler status (check if autonomous_scheduler is running)
-        if self.path == '/api/scheduler/status':
+        if path == '/api/scheduler/status':
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
@@ -875,7 +878,7 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(_PIXEL_GIF)
             return
 
-        if self.path == '/api/campaign-status':
+        if path == '/api/campaign-status':
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
@@ -889,7 +892,7 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps(status_data).encode('utf-8'))
             return
 
-        if self.path == '/api/analytics':
+        if path == '/api/analytics':
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
@@ -927,7 +930,7 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
             return
 
         # Default: serve static files
-        if self.path == '/' or self.path == '':
+        if path == '/' or path == '':
             self.path = '/index.html'
         return super().do_GET()
 
