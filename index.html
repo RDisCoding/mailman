@@ -34,7 +34,7 @@
             font-family: var(--font-sans);
             font-size: 14px;
             display: flex;
-            height: 100vh;
+            height: 100dvh;
             overflow: hidden;
         }
 
@@ -190,9 +190,13 @@
         td { padding: 1rem; border-bottom: 1px solid var(--border-subtle); font-size: 13px; }
         tr:hover td { background: var(--bg-surface-elevated); }
 
+        .csv-row {
+            display: flex; gap: 1rem; align-items: flex-end;
+        }
+
         /* Toast */
         .toast {
-            position: fixed; bottom: 20px; right: 20px;
+            position: fixed; bottom: 80px; right: 20px;
             background: var(--bg-surface-elevated);
             border-left: 3px solid var(--accent-primary);
             padding: 1rem; border-radius: 6px;
@@ -207,18 +211,23 @@
         @media (max-width: 768px) {
             body {
                 flex-direction: column;
+                height: 100dvh;
+                position: relative;
             }
             .sidebar {
+                position: fixed;
+                bottom: 0;
+                left: 0;
                 width: 100%;
-                height: auto;
+                height: 60px;
                 flex-direction: row;
                 padding: 0;
                 justify-content: space-around;
                 border-right: none;
                 border-top: 1px solid var(--border-subtle);
-                order: 2; /* Bottom tab bar */
                 background: var(--bg-surface-elevated);
-                z-index: 20;
+                z-index: 50;
+                padding-bottom: env(safe-area-inset-bottom, 0);
             }
             .brand {
                 display: none; /* Hide brand to save space on mobile */
@@ -226,10 +235,11 @@
             .nav-item {
                 flex: 1;
                 justify-content: center;
-                padding: 0.75rem 0.5rem;
+                align-items: center;
+                padding: 0.5rem 0.2rem;
                 flex-direction: column;
-                font-size: 11px;
-                gap: 0.25rem;
+                font-size: 10px;
+                gap: 0.15rem;
                 border-left: none;
                 border-top: 3px solid transparent;
             }
@@ -246,7 +256,7 @@
                 order: 1;
                 flex: 1;
                 overflow-y: auto;
-                padding-bottom: 1rem;
+                padding-bottom: 80px; /* Space for the fixed nav bar */
             }
             .header {
                 flex-direction: column;
@@ -269,6 +279,11 @@
                 width: 100%;
                 justify-content: center;
             }
+            .csv-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.5rem;
+            }
             .view > div[style*="display: flex"] {
                 flex-direction: column;
                 gap: 0.75rem !important;
@@ -282,6 +297,9 @@
                 flex-direction: row;
                 justify-content: space-around;
                 gap: 0 !important;
+            }
+            .toast {
+                bottom: 80px; /* above nav bar */
             }
         }
     </style>
@@ -364,7 +382,7 @@
         <!-- View: Configuration -->
         <div id="view-config" class="view">
             <div style="background: var(--bg-surface); padding: 2rem; border-radius: 8px; border: 1px solid var(--border-subtle);">
-                <div class="form-group" style="display: flex; gap: 1rem; align-items: flex-end;">
+                <div class="form-group csv-row">
                     <div style="flex: 1;">
                         <label class="form-label">Active Leads CSV</label>
                         <select id="cfg-csv" class="form-control" style="font-family: var(--font-sans);"></select>
