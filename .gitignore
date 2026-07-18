@@ -1,5 +1,10 @@
 # Sensitive credentials
 config.json
+agent_config.json
+service_account.json
+
+# Autonomous agent state
+pending_lead_job.json
 
 # Developer lead lists (contains email addresses)
 *.csv

@@ -4,6 +4,7 @@ import json
 import os
 import csv
 import io
+import base64
 import urllib.parse
 import urllib.request
 import urllib.error
@@ -13,6 +14,21 @@ import random
 import smtplib
 from email.mime.text import MIMEText
 from email.header import Header
+
+# Metrics logger (graceful fallback if not present)
+try:
+    from metrics_logger import record_open, start_campaign, finish_campaign
+    METRICS_ENABLED = True
+except ImportError:
+    METRICS_ENABLED = False
+    def record_open(email): pass
+    def start_campaign(*a, **k): return "no_metrics"
+    def finish_campaign(*a, **k): pass
+
+# 1x1 transparent GIF for email tracking pixel
+_PIXEL_GIF = base64.b64decode(
+    "R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+)
 
 PORT = int(os.environ.get("PORT", 8000))
 DEFAULT_CSV = "active_dev_leads.csv"
@@ -128,7 +144,25 @@ def get_target_file(path):
             csv_file = requested_file
     return csv_file
 
-def generate_email_draft(target, template_type):
+def _inject_utm(html: str, campaign_id: str, template: str) -> str:
+    """
+    Replaces bare cortogen.com links with UTM-tagged versions so GA4
+    can attribute visits and installs to specific email campaigns.
+    """
+    import re
+    utm = (f"?utm_source=email&utm_medium=cold_email"
+           f"&utm_campaign={urllib.parse.quote(campaign_id)}"
+           f"&utm_content={urllib.parse.quote(template)}")
+    # Replace href="https://cortogen.com" (with or without trailing slash)
+    html = re.sub(
+        r'href="https://cortogen\.com(/?)"',
+        f'href="https://cortogen.com\\1{utm}"',
+        html
+    )
+    return html
+
+
+def generate_email_draft(target, template_type, campaign_id: str = "manual"):
     # Use custom body/subject if configured via dashboard
     if target.get('custom_subject') and target.get('custom_subject').strip():
         subject = target['custom_subject']
@@ -163,10 +197,13 @@ def generate_email_draft(target, template_type):
                 else:
                     personalized_html = html_template.replace('{{first_name}}', first_name)
                 
-                # Inject email for tracking
+                # Inject email for open-tracking pixel
                 target_email = target.get('email', '')
-                personalized_html = personalized_html.replace('{{email}}', target_email)
-                
+                personalized_html = personalized_html.replace('{{email}}', urllib.parse.quote(target_email))
+
+                # Inject UTM parameters into CTA links
+                personalized_html = _inject_utm(personalized_html, campaign_id, template_type)
+
                 body = personalized_html
                 is_html = True
         except Exception as e:
@@ -234,7 +271,7 @@ Cortogen Team"""
     except Exception as e:
         print(f"[Summary] Failed to send notification email: {e}")
 
-def run_campaign_thread(csv_file, limit, selected_template="direct"):
+def run_campaign_thread(csv_file, limit, selected_template="direct", campaign_id: str = None):
     global campaign_running, campaign_status, campaign_current, campaign_total, campaign_logs, stop_requested
     
     with campaign_lock:
@@ -288,6 +325,10 @@ def run_campaign_thread(csv_file, limit, selected_template="direct"):
             campaign_running = False
             return
 
+        # Use provided campaign_id or generate one for metrics tracking
+        if not campaign_id:
+            campaign_id = f"manual_{time.strftime('%Y_%m_%d_%H%M')}"
+
         log(f"Found {len(pending)} pending leads. Sending batch of {campaign_total} emails today.")
 
         for i in range(campaign_total):
@@ -311,7 +352,7 @@ def run_campaign_thread(csv_file, limit, selected_template="direct"):
 
             lead["template_type"] = selected_template
             template_type = lead.get("template_type", "direct")
-            subject, body, is_html = generate_email_draft(lead, template_type)
+            subject, body, is_html = generate_email_draft(lead, template_type, campaign_id=campaign_id)
 
             campaign_status = f"Sending email {i+1} of {campaign_total} to {name}..."
             log(f"[{i+1}/{campaign_total}] Sending email to {name} ({email_addr}) using template '{template_type}'...")
@@ -414,6 +455,26 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps(leads).encode('utf-8'))
             return
 
+        # API Route: Email open tracking pixel
+        if self.path.startswith('/api/track/open'):
+            parsed = urllib.parse.urlparse(self.path)
+            params = urllib.parse.parse_qs(parsed.query)
+            email  = urllib.parse.unquote(params.get('email', [''])[0])
+
+            # Log the open in metrics
+            if email and METRICS_ENABLED:
+                threading.Thread(target=record_open, args=(email,), daemon=True).start()
+
+            # Return 1x1 transparent GIF
+            self.send_response(200)
+            self.send_header('Content-Type', 'image/gif')
+            self.send_header('Content-Length', str(len(_PIXEL_GIF)))
+            self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate')
+            self.send_header('Pragma', 'no-cache')
+            self.end_headers()
+            self.wfile.write(_PIXEL_GIF)
+            return
+
         # API Route: Fetch current campaign status
         if self.path == '/api/campaign-status':
             self.send_response(200)
@@ -430,24 +491,39 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps(status_data).encode('utf-8'))
             return
             
-        # API Route: Fetch analytics from production backend
+        # API Route: Fetch analytics (local metrics + remote stats)
         if self.path == '/api/analytics':
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
-            
+
+            combined = {"total_opens": 0, "unique_opens": 0, "recent_opens": [], "campaigns": []}
+
+            # Local campaign metrics
+            if METRICS_ENABLED:
+                try:
+                    from metrics_logger import summarize_performance, get_last_n_campaigns
+                    perf = summarize_performance(days=7)
+                    combined["total_opens"]   = perf.get("total_opens", 0)
+                    combined["avg_open_rate"] = perf.get("avg_open_rate", 0)
+                    combined["campaigns"]     = perf.get("campaign_details", [])
+                except Exception as le:
+                    combined["local_metrics_error"] = str(le)
+
+            # Remote stats (best-effort)
             try:
-                # Use a specific admin key (in a real setup this would come from local config)
                 req = urllib.request.Request(
                     'https://api.cortogen.com/api/admin/email-stats',
                     headers={'X-Admin-Key': 'CORTOGEN_ADMIN_SECURE_123'}
                 )
                 with urllib.request.urlopen(req, timeout=5) as response:
-                    stats_data = response.read()
-                    self.wfile.write(stats_data)
-            except Exception as e:
-                # Return empty/default stats if offline or fails
-                self.wfile.write(json.dumps({"error": str(e), "total_opens": 0, "unique_opens": 0, "recent_opens": []}).encode('utf-8'))
+                    remote = json.loads(response.read())
+                    combined["recent_opens"]  = remote.get("recent_opens", [])
+                    combined["remote_stats"]  = remote
+            except Exception:
+                pass  # silently ignore if offline
+
+            self.wfile.write(json.dumps(combined).encode('utf-8'))
             return
             
         # Default: Serve static files
@@ -524,16 +600,252 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(json.dumps({"status": "success", "message": "Stop requested"}).encode('utf-8'))
             return
-            
+
+        # API Route: Start Scheduler Daemon
+        if self.path == '/api/scheduler/start':
+            try:
+                import subprocess
+                # Start as background process
+                proc = subprocess.Popen([sys.executable, "autonomous_scheduler.py"], cwd=BASE_DIR)
+                pid_file = os.path.join(BASE_DIR, 'scheduler.pid')
+                with open(pid_file, 'w') as f:
+                    f.write(str(proc.pid))
+                self.send_response(200)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({"status": "ok", "pid": proc.pid}).encode())
+            except Exception as e:
+                self.send_response(500)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({"status": "error", "message": str(e)}).encode())
+            return
+
+        # API Route: Stop Scheduler Daemon
+        if self.path == '/api/scheduler/stop':
+            try:
+                pid_file = os.path.join(BASE_DIR, 'scheduler.pid')
+                if os.path.exists(pid_file):
+                    with open(pid_file) as f:
+                        pid = int(f.read().strip())
+                    import signal
+                    # Windows specific kill
+                    if os.name == 'nt':
+                        os.kill(pid, signal.SIGTERM)
+                    else:
+                        os.kill(pid, signal.SIGKILL)
+                    os.remove(pid_file)
+                self.send_response(200)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({"status": "ok"}).encode())
+            except Exception as e:
+                self.send_response(500)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({"status": "error", "message": str(e)}).encode())
+            return
+
+        # API Route: Get/Set agent config
+        if self.path == '/api/agent-config':
+            agent_cfg_path = os.path.join(BASE_DIR, 'agent_config.json')
+            if not os.path.exists(agent_cfg_path):
+                # Create from template defaults
+                default_cfg = {
+                    "timezone": "Asia/Kolkata",
+                    "send_times": ["09:00", "14:00"],
+                    "daily_limit_per_window": 30,
+                    "report_interval_days": 3,
+                    "active_csv": "",
+                    "active_template": "sales",
+                    "active_region": "",
+                    "active_lead_source": "Manual CSV",
+                    "ga4_property_id": ""
+                }
+                with open(agent_cfg_path, 'w') as f:
+                    json.dump(default_cfg, f, indent=2)
+            content_length = int(self.headers.get('Content-Length', 0))
+            post_data = self.rfile.read(content_length)
+            try:
+                new_cfg = json.loads(post_data.decode('utf-8'))
+                with open(agent_cfg_path, 'w') as f:
+                    json.dump(new_cfg, f, indent=2)
+                self.send_response(200)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({"status": "ok"}).encode())
+            except Exception as e:
+                self.send_response(500)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({"status": "error", "message": str(e)}).encode())
+            return
+
+        # API Route: Send stats report now
+        if self.path == '/api/send-report':
+            try:
+                from report_mailer import send_report
+                import threading as _t
+                _t.Thread(target=send_report, args=(3,), daemon=True).start()
+                self.send_response(200)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({"status": "ok", "message": "Report email queued."}).encode())
+            except Exception as e:
+                self.send_response(500)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({"status": "error", "message": str(e)}).encode())
+            return
+
         self.send_response(404)
         self.end_headers()
 
+    def do_GET(self):
+        # API Route: Get agent config
+        if self.path == '/api/agent-config':
+            agent_cfg_path = os.path.join(BASE_DIR, 'agent_config.json')
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            if os.path.exists(agent_cfg_path):
+                with open(agent_cfg_path, 'r') as f:
+                    self.wfile.write(f.read().encode())
+            else:
+                default = {
+                    "timezone": "Asia/Kolkata",
+                    "send_times": ["09:00", "14:00"],
+                    "daily_limit_per_window": 30,
+                    "report_interval_days": 3,
+                    "active_csv": "",
+                    "active_template": "sales",
+                    "active_region": "",
+                    "active_lead_source": "Manual CSV",
+                    "ga4_property_id": ""
+                }
+                self.wfile.write(json.dumps(default).encode())
+            return
+
+        # API Route: List available CSV files
+        if self.path == '/api/list-csvs':
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            csvs = [f for f in os.listdir(BASE_DIR) if f.endswith('.csv')]
+            self.wfile.write(json.dumps(csvs).encode())
+            return
+
+        # API Route: Scheduler status (check if autonomous_scheduler is running)
+        if self.path == '/api/scheduler-status':
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            # Check for pid file
+            pid_file = os.path.join(BASE_DIR, 'scheduler.pid')
+            running = False
+            pid = None
+            if os.path.exists(pid_file):
+                try:
+                    with open(pid_file) as f:
+                        pid = int(f.read().strip())
+                    import signal
+                    os.kill(pid, 0)  # Check if process alive
+                    running = True
+                except Exception:
+                    running = False
+            self.wfile.write(json.dumps({"running": running, "pid": pid}).encode())
+            return
+
+        # Existing GET routes (researchers, tracking pixel, campaign-status, analytics)
+        if self.path.startswith('/api/researchers'):
+            csv_file = get_target_file(self.path)
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json; charset=utf-8')
+            self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
+            self.send_header('Pragma', 'no-cache')
+            self.send_header('Expires', '0')
+            self.end_headers()
+            leads = load_csv_as_json(csv_file)
+            self.wfile.write(json.dumps(leads).encode('utf-8'))
+            return
+
+        if self.path.startswith('/api/track/open'):
+            parsed = urllib.parse.urlparse(self.path)
+            params = urllib.parse.parse_qs(parsed.query)
+            email  = urllib.parse.unquote(params.get('email', [''])[0])
+            if email and METRICS_ENABLED:
+                threading.Thread(target=record_open, args=(email,), daemon=True).start()
+            self.send_response(200)
+            self.send_header('Content-Type', 'image/gif')
+            self.send_header('Content-Length', str(len(_PIXEL_GIF)))
+            self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate')
+            self.send_header('Pragma', 'no-cache')
+            self.end_headers()
+            self.wfile.write(_PIXEL_GIF)
+            return
+
+        if self.path == '/api/campaign-status':
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            status_data = {
+                "running": campaign_running,
+                "status": campaign_status,
+                "current": campaign_current,
+                "total": campaign_total,
+                "logs": campaign_logs
+            }
+            self.wfile.write(json.dumps(status_data).encode('utf-8'))
+            return
+
+        if self.path == '/api/analytics':
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            combined = {"total_opens": 0, "unique_opens": 0, "recent_opens": [], "campaigns": [], "avg_open_rate": 0}
+            if METRICS_ENABLED:
+                try:
+                    from metrics_logger import summarize_performance
+                    from ga4_collector import compute_ga4_delta
+                    perf = summarize_performance(days=7)
+                    ga4  = compute_ga4_delta(days=7)
+                    combined.update({
+                        "total_opens":    perf.get("total_opens", 0),
+                        "avg_open_rate":  perf.get("avg_open_rate", 0),
+                        "campaigns":      perf.get("campaign_details", []),
+                        "total_sent":     perf.get("total_sent", 0),
+                        "campaigns_run":  perf.get("campaigns_run", 0),
+                        "ga4_new_users":  ga4.get("total_new_users", 0),
+                        "ga4_installs":   ga4.get("total_installs", 0),
+                        "ga4_sessions":   ga4.get("total_sessions", 0),
+                    })
+                except Exception as e:
+                    combined["error"] = str(e)
+            try:
+                req = urllib.request.Request(
+                    'https://api.cortogen.com/api/admin/email-stats',
+                    headers={'X-Admin-Key': 'CORTOGEN_ADMIN_SECURE_123'}
+                )
+                with urllib.request.urlopen(req, timeout=5) as response:
+                    remote = json.loads(response.read())
+                    combined["recent_opens"] = remote.get("recent_opens", [])
+                    combined["unique_opens"] = remote.get("unique_opens", 0)
+            except Exception:
+                pass
+            self.wfile.write(json.dumps(combined).encode('utf-8'))
+            return
+
+        # Default: serve static files
+        if self.path == '/' or self.path == '':
+            self.path = '/index.html'
+        return super().do_GET()
+
+
 def run_server():
-    # Use socketserver to handle port reuse
     socketserver.TCPServer.allow_reuse_address = True
     with socketserver.TCPServer(("", PORT), OutreachRequestHandler) as httpd:
         print(f"\n==========================================================")
-        print(f"  AI Developer Outreach Dashboard is running at:")
+        print(f"  Cortogen Email Dashboard running at:")
         print(f"  http://localhost:{PORT}")
         print(f"==========================================================\n")
         try:

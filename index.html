@@ -2,37 +2,28 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Welcome Master</title>
-    <!-- Modern Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cortogen Email Engine</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    
     <style>
         :root {
-            --bg-base: #060606;
-            --bg-surface: #111111;
-            --bg-surface-elevated: #171717;
-            --border-subtle: rgba(255, 255, 255, 0.08);
-            --border-focus: rgba(255, 106, 0, 0.4);
+            --bg-base: #0a0a0a;
+            --bg-surface: #141414;
+            --bg-surface-elevated: #1e1e1e;
+            --border-subtle: rgba(255, 255, 255, 0.1);
+            --border-focus: rgba(251, 133, 0, 0.5);
             
-            --accent-primary: #FF6A00;
-            --accent-amber: #FF9900;
-            --color-success: #10b981;
-            --color-error: #ef4444;
+            --accent-primary: #FB8500;
+            --accent-amber: #FFB703;
+            --color-success: #00c864;
+            --color-error: #ff5050;
             
             --text-primary: #ffffff;
             --text-secondary: #a1a1aa;
-            --text-muted: #52525b;
             
             --font-sans: 'Inter', sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
-            
-            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -41,1401 +32,480 @@
             background-color: var(--bg-base);
             color: var(--text-primary);
             font-family: var(--font-sans);
-            font-size: 15px;
-            overflow: hidden;
-            height: 100vh;
+            font-size: 14px;
             display: flex;
-            flex-direction: column;
-            -webkit-font-smoothing: antialiased;
+            height: 100vh;
+            overflow: hidden;
         }
 
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--bg-surface-elevated); border-radius: 2px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--border-subtle); }
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 260px;
+            background: var(--bg-surface);
+            border-right: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem 0;
+        }
 
-        /* Header / Navbar */
-        header {
-            background: var(--bg-base);
-            border-bottom: 1px solid var(--border-subtle);
+        .brand {
+            padding: 0 1.5rem;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .brand i { color: var(--accent-primary); }
+
+        .nav-item {
             padding: 0.75rem 1.5rem;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            height: 56px;
-            flex-shrink: 0;
-        }
-
-        .header-brand {
-            display: flex;
-            align-items: center;
             gap: 0.75rem;
-            font-weight: 600;
-            font-size: 16px;
-        }
-        
-        .header-brand i { color: var(--accent-primary); width: 18px; height: 18px; }
-
-        .header-stats {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
-
-        .stat-chip {
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            background: var(--bg-surface);
-            border: 1px solid var(--border-subtle);
-            border-radius: 4px;
-            padding: 0.3rem 0.6rem;
-            font-size: 12px;
-            font-family: var(--font-mono);
             color: var(--text-secondary);
-        }
-
-        .stat-val { color: var(--text-primary); font-weight: 500; }
-
-        .btn-primary {
-            background: var(--accent-primary);
-            color: #000;
-            border: none;
-            padding: 0.4rem 0.75rem;
-            border-radius: 4px;
-            font-family: var(--font-sans);
-            font-weight: 500;
-            font-size: 13px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            transition: var(--transition-fast);
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
         }
-        .btn-primary:hover { background: var(--accent-amber); transform: translateY(-1px); }
-
-        .btn-secondary {
-            background: var(--bg-surface);
-            color: var(--text-primary);
-            border: 1px solid var(--border-subtle);
-            padding: 0.4rem 0.75rem;
-            border-radius: 4px;
-            font-family: var(--font-sans);
-            font-weight: 500;
-            font-size: 13px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            transition: var(--transition-fast);
-        }
-        .btn-secondary:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
-
-        .sync-indicator {
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            font-size: 10px;
-            font-family: var(--font-mono);
-            text-transform: uppercase;
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--color-success);
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            border: 1px solid rgba(16, 185, 129, 0.2);
-        }
-        .sync-indicator.syncing {
-            background: rgba(255, 106, 0, 0.1);
+        .nav-item:hover { background: var(--bg-surface-elevated); color: var(--text-primary); }
+        .nav-item.active { 
+            background: rgba(251, 133, 0, 0.1); 
             color: var(--accent-primary);
-            border-color: rgba(255, 106, 0, 0.2);
+            border-left-color: var(--accent-primary);
         }
-        .sync-dot { width: 6px; height: 6px; border-radius: 50%; background-color: currentColor; }
 
-        /* Layout */
-        .app-container {
-            display: flex;
+        /* Main Content */
+        .main-content {
             flex: 1;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 320px;
-            border-right: 1px solid var(--border-subtle);
-            background: var(--bg-base);
             display: flex;
             flex-direction: column;
-            flex-shrink: 0;
-            transition: var(--transition-normal);
+            overflow-y: auto;
         }
 
-        .sidebar-search {
-            padding: 1rem;
+        /* Header / Master Switch */
+        .header {
+            padding: 1.5rem 2rem;
             border-bottom: 1px solid var(--border-subtle);
             display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-base);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .master-switch-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
             background: var(--bg-surface);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
         }
 
-        .input-group { position: relative; display: flex; align-items: center; width: 100%; gap: 0.5rem; }
-        .input-icon-left i { position: absolute; left: 0.75rem; width: 14px; height: 14px; color: var(--text-muted); }
-        
-        .modern-input {
-            width: 100%;
-            background: var(--bg-base);
-            border: 1px solid var(--border-subtle);
-            border-radius: 4px;
-            padding: 0.4rem 0.75rem;
+        /* Toggle Switch CSS */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #333; transition: .4s; border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px;
+            background-color: white; transition: .4s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--color-success); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        .btn {
+            background: var(--bg-surface-elevated);
             color: var(--text-primary);
-            font-family: var(--font-sans);
-            font-size: 14px;
-            outline: none;
-            transition: var(--transition-fast);
-        }
-        .modern-input.with-icon { padding-left: 2.25rem; }
-        .modern-input:focus { border-color: var(--border-focus); }
-        
-        .modern-select {
-            background: var(--bg-base);
             border: 1px solid var(--border-subtle);
-            border-radius: 4px;
-            padding: 0.3rem 0.5rem;
-            color: var(--text-secondary);
-            font-size: 13px;
-            outline: none;
-            flex: 1;
-            cursor: pointer;
-        }
-        .modern-select:focus { border-color: var(--border-focus); color: var(--text-primary); }
-
-        .researchers-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 0.5rem;
-        }
-
-        /* The JS uses exactly these classes, so we style them beautifully */
-        .researcher-card {
-            padding: 0.75rem;
+            padding: 0.5rem 1rem;
             border-radius: 6px;
             cursor: pointer;
-            transition: var(--transition-fast);
-            border: 1px solid transparent;
-            margin-bottom: 2px;
+            font-family: var(--font-sans);
+            font-weight: 500;
             display: flex;
-            flex-direction: column;
-            gap: 0.4rem;
-        }
-        .researcher-card:hover { background: var(--bg-surface); }
-        .researcher-card.active {
-            background: var(--bg-surface-elevated);
-            border-color: var(--border-subtle);
-            box-shadow: inset 2px 0 0 var(--accent-primary);
-        }
-
-        .card-header-info { display: flex; justify-content: space-between; align-items: center; }
-        .card-name { font-weight: 500; font-size: 14px; color: var(--text-primary); }
-        .card-institution { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        
-        .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 0.2rem; }
-        .card-sources { display: flex; gap: 0.2rem; flex-wrap: wrap; }
-        .source-tag { font-size: 11px; padding: 0.15rem 0.35rem; border-radius: 3px; font-family: var(--font-mono); text-transform: uppercase; background: var(--bg-base); color: var(--text-secondary); border: 1px solid var(--border-subtle); }
-        
-        .status-badge { font-size: 11px; padding: 0.15rem 0.35rem; border-radius: 3px; font-weight: 600; text-transform: uppercase; font-family: var(--font-mono); }
-        .status-badge.not_contacted { background: rgba(82, 82, 91, 0.2); color: #a1a1aa; }
-        .status-badge.drafted { background: rgba(255, 106, 0, 0.1); color: var(--accent-primary); border: 1px solid rgba(255, 106, 0, 0.2); }
-        .status-badge.scheduled { background: rgba(245, 158, 11, 0.1); color: var(--accent-amber); border: 1px solid rgba(245, 158, 11, 0.2); }
-        .status-badge.sent { background: rgba(16, 185, 129, 0.1); color: var(--color-success); border: 1px solid rgba(16, 185, 129, 0.2); }
-        .status-badge.replied { background: rgba(168, 85, 247, 0.1); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.2); }
-        
-        .status-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
-        .status-dot.not_contacted { background-color: var(--text-muted); }
-        .status-dot.drafted { background-color: var(--accent-primary); }
-        .status-dot.scheduled { background-color: var(--accent-amber); }
-        .status-dot.sent { background-color: var(--color-success); }
-        .status-dot.replied { background-color: #c084fc; }
-
-        /* Workspace */
-        .workspace {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: var(--bg-base);
-            overflow-y: auto;
-            position: relative;
-        }
-
-        /* Empty State */
-        .empty-state {
-            display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100%;
-            padding: 2rem;
-            text-align: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
         }
+        .btn:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+        .btn-primary { background: var(--accent-primary); color: #000; border: none; }
+        .btn-primary:hover { background: var(--accent-amber); color: #000; }
 
-        .hero-title {
-            font-size: 28px;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.02em;
-        }
-        .hero-desc {
-            color: var(--text-secondary);
-            font-size: 16px;
-            margin-bottom: 2rem;
-            max-width: 400px;
-        }
+        /* View Containers */
+        .view { display: none; padding: 2rem; max-width: 1000px; margin: 0 auto; width: 100%; }
+        .view.active { display: block; }
 
-        .feature-grid {
+        /* Dashboard Grid */
+        .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 1rem;
-            max-width: 700px;
-            margin-top: 2rem;
+            margin-bottom: 2rem;
         }
-        .feature-card {
+        .stat-card {
             background: var(--bg-surface);
             border: 1px solid var(--border-subtle);
-            padding: 1rem;
-            border-radius: 8px;
-            text-align: left;
-        }
-        .feature-card i { color: var(--accent-primary); margin-bottom: 0.5rem; width: 18px; height: 18px; }
-        .feature-card h4 { font-size: 13px; margin-bottom: 0.25rem; font-weight: 500; }
-        .feature-card p { font-size: 12px; color: var(--text-secondary); line-height: 1.4; }
-
-        /* Outreach Panel */
-        .outreach-panel {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        .panel-header {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--border-subtle);
-            background: var(--bg-surface);
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            flex-shrink: 0;
-        }
-
-        .profile-row { display: flex; justify-content: space-between; align-items: flex-start; }
-        
-        .profile-info h2 { font-size: 20px; font-weight: 600; margin-bottom: 0.2rem; display: flex; align-items: center; gap: 0.5rem; }
-        .profile-info p { font-size: 14px; color: var(--text-secondary); font-family: var(--font-mono); }
-
-        .meta-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 0.5rem;
-        }
-        .meta-item { display: flex; flex-direction: column; gap: 0.4rem; }
-        .meta-label { font-size: 12px; text-transform: uppercase; color: var(--text-muted); font-family: var(--font-mono); font-weight: 600; display: flex; align-items: center; justify-content: space-between; }
-
-        .mini-btn { background: transparent; border: 1px solid var(--border-subtle); color: var(--text-secondary); border-radius: 4px; padding: 0.15rem 0.4rem; font-size: 11px; font-family: var(--font-mono); cursor: pointer; transition: var(--transition-fast); display: flex; align-items: center; gap: 0.2rem; }
-        .mini-btn:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
-
-        .compact-input {
-            background: var(--bg-base); border: 1px solid var(--border-subtle); border-radius: 4px; padding: 0.4rem 0.5rem; color: var(--text-primary); font-size: 13px; outline: none; width: 100%; transition: var(--transition-fast);
-        }
-        .compact-input:focus { border-color: var(--border-focus); }
-
-        /* IDE-like Email Editor */
-        .editor-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: var(--bg-base);
             padding: 1.5rem;
+            border-radius: 8px;
         }
+        .stat-value { font-size: 2rem; font-weight: 600; margin-bottom: 0.25rem; color: var(--accent-primary); }
+        .stat-label { font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .editor-toolbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.75rem;
-        }
-
-        .editor-subject {
+        /* Config Form */
+        .form-group { margin-bottom: 1.25rem; }
+        .form-label { display: block; margin-bottom: 0.5rem; font-size: 13px; color: var(--text-secondary); }
+        .form-control {
             width: 100%;
-            background: transparent;
-            border: none;
-            border-bottom: 1px solid var(--border-subtle);
-            padding: 0.5rem 0;
-            font-size: 18px;
-            font-weight: 500;
+            background: var(--bg-base);
+            border: 1px solid var(--border-subtle);
+            padding: 0.75rem;
+            border-radius: 6px;
             color: var(--text-primary);
-            outline: none;
-            margin-bottom: 1rem;
-            transition: var(--transition-fast);
+            font-family: var(--font-mono);
+            font-size: 13px;
         }
-        .editor-subject:focus { border-bottom-color: var(--accent-primary); }
-
-        .editor-textarea {
-            flex: 1;
-            width: 100%;
-            background: transparent;
-            border: none;
-            color: var(--text-primary);
-            font-family: var(--font-sans);
-            font-size: 15px;
-            line-height: 1.6;
-            resize: none;
-            outline: none;
-        }
-
-        .editor-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border-subtle);
-            margin-top: 1rem;
-        }
-
-        /* Modal */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 100; }
-        .modal-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 8px; width: 480px; max-width: 90vw; display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--shadow-premium); }
-        .modal-header { padding: 1rem; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; background: var(--bg-surface-elevated); }
-        .modal-body { padding: 1rem; display: flex; flex-direction: column; gap: 1rem; }
-        .modal-footer { padding: 1rem; border-top: 1px solid var(--border-subtle); display: flex; justify-content: flex-end; }
+        .form-control:focus { outline: none; border-color: var(--border-focus); }
         
-        .progress-track { width: 100%; height: 4px; background: var(--bg-base); border-radius: 2px; overflow: hidden; }
-        .progress-bar { height: 100%; width: 0%; background: var(--accent-primary); transition: width 0.3s ease; }
-        
-        .console-logs { background: #000; border: 1px solid var(--border-subtle); border-radius: 4px; height: 160px; padding: 0.5rem; overflow-y: auto; font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); }
-
-        /* Toasts */
-        .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
-        .toast { background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); box-shadow: 0 10px 30px rgba(0,0,0,0.5); padding: 0.8rem 1.2rem; border-radius: 6px; color: #fff; font-family: var(--font-sans); font-size: 12px; display: flex; align-items: center; gap: 0.5rem; pointer-events: auto; opacity: 0; transform: translateY(20px); transition: all 0.3s ease; border-left: 3px solid var(--accent-primary); }
-        .toast.show { opacity: 1; transform: translateY(0); }
-        .toast.toast-error { border-left-color: var(--color-error); }
-
-        #btn-mobile-back { display: none; }
-
-        /* Mobile First */
-        @media (max-width: 768px) {
-            header { flex-wrap: wrap; height: auto; padding: 0.75rem 1rem; gap: 0.5rem; }
-            .header-brand { flex: 1; min-width: 100%; justify-content: center; margin-bottom: 0.25rem; }
-            .header-stats { width: 100%; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; }
-            .header-stats button, #campaign-template { flex: 1; min-width: 130px; font-size: 12px; padding: 0.5rem; justify-content: center; }
-            #campaign-template { margin-right: 0 !important; margin-bottom: 0.5rem; max-width: none !important; }
-            .stat-chip, .sync-indicator { display: none; }
-            .app-container { flex-direction: column; }
-            .sidebar { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 10; }
-            .workspace { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 20; }
-            
-            .mobile-hidden { display: none !important; }
-            
-            #btn-mobile-back { display: flex; margin-right: 0.5rem; background: transparent; border: none; color: var(--text-primary); cursor: pointer; }
-            
-            .feature-grid { grid-template-columns: 1fr; }
-            .meta-grid { grid-template-columns: 1fr; }
-            .editor-footer { flex-direction: column; align-items: stretch; gap: 0.5rem; }
-            .btn-primary, .btn-secondary { justify-content: center; width: 100%; }
+        .table-wrapper {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            overflow: hidden;
         }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 1rem; border-bottom: 1px solid var(--border-subtle); font-size: 12px; color: var(--text-secondary); text-transform: uppercase; }
+        td { padding: 1rem; border-bottom: 1px solid var(--border-subtle); font-size: 13px; }
+        tr:hover td { background: var(--bg-surface-elevated); }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 20px; right: 20px;
+            background: var(--bg-surface-elevated);
+            border-left: 3px solid var(--accent-primary);
+            padding: 1rem; border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            transform: translateY(100px); opacity: 0;
+            transition: all 0.3s;
+            z-index: 9999;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="header-brand">
-            Welcome Master
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="brand">
+            <i data-lucide="zap"></i> Cortogen Engine
         </div>
-        
-        <div class="header-stats">
-            <div class="stat-chip"><i data-lucide="users"></i> <span id="stat-total" class="stat-val">0</span> Tot</div>
-            <div class="stat-chip"><i data-lucide="edit-3"></i> <span id="stat-drafted" class="stat-val">0</span> Drf</div>
-            <div class="stat-chip"><i data-lucide="clock"></i> <span id="stat-scheduled" class="stat-val">0</span> Sch</div>
-            <div class="stat-chip"><i data-lucide="mail"></i> <span id="stat-sent" class="stat-val">0</span> Snt</div>
-            <div class="stat-chip"><i data-lucide="message-square"></i> <span id="stat-replies" class="stat-val">0</span> Rpl</div>
-            
-            <div class="sync-indicator" id="sync-status">
-                <div class="sync-dot"></div> <span id="sync-text">Synced</span>
-            </div>
-            
-            <select id="campaign-template" class="modern-select" style="max-width: 150px; background: var(--bg-surface); color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: 4px; padding: 0.4rem 0.5rem; font-size: 12px; margin-right: 0.5rem; cursor: pointer;">
-                <option value="direct">Direct (Plain Text)</option>
-                <option value="premium">Premium (HTML)</option>
-                <option value="sales">Sales (HTML - Free Trial)</option>
-            </select>
-            
-            <button id="btn-start-batch" class="btn-primary">
-                <i data-lucide="play"></i> Initiate Campaign
-            </button>
-            <button id="btn-view-status" class="btn-secondary" style="display: none;">
-                <i data-lucide="activity"></i> Mission Status
-            </button>
-            <button id="btn-analytics" class="btn-secondary" title="View Analytics">
-                <i data-lucide="bar-chart-2"></i> Intelligence
-            </button>
+        <div class="nav-item active" onclick="switchView('dashboard')">
+            <i data-lucide="layout-dashboard"></i> Dashboard
         </div>
-    </header>
-
-    <div class="app-container">
-        
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-search">
-                <div class="input-group input-icon-left">
-                    <i data-lucide="search"></i>
-                    <input type="text" id="search-input" class="modern-input with-icon" placeholder="Locate Target...">
-                </div>
-                <div style="display: flex; gap: 0.5rem;">
-                    <select id="filter-source" class="modern-select">
-                        <option value="all">All Sources</option>
-                        <option value="GitHub Scraper">GitHub</option>
-                        <option value="Related Work Authors">Related Work</option>
-                        <option value="Top Elite AI Researchers">Elite AI</option>
-                    </select>
-                    <select id="filter-status" class="modern-select">
-                        <option value="all">All Status</option>
-                        <option value="not_contacted">Awaiting Orders</option>
-                        <option value="drafted">Prepared</option>
-                        <option value="scheduled">Queued</option>
-                        <option value="sent">Transmitted</option>
-                        <option value="replied">Acknowledged</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="researchers-list" id="researchers-list-container">
-                <!-- Cards render here via JS -->
-            </div>
+        <div class="nav-item" onclick="switchView('config')">
+            <i data-lucide="settings"></i> Configuration
         </div>
-        
-        <!-- Workspace -->
-        <div class="workspace" id="workspace-container">
-            
-            <!-- Empty State -->
-            <div class="empty-state" id="empty-state">
-                <i data-lucide="shield-check" style="width: 48px; height: 48px; color: var(--accent-primary); margin-bottom: 1rem;"></i>
-                <h2 class="hero-title">Welcome back, Master.</h2>
-                <p class="hero-desc">Select a target from the sidebar to initiate personalized outreach operations.</p>
-                
-                <button class="btn-primary" onclick="document.querySelector('#search-input').focus()">
-                    <i data-lucide="search"></i> Locate Target
-                </button>
-                
-                <div class="feature-grid">
-                    <div class="feature-card">
-                        <i data-lucide="activity"></i>
-                        <h4>Autonomous Execution</h4>
-                        <p>I will run your campaigns quietly in the background.</p>
-                    </div>
-                    <div class="feature-card">
-                        <i data-lucide="crosshair"></i>
-                        <h4>Precision Targeting</h4>
-                        <p>Calibrated for maximum conversion and engagement.</p>
-                    </div>
-                    <div class="feature-card">
-                        <i data-lucide="lock"></i>
-                        <h4>Absolute Discretion</h4>
-                        <p>All data remains encrypted and stored strictly on your local hardware.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Outreach Panel -->
-            <div class="outreach-panel" id="outreach-panel" style="display: none;">
-                
-                <div class="panel-header">
-                    <div class="profile-row">
-                        <div class="profile-info">
-                            <h2>
-                                <button id="btn-mobile-back"><i data-lucide="arrow-left"></i></button>
-                                <span id="prof-name">Name</span>
-                            </h2>
-                            <p><span id="prof-position">Role</span> • <span id="prof-inst">Institution</span></p>
-                        </div>
-                        <div style="display: flex; gap: 0.5rem; align-items: center;">
-                            <a href="#" id="prof-homepage-link" target="_blank" class="btn-secondary" style="display: none;"><i data-lucide="external-link"></i> Homepage</a>
-                            <button class="btn-secondary" id="btn-save" style="display:none;"><i data-lucide="save"></i> Save</button>
-                        </div>
-                    </div>
-                    
-                    <div class="meta-grid">
-                        <div class="meta-item">
-                            <span class="meta-label">
-                                Target Vector 
-                                <span>
-                                    <button id="btn-predict-email" class="mini-btn" title="Copilot Predict"><i data-lucide="wand-2" style="width:10px;height:10px;"></i> Predict</button>
-                                    <button id="btn-google-search" class="mini-btn" title="Google Search"><i data-lucide="search" style="width:10px;height:10px;"></i> Acquire</button>
-                                </span>
-                            </span>
-                            <div class="input-group">
-                                <input type="email" id="input-email" class="compact-input" placeholder="target@domain.edu">
-                                <button id="btn-verify-email" style="display:none;"></button>
-                            </div>
-                            <div id="prediction-hint" style="font-size: 12px; color: var(--accent-primary); display: none;"></div>
-                        </div>
-                        <div class="meta-item">
-                            <span class="meta-label">Mission Status</span>
-                            <select id="input-status" class="compact-input">
-                                <option value="not_contacted">Awaiting Orders</option>
-                                <option value="drafted">Prepared</option>
-                                <option value="scheduled">Queued</option>
-                                <option value="sent">Transmitted</option>
-                                <option value="replied">Acknowledged</option>
-                                <option value="error">Failed</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="meta-item">
-                        <span class="meta-label">Intelligence Notes</span>
-                        <input type="text" id="input-notes" class="compact-input" placeholder="e.g. Acknowledge recent publication...">
-                    </div>
-                    
-                    <!-- Hidden elements required by JS -->
-                    <div style="display:none;" id="prof-papers-block"><span id="prof-papers"></span></div>
-                    <span style="display:none;" id="prof-overlap"></span>
-                    <span style="display:none;" id="prof-schedule-time"></span>
-                    <span style="display:none;" id="prof-schedule-zone"></span>
-                    <span style="display:none;" id="prof-sources"></span>
-                    
-                    <!-- Stub elements to prevent JS from crashing since Composer is removed -->
-                    <select id="email-template-type" style="display:none;"></select>
-                    <input type="text" id="input-subject" style="display:none;">
-                    <textarea id="input-body" style="display:none;"></textarea>
-                    <button id="btn-skip-next" style="display:none;"></button>
-                    <button id="btn-copy-email" style="display:none;"></button>
-                    <button id="btn-gmail-compose" style="display:none;"></button>
-                </div>
-                
-            </div>
+        <div class="nav-item" onclick="switchView('audience')">
+            <i data-lucide="users"></i> Audience / Leads
         </div>
     </div>
 
-    <!-- Modals -->
-    <div id="campaign-modal" class="modal-overlay">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h2 style="font-family: var(--font-mono); font-size: 14px; color: var(--text-primary);"><i data-lucide="activity" style="width: 16px; vertical-align: middle; margin-right: 0.5rem;"></i> Deployment Protocol</h2>
-                <button id="btn-close-campaign" style="background: none; border: none; color: var(--text-muted); cursor: pointer;"><i data-lucide="x"></i></button>
-            </div>
-            <div class="modal-body">
+    <!-- Main Content -->
+    <div class="main-content">
+        
+        <!-- Header -->
+        <div class="header">
+            <h2 id="view-title" style="font-size: 18px; font-weight: 500;">Dashboard</h2>
+            
+            <div class="master-switch-container">
                 <div>
-                    <div class="progress-track"><div id="campaign-progress-bar" class="progress-bar"></div></div>
-                    <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-secondary); margin-top: 0.4rem; font-family: var(--font-mono);">
-                        <span id="campaign-progress-count">0 / 0</span>
-                        <span id="campaign-progress-percent">0%</span>
-                    </div>
+                    <div style="font-size: 12px; font-weight: 600; text-transform: uppercase;">Autonomous Daemon</div>
+                    <div id="scheduler-status-text" style="font-size: 11px; color: var(--text-secondary);">Checking...</div>
                 </div>
-                <div id="campaign-status-msg" style="font-size: 12px; font-family: var(--font-mono); color: var(--accent-primary);">Systems initializing...</div>
-                <div class="console-logs" id="campaign-console-logs"></div>
-            </div>
-            <div class="modal-footer">
-                <button id="btn-stop-campaign" class="btn-secondary" style="color: var(--color-error); border-color: var(--border-subtle);"><i data-lucide="square" style="width: 14px; fill: currentColor;"></i> Abort</button>
+                <label class="switch">
+                    <input type="checkbox" id="scheduler-toggle" onchange="toggleScheduler()">
+                    <span class="slider"></span>
+                </label>
             </div>
         </div>
+
+        <!-- View: Dashboard -->
+        <div id="view-dashboard" class="view active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-sent">--</div>
+                    <div class="stat-label">Total Emails Sent</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-opens">--</div>
+                    <div class="stat-label">Total Opens</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-rate" style="color: var(--color-success)">--</div>
+                    <div class="stat-label">Avg Open Rate</div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn btn-primary" onclick="triggerManualBatch()">
+                    <i data-lucide="play"></i> Trigger Manual Batch Now
+                </button>
+                <button class="btn" onclick="sendReportNow()">
+                    <i data-lucide="mail"></i> Send Email Report Now
+                </button>
+            </div>
+            
+            <div style="margin-top: 2rem; background: var(--bg-surface); padding: 1.5rem; border: 1px solid var(--border-subtle); border-radius: 8px;">
+                <h3 style="font-size: 14px; margin-bottom: 1rem;">GA4 Conversions (Last 7 Days)</h3>
+                <div style="display: flex; gap: 2rem;">
+                    <div><span style="font-size: 24px; font-weight: 600; color: #fff;" id="ga4-users">--</span> <br><span style="font-size: 12px; color: var(--text-secondary);">New Users</span></div>
+                    <div><span style="font-size: 24px; font-weight: 600; color: #fff;" id="ga4-installs">--</span> <br><span style="font-size: 12px; color: var(--text-secondary);">Installs</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View: Configuration -->
+        <div id="view-config" class="view">
+            <div style="background: var(--bg-surface); padding: 2rem; border-radius: 8px; border: 1px solid var(--border-subtle);">
+                <div class="form-group">
+                    <label class="form-label">Active Leads CSV</label>
+                    <select id="cfg-csv" class="form-control" style="font-family: var(--font-sans);"></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Active Email Template</label>
+                    <select id="cfg-template" class="form-control" style="font-family: var(--font-sans);">
+                        <option value="sales">Sales (HTML)</option>
+                        <option value="premium">Premium (HTML)</option>
+                        <option value="direct">Direct (Plain Text)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Send Times (comma separated, 24h format)</label>
+                    <input type="text" id="cfg-times" class="form-control" placeholder="e.g. 09:00, 14:00">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Daily Limit Per Window</label>
+                    <input type="number" id="cfg-limit" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Timezone</label>
+                    <input type="text" id="cfg-timezone" class="form-control">
+                </div>
+                <button class="btn btn-primary" onclick="saveConfig()" style="margin-top: 1rem;">
+                    <i data-lucide="save"></i> Save Configuration
+                </button>
+            </div>
+        </div>
+
+        <!-- View: Audience -->
+        <div id="view-audience" class="view">
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Name</th>
+                            <th>Institution / Location</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="audience-list">
+                        <tr><td colspan="4" style="text-align:center;">Loading audience data...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 
-    <!-- Analytics Modal -->
-    <div id="analytics-modal" class="modal-overlay">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h2 style="font-family: var(--font-mono); font-size: 14px; color: var(--text-primary);"><i data-lucide="bar-chart-2" style="width: 16px; vertical-align: middle; margin-right: 0.5rem;"></i> Operation Intelligence</h2>
-                <button id="btn-close-analytics" style="background: none; border: none; color: var(--text-muted); cursor: pointer;"><i data-lucide="x"></i></button>
-            </div>
-            <div class="modal-body" style="min-height: 200px;">
-                <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
-                    <div style="flex: 1; background: var(--bg-surface-elevated); padding: 1rem; border-radius: 6px; border: 1px solid var(--border-subtle); text-align: center;">
-                        <div style="font-size: 24px; font-weight: 600; color: var(--text-primary);" id="analytics-total-opens">...</div>
-                        <div style="font-size: 11px; color: var(--text-secondary); text-transform: uppercase; font-family: var(--font-mono);">Total Opens</div>
-                    </div>
-                    <div style="flex: 1; background: var(--bg-surface-elevated); padding: 1rem; border-radius: 6px; border: 1px solid var(--border-subtle); text-align: center;">
-                        <div style="font-size: 24px; font-weight: 600; color: var(--accent-primary);" id="analytics-unique-opens">...</div>
-                        <div style="font-size: 11px; color: var(--text-secondary); text-transform: uppercase; font-family: var(--font-mono);">Unique Targets</div>
-                    </div>
-                </div>
-                
-                <h3 style="font-size: 13px; font-weight: 600; margin-bottom: 0.75rem; color: var(--text-secondary);">Recent Open Events</h3>
-                <div id="analytics-recent-list" style="background: var(--bg-base); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.5rem; max-height: 250px; overflow-y: auto;">
-                    <div style="color: var(--text-muted); text-align: center; padding: 1rem; font-family: var(--font-mono); font-size: 12px;">Initializing uplink...</div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button id="btn-refresh-analytics" class="btn-primary"><i data-lucide="refresh-cw"></i> Refresh Data</button>
-            </div>
-        </div>
-    </div>
-    <div class="toast-container">
-        <div id="toast-notification" class="toast">
-            <i data-lucide="check-circle" style="width: 16px; height: 16px;"></i>
-            <span id="toast-message">Notification</span>
-        </div>
-    </div>
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">Action completed.</div>
 
     <script>
+        lucide.createIcons();
 
-        let researchers = [];
-        let activeId = null;
-        let isSyncing = false;
+        // UI State
+        function switchView(viewId) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(v => v.classList.remove('active'));
+            
+            document.getElementById('view-' + viewId).classList.add('active');
+            event.currentTarget.classList.add('active');
+            
+            const titles = { 'dashboard': 'Overview Dashboard', 'config': 'System Configuration', 'audience': 'Audience Database' };
+            document.getElementById('view-title').textContent = titles[viewId];
 
-        // Dom Elements
-        const listContainer = document.getElementById('researchers-list-container');
-        const emptyState = document.getElementById('empty-state');
-        const outreachPanel = document.getElementById('outreach-panel');
-        const searchInput = document.getElementById('search-input');
-        const filterSource = document.getElementById('filter-source');
-        const filterStatus = document.getElementById('filter-status');
-        
-        // Profile DOM
-        const profName = document.getElementById('prof-name');
-        const profPosition = document.getElementById('prof-position');
-        const profInst = document.getElementById('prof-inst');
-        const profSources = document.getElementById('prof-sources');
-        const profHomepageLink = document.getElementById('prof-homepage-link');
-        const profPapers = document.getElementById('prof-papers');
-        const profPapersBlock = document.getElementById('prof-papers-block');
-        const profOverlap = document.getElementById('prof-overlap');
-        
-        // Forms & Composer DOM
-        const inputEmail = document.getElementById('input-email');
-        const inputNotes = document.getElementById('input-notes');
-        const emailTemplateType = document.getElementById('email-template-type');
-        const inputSubject = document.getElementById('input-subject');
-        const inputBody = document.getElementById('input-body');
-        const inputStatus = document.getElementById('input-status');
-        const predictionHint = document.getElementById('prediction-hint');
-        
-        // Buttons
-        const btnPredictEmail = document.getElementById('btn-predict-email');
-        const btnGoogleSearch = document.getElementById('btn-google-search');
-        const btnCopyEmail = document.getElementById('btn-copy-email');
-        const btnGmailCompose = document.getElementById('btn-gmail-compose');
-        
-        // Campaign DOM
-        const btnStartBatch = document.getElementById('btn-start-batch');
-        const campaignModal = document.getElementById('campaign-modal');
-        const btnCloseCampaign = document.getElementById('btn-close-campaign');
-        const campaignProgressBar = document.getElementById('campaign-progress-bar');
-        const campaignProgressCount = document.getElementById('campaign-progress-count');
-        const campaignProgressPercent = document.getElementById('campaign-progress-percent');
-        const campaignStatusMsg = document.getElementById('campaign-status-msg');
-        const campaignConsoleLogs = document.getElementById('campaign-console-logs');
-        const btnStopCampaign = document.getElementById('btn-stop-campaign');
-        
-        // Stats
-        const statTotal = document.getElementById('stat-total');
-        const statDrafted = document.getElementById('stat-drafted');
-        const statScheduled = document.getElementById('stat-scheduled');
-        const statSent = document.getElementById('stat-sent');
-        const statReplies = document.getElementById('stat-replies');
-        const syncStatus = document.getElementById('sync-status');
-        const syncText = document.getElementById('sync-text');
+            if (viewId === 'config') loadConfig();
+            if (viewId === 'audience') loadAudience();
+        }
 
-        // Initial Load
-        async function loadResearchers() {
-            setSyncState('syncing', 'Loading data...');
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        // --- Scheduler API ---
+        async function checkScheduler() {
             try {
-                const csvFile = getActiveFileName();
-                const res = await fetch(`/api/researchers?file=${encodeURIComponent(csvFile)}`);
-                if (res.ok) {
-                    researchers = await res.json();
-                    
-                    // Add default ID and statuses if not exists
-                    researchers = researchers.map((r, index) => ({
-                        ...r,
-                        id: r.id || `res_${index}`,
-                        status: r.status || 'not_contacted',
-                        email: r.email || '',
-                        notes: r.notes || '',
-                        custom_subject: r.custom_subject || '',
-                        custom_body: r.custom_body || '',
-                        template_type: r.template_type || 'adaptive_memory'
-                    }));
-                    
-                    renderList();
-                    updateStats();
-                    setSyncState('success', 'Neural link established with local storage');
-                } else {
-                    showToast('Connection to neural net failed.', true);
-                    setSyncState('error', 'Neural link failure');
-                }
-            } catch (err) {
-                console.error(err);
-                showToast('Server offline. Operating in sandbox protocol.', true);
-                setSyncState('error', 'Offline. Running in sandbox protocol.');
-            }
-        }
-
-        function setSyncState(state, message) {
-            syncStatus.className = 'sync-indicator ' + state;
-            syncText.textContent = message;
-        }
-
-        // Save back to Python server
-        async function syncWithServer() {
-            setSyncState('syncing', 'Synchronizing intelligence data...');
-            try {
-                const csvFile = getActiveFileName();
-                const res = await fetch(`/api/researchers?file=${encodeURIComponent(csvFile)}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(researchers)
-                }); setTimeout(() => lucide.createIcons(), 10);
-                
-                if (res.ok) {
-                    setSyncState('success', 'Neural link established with local storage');
-                    updateStats();
-                } else {
-                    setSyncState('error', 'Synchronization failed. Awaiting further instructions.');
-                    showToast('Unable to establish connection with local storage. Retrying.', true);
-                }
-            } catch (err) {
-                console.error(err);
-                setSyncState('error', 'Comms offline');
-            }
-        }
-
-        // Stats calculation
-        function updateStats() {
-            statTotal.textContent = researchers.length;
-            statDrafted.textContent = researchers.filter(r => r.status === 'drafted').length;
-            statScheduled.textContent = researchers.filter(r => r.status === 'scheduled').length;
-            statSent.textContent = researchers.filter(r => r.status === 'sent').length;
-            statReplies.textContent = researchers.filter(r => r.status === 'replied').length;
-        }
-
-        // Render Sidebar List
-        function renderList() {
-            const query = searchInput.value.toLowerCase();
-            const sourceFilter = filterSource.value;
-            const statusFilter = filterStatus.value;
-            
-            const filtered = researchers.filter(r => {
-                const matchesSearch = 
-                    r.name.toLowerCase().includes(query) ||
-                    r.institution.toLowerCase().includes(query) ||
-                    r.position.toLowerCase().includes(query) ||
-                    r.research_overlap.toLowerCase().includes(query) ||
-                    (r.relevant_papers && r.relevant_papers.toLowerCase().includes(query));
-                
-                const matchesSource = sourceFilter === 'all' || r.sources.includes(sourceFilter);
-                const matchesStatus = statusFilter === 'all' || r.status === statusFilter;
-                
-                return matchesSearch && matchesSource && matchesStatus;
-            }); setTimeout(() => lucide.createIcons(), 10);
-            
-            listContainer.innerHTML = '';
-            
-            if (filtered.length === 0) {
-                listContainer.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 2rem;">No researchers found.</div>';
-                return;
-            }
-            
-            filtered.forEach(r => {
-                const isActive = r.id === activeId;
-                const statusMap = {
-                            'not_contacted': 'AWAITING ORDERS',
-                            'drafted': 'PREPARED',
-                            'scheduled': 'QUEUED',
-                            'sent': 'TRANSMITTED',
-                            'replied': 'ACKNOWLEDGED',
-                            'error': 'FAILED'
-                        };
-                        const displayStatus = statusMap[r.status] || r.status.toUpperCase();
-                const card = document.createElement('div');
-                card.className = `researcher-card ${isActive ? 'active' : ''}`;
-                card.onclick = () => selectResearcher(r.id);
-                
-                // Construct source tags HTML
-                const sourceTagsHtml = r.sources.map(s => {
-                    let cls = 'outreach';
-                    let label = 'Outreach';
-                    if (s === 'Related Work Authors') { cls = 'authors'; label = 'Author'; }
-                    if (s === 'Top Elite AI Researchers') { cls = 'elite'; label = 'Elite'; }
-                    return `<span class="source-tag ${cls}">${label}</span>`;
-                }).join(' ');
-                
-                card.innerHTML = `
-                    <div class="card-header-info">
-                        <div class="card-name">${r.name}</div>
-                        <span class="status-dot ${r.status}"></span>
-                    </div>
-                    <div class="card-institution">${r.position ? r.position + ' • ' : ''}${r.institution}</div>
-                    <div class="card-footer">
-                        <div class="card-sources">${sourceTagsHtml}</div>
-                        <span class="status-badge ${r.status}">${displayStatus}</span>
-                    </div>
-                `;
-                listContainer.appendChild(card);
-            }); setTimeout(() => lucide.createIcons(), 10);
-        }
-
-        // Predict Email using common schemas
-        function getEmailPrediction(name, institution) {
-            if (!name) return '';
-            const clean = name.toLowerCase().replace(/[^a-z ]/g, '');
-            const parts = clean.split(' ').filter(p => p.length > 1);
-            if (parts.length === 0) return '';
-            
-            const first = parts[0];
-            const last = parts[parts.length - 1];
-            
-            const inst = (institution || '').toLowerCase();
-            let domain = 'domain.edu';
-            
-            if (inst.includes('princeton')) domain = 'princeton.edu';
-            else if (inst.includes('stanford')) domain = 'cs.stanford.edu';
-            else if (inst.includes('carnegie') || inst.includes('cmu')) domain = 'cs.cmu.edu';
-            else if (inst.includes('harvard')) domain = 'seas.harvard.edu';
-            else if (inst.includes('mit')) domain = 'mit.edu';
-            else if (inst.includes('berkeley')) domain = 'eecs.berkeley.edu';
-            else if (inst.includes('cornell')) domain = 'cornell.edu';
-            else if (inst.includes('toronto')) domain = 'cs.toronto.edu';
-            else if (inst.includes('google')) domain = 'google.com';
-            else if (inst.includes('microsoft')) domain = 'microsoft.com';
-            else if (inst.includes('allen') || inst.includes('ai2')) domain = 'allenai.org';
-            else if (inst.includes('mila') || inst.includes('montreal')) domain = 'mila.quebec';
-            else if (inst.includes('oxford')) domain = 'cs.ox.ac.uk';
-            else if (inst.includes('cambridge')) domain = 'cl.cam.ac.uk';
-            else if (inst.includes('nyu') || inst.includes('new york')) domain = 'nyu.edu';
-            else if (inst.includes('washington')) domain = 'cs.washington.edu';
-            
-            // Format predicted list
-            return {
-                primary: `${first[0]}${last}@${domain}`,
-                alternatives: [
-                    `${first}.${last}@${domain}`,
-                    `${first}${last}@${domain}`,
-                    `${last}@${domain}`
-                ]
-            };
-        }
-
-        // Email templates generator
-        function generateEmailDraft(r, type) {
-            let firstName = r.name.split(' ')[0];
-            // Safe fallback if name is username-like or empty
-            if (!firstName || !/^[A-Za-z]+$/.test(firstName) || firstName.length > 15) {
-                firstName = "there";
-            }
-            
-            const university = r.institution || "your university";
-
-            let subject = "";
-            let body = "";
-
-            if (type === 'student_study' || type === 'adaptive_memory') {
-                subject = `Stop starting ChatGPT from scratch at ${university}`;
-                body = `Hi ${firstName},
-
-As a student at ${university}, you probably use ChatGPT regularly for assignments, study guides, and research. 
-
-A common frustration is having to start new conversations from scratch—frequently copy-pasting the same guidelines, course syllabus, or background reference material over and over because ChatGPT's session memory is either stateless or gets bloated.
-
-To solve this, we built Cortogen (https://cortogen.com). It is a free browser extension that adds a local, semantic memory layer to ChatGPT. It automatically captures key context from your active chats and surfaces the most relevant past blocks in real time so you can reuse them in new sessions instantly.
-
-Since you are studying/working at ${university}, we would love to get your thoughts on it. It is completely free and secure.
-
-You can try it out here: https://cortogen.com
-
-Best regards,
-The Cortogen Team`;
-            } else if (type === 'developer_coding' || type === 'grpo_rl') {
-                subject = `ChatGPT context manager for developers at ${university}`;
-                body = `Hi ${firstName},
-
-If you use ChatGPT to write, debug, or refactor code for your projects at ${university}, you have likely run into its context limitations. 
-
-When starting a new session, you lose your active file structure, instructions, and error logs, forcing you to re-upload files or copy-paste code blocks to get the model back up to speed.
-
-Cortogen (https://cortogen.com) is a free browser extension that solves this by adding a local semantic memory engine to ChatGPT. It automatically indexes code snippets, database schemas, and session context, retrieving them dynamically based on your current prompt so you can reuse them across chat tabs.
-
-It is completely free and helps developers maintain continuous coding sessions without manually re-explaining context.
-
-If you find it useful for your coding workflow, we would love to hear your feedback. Try it here: https://cortogen.com
-
-Best regards,
-The Cortogen Team`;
-            } else {
-                subject = `Save and reuse ChatGPT context across tabs`;
-                body = `Hi ${firstName},
-
-Standard AI chat interfaces are completely stateless. Every new tab is a clean slate, meaning your custom guidelines, background research, and reference logs are lost, forcing you to re-introduce context repeatedly.
-
-We created Cortogen (https://cortogen.com) to bridge this gap. It is a free, local-first browser extension that provides ChatGPT with long-term memory. It captures important context and semantically retrieves relevant pieces as you type, allowing you to maintain workflow continuity across separate chats.
-
-It is free, secure, and designed to eliminate repetitive prompt preparation.
-
-You can install the extension here: https://cortogen.com
-
-If you have any feedback or suggestions, please let us know.
-
-Best regards,
-The Cortogen Team`;
-            }
-
-            return { subject, body };
-        }
-
-        // Select Researcher
-        function selectResearcher(id) {
-            activeId = id;
-            const r = researchers.find(x => x.id === id);
-            if (!r) return;
-            
-            // Toggle panel visibility
-            emptyState.style.display = 'none';
-            outreachPanel.style.display = 'flex';
-            
-            // Populate details
-            profName.textContent = r.name;
-            profPosition.textContent = r.position || 'Researcher';
-            profInst.textContent = r.institution;
-            
-            // Set homepage links
-            if (r.homepage && r.homepage !== 'nan') {
-                profHomepageLink.href = r.homepage;
-                profHomepageLink.style.display = 'flex';
-            } else {
-                profHomepageLink.style.display = 'none';
-            }
-            
-            // Set papers & overlap
-            if (r.relevant_papers && r.relevant_papers !== 'nan' && r.relevant_papers.trim() !== '') {
-                profPapers.textContent = r.relevant_papers;
-                profPapersBlock.style.display = 'block';
-            } else {
-                profPapersBlock.style.display = 'none';
-            }
-            
-            profOverlap.textContent = r.research_overlap || 'AI Research & Foundation Models';
-            
-            // Dynamically calculate and display recommended schedule send time
-            const scheduleTime = document.getElementById('prof-schedule-time');
-            const scheduleZone = document.getElementById('prof-schedule-zone');
-            const inst = (r.institution || '').toLowerCase();
-            if (inst.includes('princeton') || inst.includes('harvard') || inst.includes('mit') || inst.includes('cmu') || inst.includes('carnegie') || inst.includes('cornell') || inst.includes('nyu') || inst.includes('toronto') || inst.includes('mila') || inst.includes('montreal') || inst.includes('columbia') || inst.includes('yale') || inst.includes('penn') || inst.includes('brown') || inst.includes('georgia tech') || inst.includes('gatech')) {
-                // US East Coast (EST/EDT)
-                scheduleTime.textContent = 'Tuesday - Thursday, 6:00 PM – 7:00 PM IST';
-                scheduleZone.textContent = '(Arrives 8:30 AM – 9:30 AM EDT in recipient\'s Eastern time zone)';
-            } else if (inst.includes('stanford') || inst.includes('berkeley') || inst.includes('washington') || inst.includes('seattle') || inst.includes('allen') || inst.includes('ai2') || inst.includes('microsoft') || inst.includes('google') || inst.includes('ucla') || inst.includes('usc') || inst.includes('caltech')) {
-                // US West Coast (PST/PDT)
-                scheduleTime.textContent = 'Tuesday - Thursday, 9:00 PM – 10:00 PM IST';
-                scheduleZone.textContent = '(Arrives 8:30 AM – 9:30 AM PDT in recipient\'s Pacific time zone)';
-            } else if (inst.includes('oxford') || inst.includes('cambridge') || inst.includes('london') || inst.includes('uk') || inst.includes('edinburgh') || inst.includes('imperial') || inst.includes('cl.cam.ac.uk') || inst.includes('cs.ox.ac.uk')) {
-                // United Kingdom (BST)
-                scheduleTime.textContent = 'Tuesday - Thursday, 1:00 PM – 2:00 PM IST';
-                scheduleZone.textContent = '(Arrives 8:30 AM – 9:30 AM BST in recipient\'s UK time zone)';
-            } else {
-                // Default fallback (US Business hours standard)
-                scheduleTime.textContent = 'Tuesday - Thursday, 6:00 PM – 7:00 PM IST';
-                scheduleZone.textContent = '(Arrives standard morning hours in recipient\'s local time zone)';
-            }
-            
-            // Populate source tags
-            profSources.innerHTML = r.sources.map(s => {
-                let cls = 'outreach';
-                let label = 'Outreach';
-                if (s === 'Related Work Authors') { cls = 'authors'; label = 'Author'; }
-                if (s === 'Top Elite AI Researchers') { cls = 'elite'; label = 'Elite'; }
-                return `<span class="source-tag ${cls}">${label}</span>`;
-            }).join(' ');
-            
-            // Populate forms
-            inputEmail.value = r.email || '';
-            inputNotes.value = r.notes || '';
-            inputStatus.value = r.status || 'not_contacted';
-            emailTemplateType.value = r.template_type || 'student_study';
-            
-            // Show custom drafts if user modified them, otherwise auto-generate
-            if (r.custom_subject) {
-                inputSubject.value = r.custom_subject;
-            } else {
-                const draft = generateEmailDraft(r, r.template_type || 'student_study');
-                inputSubject.value = draft.subject;
-            }
-            
-            if (r.custom_body) {
-                inputBody.value = r.custom_body;
-            } else {
-                const draft = generateEmailDraft(r, r.template_type || 'student_study');
-                inputBody.value = draft.body;
-            }
-            
-            // Predict email hint
-            const pred = getEmailPrediction(r.name, r.institution);
-            if (pred) {
-                predictionHint.style.display = 'block';
-                predictionHint.innerHTML = `Predicted: <strong>${pred.primary}</strong> (Alternatives: ${pred.alternatives.join(', ')})`;
-            } else {
-                predictionHint.style.display = 'none';
-            }
-            
-            // Re-render sidebar to highlight active
-            renderList();
-        }
-
-        // Trigger updates when inputs are modified
-        function updateActiveResearcherData() {
-            if (!activeId) return;
-            const rIndex = researchers.findIndex(x => x.id === activeId);
-            if (rIndex === -1) return;
-            
-            researchers[rIndex].email = inputEmail.value;
-            researchers[rIndex].notes = inputNotes.value;
-            researchers[rIndex].status = inputStatus.value;
-            researchers[rIndex].template_type = emailTemplateType.value;
-            researchers[rIndex].custom_subject = inputSubject.value;
-            researchers[rIndex].custom_body = inputBody.value;
-            
-            // Auto sync to disk backend!
-            syncWithServer();
-        }
-
-        // Event Listeners
-        searchInput.oninput = renderList;
-        filterSource.onchange = renderList;
-        filterStatus.onchange = renderList;
-        
-        // Form updates
-        inputEmail.oninput = updateActiveResearcherData;
-        inputNotes.oninput = updateActiveResearcherData;
-        inputStatus.onchange = () => {
-            updateActiveResearcherData();
-            renderList(); // Reflect status color instantly
-        };
-        
-        inputSubject.oninput = updateActiveResearcherData;
-        inputBody.oninput = updateActiveResearcherData;
-        
-        emailTemplateType.onchange = () => {
-            if (!activeId) return;
-            const r = researchers.find(x => x.id === activeId);
-            const draft = generateEmailDraft(r, emailTemplateType.value);
-            inputSubject.value = draft.subject;
-            inputBody.value = draft.body;
-            updateActiveResearcherData();
-        };
-
-        // Heuristic Email Prediction Button
-        btnPredictEmail.onclick = () => {
-            if (!activeId) return;
-            const r = researchers.find(x => x.id === activeId);
-            const pred = getEmailPrediction(r.name, r.institution);
-            if (pred) {
-                inputEmail.value = pred.primary;
-                updateActiveResearcherData();
-                showToast(`Filled predicted email: ${pred.primary}`);
-            } else {
-                showToast('Insufficient data to synthesize vector.', true);
-            }
-        };
-
-        // Find Email via Google Search
-        btnGoogleSearch.onclick = () => {
-            if (!activeId) return;
-            const r = researchers.find(x => x.id === activeId);
-            const query = `${r.name} ${r.institution} email contact cs`;
-            const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-            window.open(searchUrl, '_blank');
-            showToast('Initializing global query protocol...');
-        };
-
-        // Copy Email Body to clipboard
-        btnCopyEmail.onclick = () => {
-            inputBody.select();
-            document.execCommand('copy');
-            window.getSelection().removeAllRanges();
-            showToast('Transmission copied to clipboard.');
-        };
-
-        // Open in Gmail Compose tab
-        btnGmailCompose.onclick = () => {
-            if (!activeId) return;
-            const r = researchers.find(x => x.id === activeId);
-            
-            const to = inputEmail.value;
-            const subject = inputSubject.value;
-            const body = inputBody.value;
-            
-            const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(to)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-            
-            window.open(gmailUrl, '_blank');
-            
-            // Mark as drafted/scheduled automatically if not already sent
-            if (r.status === 'not_contacted') {
-                inputStatus.value = 'drafted';
-                updateActiveResearcherData();
-                renderList();
-            }
-            
-            showToast('External transmission terminal launched. Advancing queue.');
-            
-            // Auto-advance to the next pending target
-            setTimeout(() => {
-                const nextTarget = researchers.find(x => x.id !== activeId && (x.status === 'not_contacted' || x.status === 'drafted'));
-                if (nextTarget) {
-                    selectResearcher(nextTarget.id);
-                } else {
-                    showToast('All pending objectives have been completed, Master.');
-                }
-            }, 600);
-        };
-
-        // Skip to next button
-        const btnSkipNext = document.getElementById('btn-skip-next');
-        btnSkipNext.onclick = () => {
-            const nextTarget = researchers.find(x => x.id !== activeId && (x.status === 'not_contacted' || x.status === 'drafted'));
-            if (nextTarget) {
-                selectResearcher(nextTarget.id);
-                showToast('Advanced to next target.');
-            } else {
-                showToast('No more pending targets in the list.');
-            }
-        };
-
-        // Toast Helper
-        function showToast(message, isError = false) {
-            const toast = document.getElementById('toast-notification');
-            const msgSpan = document.getElementById('toast-message');
-            
-            msgSpan.textContent = message;
-            toast.className = 'toast ' + (isError ? 'toast-error' : 'toast-success') + ' show';
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-
-        // Campaign Client Logic
-        let campaignPollingInterval = null;
-
-        function getActiveFileName() {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('file') || 'github_developers.csv';
-        }
-
-        async function startBatchCampaign() {
-            const csvFile = getActiveFileName();
-            const templateSelect = document.getElementById('campaign-template');
-            const selectedTemplate = templateSelect ? templateSelect.value : 'direct';
-            
-            btnStartBatch.disabled = true;
-            btnStartBatch.style.opacity = '0.5';
-            
-            try {
-                const res = await fetch(`/api/send-batch?file=${encodeURIComponent(csvFile)}&limit=100&template=${selectedTemplate}`, {
-                    method: 'POST'
-                }); setTimeout(() => lucide.createIcons(), 10);
+                const res = await fetch('/api/scheduler/status');
                 const data = await res.json();
+                const toggle = document.getElementById('scheduler-toggle');
+                const text = document.getElementById('scheduler-status-text');
                 
-                if (res.ok) {
-                    showToast('Daily batch campaign started!');
-                    openCampaignModal();
-                } else {
-                    showToast(data.message || 'Failed to start campaign', true);
-                    btnStartBatch.disabled = false;
-                    btnStartBatch.style.opacity = '1';
-                }
-            } catch (err) {
-                console.error(err);
-                showToast('Failed to connect to outreach server', true);
-                btnStartBatch.disabled = false;
-                btnStartBatch.style.opacity = '1';
-            }
-        }
-
-        async function stopBatchCampaign() {
-            btnStopCampaign.disabled = true;
-            btnStopCampaign.textContent = 'Stopping...';
-            try {
-                const res = await fetch('/api/stop-campaign', { method: 'POST' }); setTimeout(() => lucide.createIcons(), 10);
-                if (res.ok) {
-                    showToast('Stop campaign request sent.');
-                }
-            } catch (err) {
-                console.error(err);
-            }
-        }
-
-        function openCampaignModal() {
-            campaignModal.style.display = 'flex';
-            if (!campaignPollingInterval) {
-                pollCampaignStatus();
-                campaignPollingInterval = setInterval(pollCampaignStatus, 2000);
-            }
-        }
-
-        function closeCampaignModal() {
-            campaignModal.style.display = 'none';
-        }
-
-        async function pollCampaignStatus() {
-            try {
-                const res = await fetch('/api/campaign-status');
-                if (!res.ok) return;
-                const data = await res.json();
-                
-                // Update progress bar
-                const percent = data.total > 0 ? Math.round((data.current / data.total) * 100) : 0;
-                campaignProgressBar.style.width = percent + '%';
-                campaignProgressCount.textContent = `${data.current} / ${data.total} sent`;
-                campaignProgressPercent.textContent = percent + '%';
-                campaignStatusMsg.textContent = data.status;
-                
-                // Update Console Logs
-                campaignConsoleLogs.innerHTML = '';
-                data.logs.forEach(log => {
-                    const logLine = document.createElement('div');
-                    logLine.className = 'console-line';
-                    if (log.type === 'error') logLine.style.color = '#ef4444';
-                    else if (log.type === 'success') logLine.style.color = '#10b981';
-                    else logLine.style.color = '#94a3b8';
-                    
-                    logLine.textContent = `[${log.time}] [${log.type.toUpperCase()}] ${log.message}`;
-                    campaignConsoleLogs.appendChild(logLine);
-                }); setTimeout(() => lucide.createIcons(), 10);
-                
-                // Auto-scroll console
-                campaignConsoleLogs.scrollTop = campaignConsoleLogs.scrollHeight;
-                
-                // Handle stop/finished
+                toggle.checked = data.running;
                 if (data.running) {
-                    btnStartBatch.disabled = true;
-                    btnStartBatch.style.opacity = '0.5';
-                    btnStopCampaign.disabled = false;
-                    btnStopCampaign.textContent = 'Stop Campaign';
+                    text.textContent = 'Active & Running';
+                    text.style.color = 'var(--color-success)';
                 } else {
-                    btnStartBatch.disabled = false;
-                    btnStartBatch.style.opacity = '1';
-                    btnStopCampaign.disabled = true;
-                    btnStopCampaign.textContent = 'Campaign Ended';
-                    
-                    if (campaignPollingInterval) {
-                        clearInterval(campaignPollingInterval);
-                        campaignPollingInterval = null;
-                    }
-                    loadResearchers();
+                    text.textContent = 'Halted';
+                    text.style.color = 'var(--text-secondary)';
                 }
-            } catch (err) {
-                console.error(err);
+            } catch(e) {}
+        }
+
+        async function toggleScheduler() {
+            const isChecked = document.getElementById('scheduler-toggle').checked;
+            const action = isChecked ? 'start' : 'stop';
+            try {
+                await fetch('/api/scheduler/' + action, {method: 'POST'});
+                showToast(`Scheduler ${action}ed.`);
+                checkScheduler();
+            } catch(e) {
+                showToast('Failed to toggle scheduler.');
+                document.getElementById('scheduler-toggle').checked = !isChecked; // revert
             }
         }
 
-        async function checkCampaignOnStartup() {
+        // --- Dashboard API ---
+        async function loadAnalytics() {
             try {
-                const res = await fetch('/api/campaign-status');
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.running) {
-                        openCampaignModal();
-                    }
-                }
-            } catch (err) {
-                console.error(err);
-            }
-        }
-
-        // Attach campaign event listeners
-        btnStartBatch.onclick = startBatchCampaign;
-        btnCloseCampaign.onclick = closeCampaignModal;
-        btnStopCampaign.onclick = stopBatchCampaign;
-        
-        checkCampaignOnStartup();
-
-        // Start App
-        loadResearchers();
-    
-        // Campaign Modal Toggle Logic
-        const btnViewStatus = document.getElementById('btn-view-status');
-        if(btnViewStatus) {
-            btnViewStatus.onclick = () => {
-                openCampaignModal();
-            };
-        }
-    
-        // Analytics Modal Logic
-        const btnAnalytics = document.getElementById('btn-analytics');
-        const modalAnalytics = document.getElementById('analytics-modal');
-        const btnCloseAnalytics = document.getElementById('btn-close-analytics');
-        const btnRefreshAnalytics = document.getElementById('btn-refresh-analytics');
-        
-        async function fetchAnalytics() {
-            try {
-                document.getElementById('analytics-recent-list').innerHTML = '<div style="color: var(--text-muted); text-align: center; padding: 1rem; font-family: var(--font-mono); font-size: 12px;">Fetching from production...</div>';
-                
                 const res = await fetch('/api/analytics');
                 const data = await res.json();
+                document.getElementById('stat-sent').textContent = data.total_sent || 0;
+                document.getElementById('stat-opens').textContent = data.total_opens || 0;
+                document.getElementById('stat-rate').textContent = (data.avg_open_rate * 100).toFixed(1) + '%';
                 
-                if (data.error) {
-                    throw new Error(data.error);
-                }
-                
-                document.getElementById('analytics-total-opens').textContent = data.total_opens || 0;
-                document.getElementById('analytics-unique-opens').textContent = data.unique_opens || 0;
-                
-                let listHtml = '';
-                if (data.recent_opens && data.recent_opens.length > 0) {
-                    data.recent_opens.forEach(item => {
-                        const date = new Date(item.opened_at).toLocaleString();
-                        listHtml += `
-                            <div style="padding: 0.6rem 0.5rem; border-bottom: 1px solid var(--border-subtle); font-size: 12px; font-family: var(--font-mono); display: flex; flex-direction: column; gap: 0.4rem;">
-                                <span style="color: var(--accent-primary); word-break: break-all; font-weight: 500;">${item.email}</span>
-                                <span style="color: var(--text-muted); font-size: 11px;">${date}</span>
-                            </div>
-                        `;
-                    });
-                } else {
-                    listHtml = '<div style="color: var(--text-muted); text-align: center; padding: 1rem; font-family: var(--font-mono); font-size: 12px;">No opens detected yet.</div>';
-                }
-                document.getElementById('analytics-recent-list').innerHTML = listHtml;
-            } catch (err) {
-                console.error("Failed to fetch analytics", err);
-                document.getElementById('analytics-recent-list').innerHTML = `<div style="color: var(--color-error); text-align: center; padding: 1rem; font-family: var(--font-mono); font-size: 12px;">Error connecting to production backend.<br>${err.message}</div>`;
+                document.getElementById('ga4-users').textContent = data.ga4_new_users || 0;
+                document.getElementById('ga4-installs').textContent = data.ga4_installs || 0;
+            } catch(e) {}
+        }
+
+        async function triggerManualBatch() {
+            showToast('Initiating campaign batch...');
+            try {
+                // Get active CSV from config to send it to the endpoint
+                const cfgRes = await fetch('/api/agent-config');
+                const cfg = await cfgRes.json();
+                const res = await fetch(`/api/send-batch?file=${encodeURIComponent(cfg.active_csv)}&template=${cfg.active_template}&limit=${cfg.daily_limit_per_window}`, { method: 'POST' });
+                const data = await res.json();
+                showToast(data.message || 'Batch triggered');
+            } catch(e) {
+                showToast('Failed to trigger batch.');
             }
         }
-        
-        btnAnalytics.onclick = () => {
-            modalAnalytics.style.display = 'flex';
-            fetchAnalytics();
-        };
-        
-        btnCloseAnalytics.onclick = () => {
-            modalAnalytics.style.display = 'none';
-        };
-        
-        btnRefreshAnalytics.onclick = fetchAnalytics;
 
-        // Mobile UI Transitions
-        const btnMobileBack = document.getElementById('btn-mobile-back');
-        if (btnMobileBack) {
-            btnMobileBack.onclick = () => {
-                document.querySelector('.sidebar').classList.remove('mobile-hidden');
-                document.getElementById('workspace-container').classList.add('mobile-hidden');
+        async function sendReportNow() {
+            showToast('Requesting report...');
+            try {
+                await fetch('/api/send-report', { method: 'POST' });
+                showToast('Report queued for delivery.');
+            } catch(e) {}
+        }
+
+        // --- Config API ---
+        async function loadConfig() {
+            try {
+                // Load CSV options
+                const csvRes = await fetch('/api/list-csvs');
+                const csvs = await csvRes.json();
+                const select = document.getElementById('cfg-csv');
+                select.innerHTML = '';
+                csvs.forEach(c => select.add(new Option(c, c)));
+
+                // Load config values
+                const res = await fetch('/api/agent-config');
+                const cfg = await res.json();
+                
+                if (cfg.active_csv) select.value = cfg.active_csv;
+                document.getElementById('cfg-template').value = cfg.active_template || 'sales';
+                document.getElementById('cfg-times').value = (cfg.send_times || []).join(', ');
+                document.getElementById('cfg-limit').value = cfg.daily_limit_per_window || 30;
+                document.getElementById('cfg-timezone').value = cfg.timezone || 'Asia/Kolkata';
+            } catch(e) {}
+        }
+
+        async function saveConfig() {
+            const cfg = {
+                active_csv: document.getElementById('cfg-csv').value,
+                active_template: document.getElementById('cfg-template').value,
+                send_times: document.getElementById('cfg-times').value.split(',').map(s => s.trim()),
+                daily_limit_per_window: parseInt(document.getElementById('cfg-limit').value),
+                timezone: document.getElementById('cfg-timezone').value
             };
+            try {
+                await fetch('/api/agent-config', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(cfg)
+                });
+                showToast('Configuration saved successfully. Scheduler will use new settings.');
+            } catch(e) {
+                showToast('Error saving configuration.');
+            }
         }
 
-        const originalSelectResearcher = selectResearcher;
-        selectResearcher = function(id) {
-            originalSelectResearcher(id);
-            if (window.innerWidth <= 768) {
-                document.querySelector('.sidebar').classList.add('mobile-hidden');
-                document.getElementById('workspace-container').classList.remove('mobile-hidden');
+        // --- Audience API ---
+        async function loadAudience() {
+            try {
+                const cfgRes = await fetch('/api/agent-config');
+                const cfg = await cfgRes.json();
+                if (!cfg.active_csv) {
+                    document.getElementById('audience-list').innerHTML = '<tr><td colspan="4">No active CSV selected in Config.</td></tr>';
+                    return;
+                }
+                
+                const res = await fetch(`/api/researchers?file=${encodeURIComponent(cfg.active_csv)}`);
+                const leads = await res.json();
+                
+                let html = '';
+                leads.slice(0, 100).forEach(l => {
+                    let statusColor = l.status === 'sent' ? 'var(--color-success)' : 
+                                      l.status === 'replied' ? '#c084fc' : 'var(--text-secondary)';
+                    html += `
+                    <tr>
+                        <td style="font-family: var(--font-mono); color: var(--accent-primary)">${l.email || 'N/A'}</td>
+                        <td>${l.name || 'Unknown'}</td>
+                        <td>${l.institution || l.location || '--'}</td>
+                        <td style="color: ${statusColor}; font-weight: 500; text-transform: uppercase; font-size: 11px;">
+                            ${l.status || 'not_contacted'}
+                        </td>
+                    </tr>`;
+                });
+                if(leads.length > 100) html += `<tr><td colspan="4" style="text-align:center; color:var(--text-secondary)">... and ${leads.length - 100} more.</td></tr>`;
+                document.getElementById('audience-list').innerHTML = html;
+            } catch(e) {
+                document.getElementById('audience-list').innerHTML = '<tr><td colspan="4">Error loading data.</td></tr>';
             }
-            setTimeout(() => lucide.createIcons(), 10);
-        };
+        }
 
-        // Initialize lucide
-        document.addEventListener("DOMContentLoaded", () => {
-            lucide.createIcons();
-            if (window.innerWidth <= 768) {
-                document.getElementById('workspace-container').classList.add('mobile-hidden');
-            }
-        });
-    
+        // Init
+        loadAnalytics();
+        checkScheduler();
+        setInterval(checkScheduler, 10000); // Check status every 10s
     </script>
 </body>
 </html>

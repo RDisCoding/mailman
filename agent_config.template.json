@@ -1,0 +1,21 @@
+{
+  "_comment": "Copy this to agent_config.json and fill in your values.",
+
+  "timezone": "Asia/Kolkata",
+
+  "send_times": ["09:00", "14:00"],
+
+  "daily_limit_per_window": 30,
+
+  "report_interval_days": 3,
+
+  "active_csv": "your_leads_file.csv",
+
+  "active_template": "sales",
+
+  "active_region": "India",
+
+  "active_lead_source": "Manual CSV",
+
+  "ga4_property_id": "YOUR_GA4_PROPERTY_ID_e.g_123456789"
+}
