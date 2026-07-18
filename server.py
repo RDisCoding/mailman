@@ -614,12 +614,18 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
                 # Start as background process, redirecting I/O to avoid stream init errors
                 log_path = os.path.join(BASE_DIR, 'scheduler.log')
                 log_file = open(log_path, 'a')
+                
+                creationflags = 0
+                if os.name == 'nt':
+                    creationflags = subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP
+                
                 proc = subprocess.Popen(
                     [sys.executable, "autonomous_scheduler.py"], 
                     cwd=BASE_DIR,
                     stdout=log_file,
                     stderr=subprocess.STDOUT,
-                    stdin=subprocess.DEVNULL
+                    stdin=subprocess.DEVNULL,
+                    creationflags=creationflags
                 )
                 pid_file = os.path.join(BASE_DIR, 'scheduler.pid')
                 with open(pid_file, 'w') as f:
