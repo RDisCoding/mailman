@@ -814,6 +814,7 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
             pid_file = os.path.join(BASE_DIR, 'scheduler.pid')
             running = False
             pid = None
+            jobs = []
             if os.path.exists(pid_file):
                 try:
                     with open(pid_file) as f:
@@ -821,9 +822,14 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
                     import signal
                     os.kill(pid, 0)  # Check if process alive
                     running = True
+                    
+                    jobs_file = os.path.join(BASE_DIR, 'scheduler_jobs.json')
+                    if os.path.exists(jobs_file):
+                        with open(jobs_file) as jf:
+                            jobs = json.load(jf)
                 except Exception:
                     running = False
-            self.wfile.write(json.dumps({"running": running, "pid": pid}).encode())
+            self.wfile.write(json.dumps({"running": running, "pid": pid, "jobs": jobs}).encode())
             return
 
         # Existing GET routes (researchers, tracking pixel, campaign-status, analytics)

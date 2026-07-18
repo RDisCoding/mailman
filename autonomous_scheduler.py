@@ -289,9 +289,23 @@ def main():
 
     try:
         while True:
-            time.sleep(60)
+            # write status for the frontend
+            status = []
+            for job in scheduler.get_jobs():
+                nxt = job.next_run_time
+                nxt_str = nxt.strftime("%Y-%m-%d %H:%M %Z") if nxt else "—"
+                status.append({"name": job.name, "next_run": nxt_str})
+            
+            jobs_file = os.path.join(BASE_DIR, 'scheduler_jobs.json')
+            with open(jobs_file, 'w') as f:
+                json.dump(status, f)
+                
+            time.sleep(15)
     except KeyboardInterrupt:
         print("\n[Scheduler] Stopping...")
+        jobs_file = os.path.join(BASE_DIR, 'scheduler_jobs.json')
+        if os.path.exists(jobs_file):
+            os.remove(jobs_file)
         scheduler.shutdown()
         print("[Scheduler] Done.")
 

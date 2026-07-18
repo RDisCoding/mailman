@@ -377,6 +377,16 @@
                     <div><span style="font-size: 24px; font-weight: 600; color: #fff;" id="ga4-installs">--</span> <br><span style="font-size: 12px; color: var(--text-secondary);">Installs</span></div>
                 </div>
             </div>
+
+            <!-- Upcoming Jobs Panel -->
+            <div id="scheduler-panel" style="display: none; margin-top: 1rem; background: var(--bg-surface); padding: 1.5rem; border: 1px solid var(--border-subtle); border-radius: 8px;">
+                <h3 style="font-size: 14px; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i data-lucide="clock" style="width: 16px; height: 16px; color: var(--accent-primary);"></i> 
+                    Upcoming Autonomous Tasks
+                </h3>
+                <div id="scheduler-jobs-list" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                </div>
+            </div>
         </div>
 
         <!-- View: Configuration -->
@@ -512,9 +522,25 @@
                 if (data.running) {
                     text.textContent = 'Active & Running';
                     text.style.color = 'var(--color-success)';
+                    document.getElementById('scheduler-panel').style.display = 'block';
+                    
+                    let html = '';
+                    if (data.jobs && data.jobs.length > 0) {
+                        data.jobs.forEach(j => {
+                            html += `<div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.5rem;">
+                                <span style="color: var(--text-primary); font-size: 13px;">${j.name}</span>
+                                <span style="color: var(--accent-primary); font-family: var(--font-mono); font-size: 12px;">${j.next_run}</span>
+                            </div>`;
+                        });
+                    } else {
+                        html = '<div style="color: var(--text-secondary); font-size: 12px;">Initializing scheduler data...</div>';
+                    }
+                    document.getElementById('scheduler-jobs-list').innerHTML = html;
+                    lucide.createIcons();
                 } else {
                     text.textContent = 'Halted';
                     text.style.color = 'var(--text-secondary)';
+                    document.getElementById('scheduler-panel').style.display = 'none';
                 }
             } catch(e) {}
         }
