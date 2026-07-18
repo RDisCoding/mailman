@@ -302,6 +302,9 @@
         <div class="nav-item" onclick="switchView('audience')">
             <i data-lucide="users"></i> Audience / Leads
         </div>
+        <div class="nav-item" onclick="switchView('templates')">
+            <i data-lucide="file-text"></i> Email Templates
+        </div>
     </div>
 
     <!-- Main Content -->
@@ -368,9 +371,7 @@
                 <div class="form-group">
                     <label class="form-label">Active Email Template</label>
                     <select id="cfg-template" class="form-control" style="font-family: var(--font-sans);">
-                        <option value="sales">Sales (HTML)</option>
-                        <option value="premium">Premium (HTML)</option>
-                        <option value="direct">Direct (Plain Text)</option>
+                        <!-- populated via api -->
                     </select>
                 </div>
                 <div class="form-group">
@@ -410,6 +411,33 @@
             </div>
         </div>
 
+        <!-- View: Templates -->
+        <div id="view-templates" class="view">
+            <div style="background: var(--bg-surface); padding: 2rem; border-radius: 8px; border: 1px solid var(--border-subtle);">
+                <h3 style="font-size: 14px; margin-bottom: 1rem;">Create / Edit Template</h3>
+                <div class="form-group">
+                    <label class="form-label">Template Name (e.g. mobile_pitch.html)</label>
+                    <input type="text" id="tpl-name" class="form-control" placeholder="new_campaign.html">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">HTML Content</label>
+                    <textarea id="tpl-content" class="form-control" rows="12" style="font-family: var(--font-mono); resize: vertical; padding: 1rem;" placeholder="<html>
+<body>
+    <p>Hi {{name}},</p>
+    <p>We noticed your work at {{institution}}.</p>
+    <br>
+    <p>Best,<br>Cortogen Team</p>
+    <!-- Keep this pixel tracker! -->
+    {{tracking_pixel}}
+</body>
+</html>"></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="saveTemplate()">
+                    <i data-lucide="save"></i> Save Template
+                </button>
+            </div>
+        </div>
+
     </div>
 
     <!-- Toast Notification -->
@@ -426,7 +454,12 @@
             document.getElementById('view-' + viewId).classList.add('active');
             event.currentTarget.classList.add('active');
             
-            const titles = { 'dashboard': 'Overview Dashboard', 'config': 'System Configuration', 'audience': 'Audience Database' };
+            const titles = { 
+                'dashboard': 'Overview Dashboard', 
+                'config': 'System Configuration', 
+                'audience': 'Audience Database',
+                'templates': 'Email Templates'
+            };
             document.getElementById('view-title').textContent = titles[viewId];
 
             if (viewId === 'config') loadConfig();
@@ -518,12 +551,29 @@
                 select.innerHTML = '';
                 csvs.forEach(c => select.add(new Option(c, c)));
 
+                // Load Templates options
+                const tplRes = await fetch('/api/list-templates');
+                const tpls = await tplRes.json();
+                const tplSelect = document.getElementById('cfg-template');
+                tplSelect.innerHTML = '';
+                tpls.forEach(t => tplSelect.add(new Option(t, t.replace('.html','').replace('.txt',''))));
+
                 // Load config values
                 const res = await fetch('/api/agent-config');
                 const cfg = await res.json();
                 
                 if (cfg.active_csv) select.value = cfg.active_csv;
-                document.getElementById('cfg-template').value = cfg.active_template || 'sales';
+                if (cfg.active_template) {
+                    // Try to match value exactly, or fallback to first
+                    let matched = false;
+                    for (let i = 0; i < tplSelect.options.length; i++) {
+                        if (tplSelect.options[i].value === cfg.active_template) {
+                            tplSelect.selectedIndex = i;
+                            matched = true;
+                            break;
+                        }
+                    }
+                }
                 document.getElementById('cfg-times').value = (cfg.send_times || []).join(', ');
                 document.getElementById('cfg-limit').value = cfg.daily_limit_per_window || 30;
                 document.getElementById('cfg-timezone').value = cfg.timezone || 'Asia/Kolkata';
@@ -564,7 +614,7 @@
                 const leads = await res.json();
                 
                 let html = '';
-                leads.slice(0, 100).forEach(l => {
+                leads.forEach(l => {
                     let statusColor = l.status === 'sent' ? 'var(--color-success)' : 
                                       l.status === 'replied' ? '#c084fc' : 'var(--text-secondary)';
                     html += `
@@ -577,10 +627,31 @@
                         </td>
                     </tr>`;
                 });
-                if(leads.length > 100) html += `<tr><td colspan="4" style="text-align:center; color:var(--text-secondary)">... and ${leads.length - 100} more.</td></tr>`;
                 document.getElementById('audience-list').innerHTML = html;
             } catch(e) {
                 document.getElementById('audience-list').innerHTML = '<tr><td colspan="4">Error loading data.</td></tr>';
+            }
+        }
+
+        // --- Template API ---
+        async function saveTemplate() {
+            const name = document.getElementById('tpl-name').value.trim();
+            const content = document.getElementById('tpl-content').value.trim();
+            if(!name || !content) {
+                showToast('Name and content are required.');
+                return;
+            }
+            try {
+                await fetch('/api/templates', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({name, content})
+                });
+                showToast('Template saved successfully!');
+                document.getElementById('tpl-name').value = '';
+                document.getElementById('tpl-content').value = '';
+            } catch(e) {
+                showToast('Error saving template.');
             }
         }
 

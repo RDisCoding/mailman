@@ -700,6 +700,32 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
                 self.wfile.write(json.dumps({"status": "error", "message": str(e)}).encode())
             return
 
+        # API Route: Save template
+        if self.path == '/api/templates':
+            content_length = int(self.headers.get('Content-Length', 0))
+            post_data = self.rfile.read(content_length)
+            try:
+                data = json.loads(post_data.decode('utf-8'))
+                name = data.get('name')
+                content = data.get('content')
+                if name and content:
+                    templates_dir = os.path.join(BASE_DIR, 'templates')
+                    os.makedirs(templates_dir, exist_ok=True)
+                    if not name.endswith('.html') and not name.endswith('.txt'):
+                        name += '.html'
+                    with open(os.path.join(templates_dir, name), 'w', encoding='utf-8') as f:
+                        f.write(content)
+                self.send_response(200)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({"status": "ok"}).encode())
+            except Exception as e:
+                self.send_response(500)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({"status": "error", "message": str(e)}).encode())
+            return
+
         self.send_response(404)
         self.end_headers()
 
@@ -735,6 +761,17 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
             csvs = [f for f in os.listdir(BASE_DIR) if f.endswith('.csv')]
             self.wfile.write(json.dumps(csvs).encode())
+            return
+
+        # API Route: List available templates
+        if self.path == '/api/list-templates':
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            templates_dir = os.path.join(BASE_DIR, 'templates')
+            os.makedirs(templates_dir, exist_ok=True)
+            templates = [f for f in os.listdir(templates_dir) if f.endswith('.html') or f.endswith('.txt')]
+            self.wfile.write(json.dumps(templates).encode())
             return
 
         # API Route: Scheduler status (check if autonomous_scheduler is running)
