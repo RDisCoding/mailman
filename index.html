@@ -534,7 +534,7 @@
         // --- Scheduler API ---
         async function checkScheduler() {
             try {
-                const res = await fetch('/api/scheduler/status');
+                const res = await fetch('/api/scheduler/status?t=' + new Date().getTime());
                 const data = await res.json();
                 const toggle = document.getElementById('scheduler-toggle');
                 const text = document.getElementById('scheduler-status-text');
