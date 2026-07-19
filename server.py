@@ -858,19 +858,20 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
                     os.kill(pid, 0)  # Check if process alive
                     
                     jobs_file = os.path.join(BASE_DIR, 'scheduler_jobs.json')
+                    mtime_pid = os.path.getmtime(pid_file)
+                    is_booting = (time.time() - mtime_pid) < 15
+
                     if os.path.exists(jobs_file):
-                        # Check heartbeat: file should be updated every 15s by daemon
                         mtime = os.path.getmtime(jobs_file)
-                        if time.time() - mtime > 45:
+                        # Check heartbeat: file should be updated every 15s by daemon
+                        if not is_booting and (time.time() - mtime > 45):
                             running = False # Daemon crashed and stopped updating heartbeat
                         else:
                             running = True
                             with open(jobs_file) as jf:
                                 jobs = json.load(jf)
                     else:
-                        # If file doesn't exist yet, give it 10 seconds to create it
-                        mtime_pid = os.path.getmtime(pid_file)
-                        if time.time() - mtime_pid > 15:
+                        if not is_booting:
                             running = False # Failed to start properly
                         else:
                             running = True # Still initializing
