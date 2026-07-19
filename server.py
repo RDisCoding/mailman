@@ -881,6 +881,21 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps({"running": running, "pid": pid, "jobs": jobs}).encode())
             return
 
+        # API Route: Scheduler logs (read scheduler.log)
+        if path == '/api/scheduler/logs':
+            self.send_response(200)
+            self.send_header('Content-type', 'text/plain; charset=utf-8')
+            self.end_headers()
+            log_path = os.path.join(BASE_DIR, 'scheduler.log')
+            if os.path.exists(log_path):
+                with open(log_path, 'r', encoding='utf-8', errors='replace') as f:
+                    lines = f.readlines()
+                    # Return last 100 lines
+                    self.wfile.write("".join(lines[-100:]).encode('utf-8'))
+            else:
+                self.wfile.write(b"No scheduler logs found yet.")
+            return
+
         # Existing GET routes (researchers, tracking pixel, campaign-status, analytics)
         if self.path.startswith('/api/researchers'):
             csv_file = get_target_file(self.path)
