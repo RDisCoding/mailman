@@ -498,18 +498,23 @@
 
         <!-- View: Logs -->
         <div id="view-logs" class="view">
-            <div style="background: var(--bg-surface); padding: 2rem; border-radius: 8px; border: 1px solid var(--border-subtle); height: calc(100vh - 180px); display: flex; flex-direction: column;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <div style="display: flex; align-items: center; gap: 1rem;">
-                        <h3 style="font-size: 14px; margin: 0;">Terminal Output</h3>
-                        <select id="log-type-selector" class="form-control" style="width: auto; padding: 0.2rem 0.5rem; font-size: 12px; height: 26px;" onchange="fetchLiveLogs()">
+            <div style="background: var(--bg-surface); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-subtle); height: calc(100vh - 180px); display: flex; flex-direction: column;">
+                <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 1rem;">
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px;">
+                        <h3 style="font-size: 14px; margin: 0; white-space: nowrap;">Terminal Output</h3>
+                        <select id="log-type-selector" class="form-control" style="width: auto; padding: 0.2rem 0.5rem; font-size: 12px; height: 26px; min-width: 150px;" onchange="fetchLiveLogs()">
                             <option value="manual">Manual Batch Logs</option>
                             <option value="daemon">Background Daemon Logs</option>
                         </select>
                     </div>
-                    <div id="log-status-indicator" style="font-size: 12px; color: var(--text-secondary);">Idle</div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div id="log-status-indicator" style="font-size: 12px; color: var(--text-secondary); white-space: nowrap;">Idle</div>
+                        <button class="btn btn-primary" style="padding: 0.2rem 0.5rem; font-size: 11px; height: 26px; border-radius: 4px;" onclick="copyTerminalLogs()">
+                            <i data-lucide="copy" style="width: 12px; height: 12px;"></i> Copy
+                        </button>
+                    </div>
                 </div>
-                <div id="terminal-container" style="flex: 1; background: #000; padding: 1rem; border-radius: 6px; overflow-y: auto; font-family: var(--font-mono); font-size: 12px; line-height: 1.5; color: #0f0; white-space: pre-wrap;"></div>
+                <div id="terminal-container" style="flex: 1; background: #000; padding: 1rem; border-radius: 6px; overflow-y: auto; overflow-x: auto; font-family: var(--font-mono); font-size: 12px; line-height: 1.5; color: #0f0; white-space: pre-wrap; word-break: break-all;"></div>
             </div>
         </div>
 
@@ -869,6 +874,16 @@ Based on these specific metrics:
             } catch (e) {
                 console.error("Failed to fetch logs");
             }
+        }
+
+        function copyTerminalLogs() {
+            const term = document.getElementById('terminal-container');
+            navigator.clipboard.writeText(term.innerText || term.textContent).then(() => {
+                showToast('Logs copied to clipboard!');
+            }).catch(err => {
+                console.error('Error copying text: ', err);
+                showToast('Failed to copy logs.');
+            });
         }
 
         setInterval(fetchLiveLogs, 2000);
