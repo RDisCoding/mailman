@@ -296,8 +296,8 @@ def run_campaign_thread(csv_file, limit, selected_template="direct", campaign_id
 
     def log(msg, log_type="info"):
         t_str = time.strftime('%H:%M:%S')
-        campaign_logs.append({"time": t_str, "type": log_type, "message": msg})
-        print(f"[{t_str}] [{log_type.upper()}] {msg}")
+        campaign_logs.append({"timestamp": t_str, "type": log_type, "message": msg})
+        print(f"[{t_str}] [{log_type.upper()}] {msg}", flush=True)
 
     try:
         # Load config
@@ -637,7 +637,7 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
                     creationflags = subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP
                 
                 proc = subprocess.Popen(
-                    [sys.executable, "autonomous_scheduler.py"], 
+                    [sys.executable, "-u", "autonomous_scheduler.py"], 
                     cwd=BASE_DIR,
                     stdout=log_file,
                     stderr=subprocess.STDOUT,
