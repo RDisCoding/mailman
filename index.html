@@ -437,12 +437,12 @@
             </div>
         </div>
 
-        <!-- View: Audience -->
         <div id="view-audience" class="view">
             <div class="table-wrapper">
                 <table>
                     <thead>
                         <tr>
+                            <th style="width: 40px;">#</th>
                             <th>Email</th>
                             <th>Name</th>
                             <th>Institution / Location</th>
@@ -450,7 +450,7 @@
                         </tr>
                     </thead>
                     <tbody id="audience-list">
-                        <tr><td colspan="4" style="text-align:center;">Loading audience data...</td></tr>
+                        <tr><td colspan="5" style="text-align:center;">Loading audience data...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -758,7 +758,7 @@
                 const cfgRes = await fetch('/api/agent-config');
                 const cfg = await cfgRes.json();
                 if (!cfg.active_csv) {
-                    document.getElementById('audience-list').innerHTML = '<tr><td colspan="4">No active CSV selected in Config.</td></tr>';
+                    document.getElementById('audience-list').innerHTML = '<tr><td colspan="5">No active CSV selected in Config.</td></tr>';
                     return;
                 }
                 
@@ -766,11 +766,12 @@
                 const leads = await res.json();
                 
                 let html = '';
-                leads.forEach(l => {
+                leads.forEach((l, idx) => {
                     let statusColor = l.status === 'sent' ? 'var(--color-success)' : 
                                       l.status === 'replied' ? '#c084fc' : 'var(--text-secondary)';
                     html += `
                     <tr>
+                        <td style="color: var(--text-secondary); font-size: 12px;">${idx + 1}</td>
                         <td style="font-family: var(--font-mono); color: var(--accent-primary)">${l.email || 'N/A'}</td>
                         <td>${l.name || 'Unknown'}</td>
                         <td>${l.institution || l.location || '--'}</td>
@@ -781,7 +782,7 @@
                 });
                 document.getElementById('audience-list').innerHTML = html;
             } catch(e) {
-                document.getElementById('audience-list').innerHTML = '<tr><td colspan="4">Error loading data.</td></tr>';
+                document.getElementById('audience-list').innerHTML = '<tr><td colspan="5">Error loading data.</td></tr>';
             }
         }
 
