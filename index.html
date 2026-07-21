@@ -545,6 +545,7 @@
                     <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 13px;">
                         <thead>
                             <tr style="border-bottom: 1px solid var(--border-subtle); color: var(--text-secondary);">
+                                <th style="padding: 0.75rem 0.5rem; width: 40px;">#</th>
                                 <th style="padding: 0.75rem 0.5rem;">Date</th>
                                 <th style="padding: 0.75rem 0.5rem;">List / Source</th>
                                 <th style="padding: 0.75rem 0.5rem;">Sent</th>
@@ -891,13 +892,14 @@ I need you to completely reconsider who I should be emailing.
                 const history = await res.json();
                 let html = '';
                 if (history.length === 0) {
-                    html = '<tr><td colspan="5" style="padding: 1rem 0.5rem; text-align: center; color: var(--text-secondary);">No past campaigns found.</td></tr>';
+                    html = '<tr><td colspan="6" style="padding: 1rem 0.5rem; text-align: center; color: var(--text-secondary);">No past campaigns found.</td></tr>';
                 } else {
-                    history.forEach(c => {
+                    history.forEach((c, idx) => {
                         const d = new Date(c.started_at);
                         const dateStr = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                         html += `
                             <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <td style="padding: 0.75rem 0.5rem; color: var(--text-secondary);">${history.length - idx}</td>
                                 <td style="padding: 0.75rem 0.5rem; font-size: 12px; color: var(--text-secondary);">${dateStr}</td>
                                 <td style="padding: 0.75rem 0.5rem;">${c.csv_file}</td>
                                 <td style="padding: 0.75rem 0.5rem; color: var(--color-success);">${c.total_sent || 0}</td>
@@ -973,7 +975,7 @@ I need you to completely reconsider who I should be emailing.
         // --- Swipe Navigation ---
         let touchStartX = 0;
         let touchEndX = 0;
-        const tabOrder = ['dashboard', 'config', 'audience', 'templates', 'advisor', 'logs'];
+        const tabOrder = ['dashboard', 'config', 'audience', 'templates', 'advisor', 'history', 'logs'];
         
         function handleSwipe() {
             const swipeDistance = touchEndX - touchStartX;
