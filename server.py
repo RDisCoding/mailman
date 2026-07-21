@@ -366,6 +366,18 @@ def run_campaign_thread(csv_file, limit, selected_template="direct", campaign_id
             attempted_count += 1
             try:
                 msg_type = 'html' if is_html else 'plain'
+                
+                # Inject tracking pixel if HTML and metrics enabled
+                if is_html and METRICS_ENABLED:
+                    public_host = config.get("public_host", "http://localhost:8000")
+                    pixel_url = f"{public_host}/api/track/open?email={urllib.parse.quote(email_addr)}"
+                    pixel_img = f'<img src="{pixel_url}" width="1" height="1" alt="" style="display:none;" />'
+                    if '</body>' in body.lower():
+                        import re
+                        body = re.sub(r'</body>', f'{pixel_img}</body>', body, flags=re.IGNORECASE)
+                    else:
+                        body += pixel_img
+
                 msg = MIMEText(body, msg_type, 'utf-8')
                 msg['Subject'] = Header(subject, 'utf-8')
                 msg['From'] = Header(f"The Cortogen Team <{sender}>", 'utf-8')
@@ -379,15 +391,25 @@ def run_campaign_thread(csv_file, limit, selected_template="direct", campaign_id
                 smtp_port = config.get("smtp_port", 465)
                 smtp_user = config.get("smtp_username", sender)
                 
-                if smtp_port == 587:
-                    with smtplib.SMTP(smtp_host, smtp_port) as server:
-                        server.starttls()
-                        server.login(smtp_user, password)
-                        server.sendmail(sender, [email_addr], msg.as_string())
-                else:
-                    with smtplib.SMTP_SSL(smtp_host, smtp_port) as server:
-                        server.login(smtp_user, password)
-                        server.sendmail(sender, [email_addr], msg.as_string())
+                max_retries = 3
+                for attempt in range(max_retries):
+                    try:
+                        if smtp_port == 587:
+                            with smtplib.SMTP(smtp_host, smtp_port, timeout=15) as server:
+                                server.starttls()
+                                server.login(smtp_user, password)
+                                server.sendmail(sender, [email_addr], msg.as_string())
+                        else:
+                            with smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=15) as server:
+                                server.login(smtp_user, password)
+                                server.sendmail(sender, [email_addr], msg.as_string())
+                        break # Success
+                    except Exception as e:
+                        if attempt < max_retries - 1:
+                            log(f"Network drop on attempt {attempt+1}, retrying in 5s...", "info")
+                            time.sleep(5)
+                        else:
+                            raise e
                 
                 lead["status"] = "sent"
                 lead["notes"] = f"Sent via automated web campaign at {time.strftime('%Y-%m-%d %H:%M:%S')}"
@@ -936,6 +958,17 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
                 "logs": campaign_logs
             }
             self.wfile.write(json.dumps(status_data).encode('utf-8'))
+            return
+
+        if path == '/api/campaign/history':
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            from metrics_logger import load_campaign_log
+            history = load_campaign_log()
+            # Sort by started_at descending
+            history.sort(key=lambda x: x.get("started_at", ""), reverse=True)
+            self.wfile.write(json.dumps(history).encode('utf-8'))
             return
 
         if path == '/api/analytics':

@@ -328,6 +328,9 @@
         <div class="nav-item" onclick="switchView('advisor')">
             <i data-lucide="brain"></i> <span>AI Advisor</span>
         </div>
+        <div class="nav-item" onclick="switchView('history')">
+            <i data-lucide="history"></i> <span>Campaign History</span>
+        </div>
         <div class="nav-item" onclick="switchView('logs')">
             <i data-lucide="terminal"></i> <span>Live Logs</span>
         </div>
@@ -483,15 +486,26 @@
         <!-- View: Advisor -->
         <div id="view-advisor" class="view">
             <div style="background: var(--bg-surface); padding: 2rem; border-radius: 8px; border: 1px solid var(--border-subtle);">
-                <h3 style="font-size: 14px; margin-bottom: 1rem;">AI Strategy Advisor Prompt</h3>
+                <h3 style="font-size: 14px; margin-bottom: 1rem;">1. Funnel Optimization Prompt</h3>
                 <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 1.5rem;">
                     This automatically compiles your real-time campaign metrics. Copy this and paste it into Claude or ChatGPT to get expert marketing advice on what to improve next.
                 </p>
                 <div class="form-group">
-                    <textarea id="advisor-prompt" class="form-control" rows="15" style="font-family: var(--font-sans); font-size: 13px; line-height: 1.6; resize: vertical; padding: 1rem; color: #fff;" readonly></textarea>
+                    <textarea id="advisor-prompt" class="form-control" rows="10" style="font-family: var(--font-sans); font-size: 13px; line-height: 1.6; resize: vertical; padding: 1rem; color: #fff;" readonly></textarea>
                 </div>
-                <button class="btn btn-primary" onclick="copyPrompt()">
-                    <i data-lucide="copy"></i> Copy to Clipboard
+                <button class="btn btn-primary" onclick="copyPrompt('advisor-prompt')" style="margin-bottom: 2.5rem;">
+                    <i data-lucide="copy"></i> Copy Funnel Prompt
+                </button>
+
+                <h3 style="font-size: 14px; margin-bottom: 1rem;">2. Audience Targeting & Lead Generation Prompt</h3>
+                <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 1.5rem;">
+                    Use this prompt to have AI reconsider your exact target audience and build a precise profile of people who are most likely to buy your product.
+                </p>
+                <div class="form-group">
+                    <textarea id="audience-prompt" class="form-control" rows="10" style="font-family: var(--font-sans); font-size: 13px; line-height: 1.6; resize: vertical; padding: 1rem; color: #fff;" readonly></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="copyPrompt('audience-prompt')">
+                    <i data-lucide="copy"></i> Copy Audience Prompt
                 </button>
             </div>
         </div>
@@ -515,6 +529,34 @@
                     </div>
                 </div>
                 <div id="terminal-container" style="flex: 1; background: #000; padding: 1rem; border-radius: 6px; overflow-y: auto; overflow-x: auto; font-family: var(--font-mono); font-size: 12px; line-height: 1.5; color: #0f0; white-space: pre-wrap; word-break: break-all;"></div>
+            </div>
+        </div>
+
+        <!-- View: History -->
+        <div id="view-history" class="view">
+            <div style="background: var(--bg-surface); padding: 2rem; border-radius: 8px; border: 1px solid var(--border-subtle);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3 style="font-size: 14px; margin: 0;">Campaign Execution History</h3>
+                    <button class="btn btn-primary" style="padding: 0.2rem 0.5rem; font-size: 11px; height: 26px;" onclick="loadHistory()">
+                        <i data-lucide="refresh-cw" style="width: 12px; height: 12px;"></i> Refresh
+                    </button>
+                </div>
+                <div class="table-wrapper">
+                    <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 13px;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid var(--border-subtle); color: var(--text-secondary);">
+                                <th style="padding: 0.75rem 0.5rem;">Date</th>
+                                <th style="padding: 0.75rem 0.5rem;">List / Source</th>
+                                <th style="padding: 0.75rem 0.5rem;">Sent</th>
+                                <th style="padding: 0.75rem 0.5rem;">Failed</th>
+                                <th style="padding: 0.75rem 0.5rem;">Opens</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-tbody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -550,6 +592,7 @@
             if (viewId === 'config') loadConfig();
             if (viewId === 'audience') loadAudience();
             if (viewId === 'advisor') generateAdvisorPrompt();
+            if (viewId === 'history') loadHistory();
         }
 
         function showToast(msg) {
@@ -801,7 +844,7 @@
                 const newUsers = data.ga4_new_users || 0;
                 const installs = data.ga4_installs || 0;
                 
-                const prompt = `Act as an elite Growth Hacker and B2B SaaS Marketer. 
+                const funnelPrompt = `Act as an elite Growth Hacker and B2B SaaS Marketer. 
 
 I am currently running an automated cold email outreach campaign for my software product, and I need strategic advice on how to improve my conversion funnel and drastically increase my user base.
 
@@ -818,17 +861,56 @@ Based on these specific metrics:
 3. What 3 specific psychological triggers or changes should I add to my website's landing page to boost the conversion rate of those who do click?
 4. Provide a step-by-step, 7-day tactical growth plan tailored to these numbers to aggressively ramp up my user count.`;
 
-                document.getElementById('advisor-prompt').value = prompt;
+                const audiencePrompt = `Act as an elite Data Broker and B2B Lead Generation Specialist.
+
+I am running cold email campaigns for my product (Cortogen), but my current open rates and conversions indicate that I might be targeting the wrong demographic. 
+
+I need you to completely reconsider who I should be emailing. 
+1. Build 3 hyper-specific "Buyer Personas" (Ideal Customer Profiles) of people who will practically beg to buy my product. Include their exact job titles, the size of their company, and the specific daily pain points they experience that my product solves.
+2. Give me a tactical, step-by-step plan on exactly where to scrape or buy a list of these exact people (e.g. specific GitHub searches, LinkedIn Sales Navigator filters, or specialized directories).
+3. Draft a 3-sentence "hook" for each persona that I can use as the opening line of my next cold email to instantly grab their attention.`;
+
+                document.getElementById('advisor-prompt').value = funnelPrompt;
+                document.getElementById('audience-prompt').value = audiencePrompt;
             } catch(e) {
                 document.getElementById('advisor-prompt').value = "Error loading metrics from server. Please refresh the page.";
+                document.getElementById('audience-prompt').value = "Error loading metrics from server.";
             }
         }
         
-        function copyPrompt() {
-            const promptText = document.getElementById('advisor-prompt');
+        function copyPrompt(elementId) {
+            const promptText = document.getElementById(elementId);
             promptText.select();
             document.execCommand('copy');
             showToast('Prompt copied to clipboard! Paste it into Claude or ChatGPT.');
+        }
+
+        async function loadHistory() {
+            try {
+                const res = await fetch('/api/campaign/history?t=' + new Date().getTime());
+                const history = await res.json();
+                let html = '';
+                if (history.length === 0) {
+                    html = '<tr><td colspan="5" style="padding: 1rem 0.5rem; text-align: center; color: var(--text-secondary);">No past campaigns found.</td></tr>';
+                } else {
+                    history.forEach(c => {
+                        const d = new Date(c.started_at);
+                        const dateStr = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        html += `
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <td style="padding: 0.75rem 0.5rem; font-size: 12px; color: var(--text-secondary);">${dateStr}</td>
+                                <td style="padding: 0.75rem 0.5rem;">${c.csv_file}</td>
+                                <td style="padding: 0.75rem 0.5rem; color: var(--color-success);">${c.total_sent || 0}</td>
+                                <td style="padding: 0.75rem 0.5rem; color: var(--color-error);">${c.total_failed || 0}</td>
+                                <td style="padding: 0.75rem 0.5rem; color: var(--accent-primary);">${c.total_opens || 0}</td>
+                            </tr>
+                        `;
+                    });
+                }
+                document.getElementById('history-tbody').innerHTML = html;
+            } catch (e) {
+                console.error("Failed to load history");
+            }
         }
 
         // --- Live Logs API ---
