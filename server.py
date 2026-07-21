@@ -322,7 +322,7 @@ def run_campaign_thread(csv_file, limit, selected_template="direct", campaign_id
         leads = load_csv_as_json(csv_file)
         
         pending = [lead for lead in leads if lead.get("status") == "not_contacted"]
-        daily_limit = config.get("daily_limit", limit)
+        daily_limit = limit if limit else config.get("daily_limit", 60)
         campaign_total = min(len(pending), daily_limit)
         
         if campaign_total == 0:
