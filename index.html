@@ -367,6 +367,10 @@
                     <div class="stat-label">Total Opens</div>
                 </div>
                 <div class="stat-card">
+                    <div class="stat-value" id="stat-unique-opens">--</div>
+                    <div class="stat-label">Unique Openers</div>
+                </div>
+                <div class="stat-card">
                     <div class="stat-value" id="stat-rate" style="color: var(--color-success)">--</div>
                     <div class="stat-label">Avg Open Rate</div>
                 </div>
@@ -386,6 +390,24 @@
                 <div style="display: flex; gap: 2rem;">
                     <div><span style="font-size: 24px; font-weight: 600; color: #fff;" id="ga4-users">--</span> <br><span style="font-size: 12px; color: var(--text-secondary);">New Users</span></div>
                     <div><span style="font-size: 24px; font-weight: 600; color: #fff;" id="ga4-installs">--</span> <br><span style="font-size: 12px; color: var(--text-secondary);">Installs</span></div>
+                </div>
+            </div>
+
+            <div style="margin-top: 1rem; background: var(--bg-surface); padding: 1.5rem; border: 1px solid var(--border-subtle); border-radius: 8px;">
+                <h3 style="font-size: 14px; margin-bottom: 1rem;">Recent Opens</h3>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>When</th>
+                                <th>Email</th>
+                                <th>Campaign</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-opens-list">
+                            <tr><td colspan="3" style="text-align:center; color: var(--text-secondary);">No opens recorded yet.</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
@@ -430,6 +452,13 @@
                 <div class="form-group">
                     <label class="form-label">Timezone</label>
                     <input type="text" id="cfg-timezone" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Public Tracking Host</label>
+                    <input type="text" id="cfg-public-host" class="form-control" placeholder="https://api.cortogen.com">
+                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 0.35rem;">
+                        Must be reachable by the recipient's email client for open tracking to work.
+                    </div>
                 </div>
                 <button class="btn btn-primary" onclick="saveConfig()" style="margin-top: 1rem;">
                     <i data-lucide="save"></i> Save Configuration
@@ -654,14 +683,26 @@
         // --- Dashboard API ---
         async function loadAnalytics() {
             try {
-                const res = await fetch('/api/analytics');
+                const res = await fetch('/api/analytics?t=' + new Date().getTime());
                 const data = await res.json();
                 document.getElementById('stat-sent').textContent = data.total_sent || 0;
                 document.getElementById('stat-opens').textContent = data.total_opens || 0;
+                document.getElementById('stat-unique-opens').textContent = data.unique_opens || 0;
                 document.getElementById('stat-rate').textContent = (data.avg_open_rate * 100).toFixed(1) + '%';
                 
                 document.getElementById('ga4-users').textContent = data.ga4_new_users || 0;
                 document.getElementById('ga4-installs').textContent = data.ga4_installs || 0;
+
+                const opens = data.recent_opens || [];
+                const opensBody = document.getElementById('recent-opens-list');
+                if (opens.length === 0) {
+                    opensBody.innerHTML = '<tr><td colspan="3" style="text-align:center; color: var(--text-secondary);">No opens recorded yet.</td></tr>';
+                } else {
+                    opensBody.innerHTML = opens.slice(0, 10).map(open => {
+                        const openedAt = open.opened_at ? new Date(open.opened_at).toLocaleString() : '--';
+                        return `<tr><td>${openedAt}</td><td style="font-family: var(--font-mono); color: var(--accent-primary);">${open.email || '--'}</td><td>${open.campaign_id || '--'}</td></tr>`;
+                    }).join('');
+                }
             } catch(e) {}
         }
 
@@ -671,7 +712,7 @@
                 // Get active CSV from config to send it to the endpoint
                 const cfgRes = await fetch('/api/agent-config');
                 const cfg = await cfgRes.json();
-                const res = await fetch(`/api/send-batch?file=${encodeURIComponent(cfg.active_csv)}&template=${cfg.active_template}&limit=${cfg.daily_limit_per_window}`, { method: 'POST' });
+                const res = await fetch(`/api/send-batch?file=${encodeURIComponent(cfg.active_csv)}&template=${encodeURIComponent(cfg.active_template)}&limit=${cfg.daily_limit_per_window}&public_host=${encodeURIComponent(window.location.origin)}`, { method: 'POST' });
                 const data = await res.json();
                 showToast(data.message || 'Batch triggered');
             } catch(e) {
@@ -690,6 +731,13 @@
         // --- Config API ---
         async function loadConfig() {
             try {
+                const normalizeTemplate = (value) => {
+                    let name = (value || '').toString().trim().toLowerCase();
+                    name = name.split(/[\\/]/).pop().replace(/\.(html|txt)$/i, '');
+                    if (name.startsWith('cortogen_')) name = name.slice('cortogen_'.length);
+                    return name;
+                };
+
                 // Load CSV options
                 const csvRes = await fetch('/api/list-csvs');
                 const csvs = await csvRes.json();
@@ -710,10 +758,12 @@
                 
                 if (cfg.active_csv) select.value = cfg.active_csv;
                 if (cfg.active_template) {
-                    // Try to match value exactly, or fallback to first
+                    const activeTemplate = normalizeTemplate(cfg.active_template);
+                    // Try to match value exactly, or fallback to the normalized value.
                     let matched = false;
                     for (let i = 0; i < tplSelect.options.length; i++) {
-                        if (tplSelect.options[i].value === cfg.active_template) {
+                        const optionValue = normalizeTemplate(tplSelect.options[i].value);
+                        if (tplSelect.options[i].value === cfg.active_template || optionValue === activeTemplate) {
                             tplSelect.selectedIndex = i;
                             matched = true;
                             break;
@@ -721,8 +771,9 @@
                     }
                 }
                 document.getElementById('cfg-times').value = (cfg.send_times || []).join(', ');
-                document.getElementById('cfg-limit').value = cfg.daily_limit_per_window || 30;
+                document.getElementById('cfg-limit').value = cfg.daily_limit_per_window || 7;
                 document.getElementById('cfg-timezone').value = cfg.timezone || 'Asia/Kolkata';
+                document.getElementById('cfg-public-host').value = cfg.public_host || 'https://api.cortogen.com';
             } catch(e) {}
         }
 
@@ -738,7 +789,8 @@
                     active_template: document.getElementById('cfg-template').value,
                     send_times: document.getElementById('cfg-times').value.split(',').map(s => s.trim()),
                     daily_limit_per_window: parseInt(document.getElementById('cfg-limit').value),
-                    timezone: document.getElementById('cfg-timezone').value
+                    timezone: document.getElementById('cfg-timezone').value,
+                    public_host: document.getElementById('cfg-public-host').value.trim()
                 };
                 
                 await fetch('/api/agent-config', {
@@ -1011,6 +1063,7 @@ I need you to completely reconsider who I should be emailing.
 
         // Init
         loadAnalytics();
+        setInterval(loadAnalytics, 10000);
         checkScheduler();
         setInterval(checkScheduler, 10000); // Check status every 10s
     </script>

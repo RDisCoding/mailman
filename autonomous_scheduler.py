@@ -65,7 +65,7 @@ def job_send_email_batch():
     template     = cfg.get("active_template", "sales")
     region       = cfg.get("active_region", "Unknown")
     lead_source  = cfg.get("active_lead_source", "Manual CSV")
-    daily_limit  = cfg.get("daily_limit_per_window", 30)
+    daily_limit  = cfg.get("daily_limit_per_window", 7)
 
     ts = datetime.now().strftime("%H:%M:%S")
     print(f"\n[{ts}] Email batch triggered.")
@@ -137,7 +137,7 @@ def cmd_status(scheduler=None):
     print(f"  Active CSV:      {cfg.get('active_csv', 'NOT SET')}")
     print(f"  Template:        {cfg.get('active_template', 'NOT SET')}")
     print(f"  Region:          {cfg.get('active_region', 'NOT SET')}")
-    print(f"  Limit/window:    {cfg.get('daily_limit_per_window', 30)} emails")
+    print(f"  Limit/window:    {cfg.get('daily_limit_per_window', 7)} emails")
     print(f"  Send times:      {', '.join(cfg.get('send_times', []))}")
     print(f"  Timezone:        {cfg.get('timezone', 'Asia/Kolkata')}")
     print(f"  Report interval: every {cfg.get('report_interval_days', 3)} days")

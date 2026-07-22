@@ -77,6 +77,7 @@ def start_campaign(csv_file: str, region: str, lead_source: str,
         "total_sent":           0,
         "total_failed":         0,
         "total_opens":          0,
+        "open_events":          [],
         "open_rate":            0.0,
         "ga4_new_users_delta":  0,
         "ga4_installs_delta":   0,
@@ -106,6 +107,20 @@ def finish_campaign(campaign_id: str, total_sent: int, total_failed: int,
     save_campaign_log(log)
     print(f"[Metrics] Campaign finished: {campaign_id} | sent={total_sent} failed={total_failed}")
 
+def record_sent(campaign_id: str, count: int = 1):
+    """Increment the sent counter for a campaign as emails are delivered."""
+    log = load_campaign_log()
+    for entry in log:
+        if entry["campaign_id"] == campaign_id:
+            entry["total_sent"] = entry.get("total_sent", 0) + count
+            sent = entry["total_sent"]
+            opens = entry.get("total_opens", 0)
+            entry["open_rate"] = round(opens / sent, 4) if sent > 0 else 0.0
+            save_campaign_log(log)
+            print(f"[Metrics] Sent tracked for campaign={campaign_id} | sent={entry['total_sent']} | rate={entry['open_rate']:.1%}")
+            return
+    print(f"[Metrics] Sent tracked for campaign={campaign_id} but campaign not found.")
+
 def record_open(email: str):
     """
     Called by the tracking pixel endpoint on api.cortogen.com.
@@ -117,7 +132,13 @@ def record_open(email: str):
     # (Simple approach: increment the last campaign entry that has sent > 0)
     for entry in reversed(log):
         if entry.get("total_sent", 0) > 0:
+            opened_at = datetime.now().isoformat(timespec="seconds")
             entry["total_opens"] = entry.get("total_opens", 0) + 1
+            entry.setdefault("open_events", []).append({
+                "email": email,
+                "opened_at": opened_at,
+                "campaign_id": entry.get("campaign_id", "")
+            })
             sent = entry["total_sent"]
             entry["open_rate"] = round(entry["total_opens"] / sent, 4) if sent > 0 else 0.0
             save_campaign_log(log)
@@ -163,18 +184,33 @@ def summarize_performance(days: int = 3) -> dict:
             "campaigns_run": 0,
             "total_sent": 0,
             "total_opens": 0,
+            "unique_opens": 0,
             "avg_open_rate": 0.0,
             "best_template": None,
             "best_region": None,
             "worst_region": None,
             "regions_tried": [],
             "templates_tried": [],
+            "recent_opens": [],
             "data_available": False
         }
 
     total_sent  = sum(c.get("total_sent", 0) for c in campaigns)
     total_opens = sum(c.get("total_opens", 0) for c in campaigns)
     avg_open    = round(total_opens / total_sent, 4) if total_sent > 0 else 0.0
+
+    recent_opens = []
+    for campaign in campaigns:
+        for event in campaign.get("open_events", []):
+            recent_opens.append({
+                "email": event.get("email", ""),
+                "opened_at": event.get("opened_at", ""),
+                "campaign_id": event.get("campaign_id", campaign.get("campaign_id", "")),
+                "region": campaign.get("region", "Unknown"),
+                "template": campaign.get("template_used", "Unknown")
+            })
+    recent_opens.sort(key=lambda x: x.get("opened_at", ""), reverse=True)
+    unique_opens = len({event.get("email", "") for event in recent_opens if event.get("email")})
 
     # Best/worst by open rate
     finished = [c for c in campaigns if c.get("total_sent", 0) > 5]
@@ -197,12 +233,14 @@ def summarize_performance(days: int = 3) -> dict:
         "campaigns_run":    len(campaigns),
         "total_sent":       total_sent,
         "total_opens":      total_opens,
+        "unique_opens":     unique_opens,
         "avg_open_rate":    avg_open,
         "best_template":    best_tmpl,
         "best_region":      best["region"] if best else None,
         "worst_region":     worst["region"] if worst else None,
         "regions_tried":    regions,
         "templates_tried":  templates,
+        "recent_opens":     recent_opens[:50],
         "campaign_details": [
             {
                 "campaign_id":   c["campaign_id"],

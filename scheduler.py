@@ -4,6 +4,8 @@ import json
 import time
 import random
 import smtplib
+import socket
+import urllib.parse
 from email.mime.text import MIMEText
 from email.header import Header
 
@@ -75,7 +77,31 @@ def save_targets(targets):
     except Exception as e:
         print(f"Error saving {DATA_FILE}: {e}")
 
-def generate_email_draft(target, template_type):
+def normalize_template_type(template_type):
+    template = (template_type or "").strip().lower()
+    template = os.path.splitext(os.path.basename(template))[0]
+    if template.startswith("cortogen_"):
+        template = template[len("cortogen_"):]
+    if template not in {"direct", "sales", "premium"}:
+        return "direct"
+    return template
+
+
+def default_tracking_host(port=8000):
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+            s.connect(("8.8.8.8", 80))
+            local_ip = s.getsockname()[0]
+        return f"http://{local_ip}:{port}"
+    except Exception:
+        return f"http://localhost:{port}"
+
+
+def build_tracking_pixel(email: str, public_host: str) -> str:
+    host = (public_host or "https://api.cortogen.com").rstrip("/")
+    return f'<img src="{host}/api/track/open?email={urllib.parse.quote(email)}" width="1" height="1" alt="" style="display:none;" />'
+
+def generate_email_draft(target, template_type, config=None):
     # Use custom body/subject if configured via dashboard
     if target.get('custom_subject') and target.get('custom_subject').strip():
         subject = target['custom_subject']
@@ -92,13 +118,27 @@ def generate_email_draft(target, template_type):
             first_name = "there"
             
         try:
-            template_path = os.path.join(os.path.dirname(__file__), "templates", "cortogen_premium.html")
+            template_type = normalize_template_type(template_type)
+            if template_type == "premium":
+                template_file = "cortogen_premium.html"
+            elif template_type == "sales":
+                template_file = "cortogen_sales.html"
+            else:
+                template_file = "cortogen_direct.html"
+
+            template_path = os.path.join(os.path.dirname(__file__), "templates", template_file)
             with open(template_path, "r", encoding="utf-8") as f:
                 html_template = f.read()
                 
-                # Inject personalized greeting
-                greeting = f'<div class="content">\n            <p style="font-weight: 600; color: #fff; font-size: 18px; margin-bottom: 20px;">Hi {first_name},</p>'
-                personalized_html = html_template.replace('<div class="content">', greeting)
+                if template_type in ["premium", "sales"]:
+                    greeting = f'<div class="content">\n            <p style="font-weight: 600; color: #fff; font-size: 18px; margin-bottom: 20px;">Hi {first_name},</p>'
+                    personalized_html = html_template.replace('<div class="content">', greeting)
+                else:
+                    personalized_html = html_template.replace('{{first_name}}', first_name)
+
+                personalized_html = personalized_html.replace('{{email}}', urllib.parse.quote(target.get('email', '')))
+                public_host = (config or {}).get('public_host') or default_tracking_host()
+                personalized_html = personalized_html.replace('{{tracking_pixel}}', build_tracking_pixel(target.get('email', ''), public_host))
                 
                 body = personalized_html
                 is_html = True
@@ -178,7 +218,7 @@ def run_campaign_batch(config):
             continue
             
         template_type = target.get('template_type', 'student_study')
-        subject, body, is_html = generate_email_draft(target, template_type)
+        subject, body, is_html = generate_email_draft(target, template_type, config=config)
         
         print(f"[{i+1}/{daily_quota}] Sending to {target['name']} ({email_addr}) [{target['institution']}] using template '{template_type}'...")
         

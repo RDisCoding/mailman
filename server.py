@@ -13,6 +13,7 @@ import time
 import random
 import smtplib
 import sys
+import socket
 from email.mime.text import MIMEText
 from email.header import Header
 
@@ -20,11 +21,12 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Metrics logger (graceful fallback if not present)
 try:
-    from metrics_logger import record_open, start_campaign, finish_campaign
+    from metrics_logger import record_open, record_sent, start_campaign, finish_campaign
     METRICS_ENABLED = True
 except ImportError:
     METRICS_ENABLED = False
     def record_open(email): pass
+    def record_sent(*a, **k): pass
     def start_campaign(*a, **k): return "no_metrics"
     def finish_campaign(*a, **k): pass
 
@@ -168,7 +170,51 @@ def _inject_utm(html: str, campaign_id: str, template: str) -> str:
     return html
 
 
-def generate_email_draft(target, template_type, campaign_id: str = "manual"):
+def _normalize_template_type(template_type: str) -> str:
+    template = (template_type or "").strip().lower()
+    template = os.path.splitext(os.path.basename(template))[0]
+    if template.startswith("cortogen_"):
+        template = template[len("cortogen_"):]
+    if template not in {"direct", "sales", "premium"}:
+        return "direct"
+    return template
+
+
+def _build_tracking_pixel(email: str, public_host: str) -> str:
+    host = (public_host or "https://api.cortogen.com").rstrip("/")
+    return f'<img src="{host}/api/track/open?email={urllib.parse.quote(email)}" width="1" height="1" alt="" style="display:none;" />'
+
+
+def _default_tracking_host(port: int = PORT) -> str:
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+            s.connect(("8.8.8.8", 80))
+            local_ip = s.getsockname()[0]
+        return f"http://{local_ip}:{port}"
+    except Exception:
+        return f"http://localhost:{port}"
+
+
+def _resolve_tracking_host(config: dict | None = None, request_host: str | None = None) -> str:
+    if request_host:
+        host = request_host.strip().rstrip("/")
+        if host and host not in {
+            "http://localhost:8000",
+            "https://localhost:8000",
+            "http://127.0.0.1:8000",
+            "https://127.0.0.1:8000",
+        }:
+            return host
+
+    if config:
+        configured = (config.get("public_host") or "").strip()
+        if configured:
+            return configured.rstrip("/")
+
+    return _default_tracking_host()
+
+
+def generate_email_draft(target, template_type, campaign_id: str = "manual", public_host: str = "http://localhost:8000"):
     # Use custom body/subject if configured via dashboard
     if target.get('custom_subject') and target.get('custom_subject').strip():
         subject = target['custom_subject']
@@ -185,6 +231,7 @@ def generate_email_draft(target, template_type, campaign_id: str = "manual"):
             first_name = "there"
             
         try:
+            template_type = _normalize_template_type(template_type)
             if template_type == "premium":
                 template_file = "cortogen_premium.html"
             elif template_type == "sales":
@@ -209,6 +256,12 @@ def generate_email_draft(target, template_type, campaign_id: str = "manual"):
 
                 # Inject UTM parameters into CTA links
                 personalized_html = _inject_utm(personalized_html, campaign_id, template_type)
+
+                if '{{tracking_pixel}}' in personalized_html:
+                    personalized_html = personalized_html.replace(
+                        '{{tracking_pixel}}',
+                        _build_tracking_pixel(target_email, public_host)
+                    )
 
                 body = personalized_html
                 is_html = True
@@ -277,7 +330,7 @@ Cortogen Team"""
     except Exception as e:
         print(f"[Summary] Failed to send notification email: {e}")
 
-def run_campaign_thread(csv_file, limit, selected_template="direct", campaign_id: str = None):
+def run_campaign_thread(csv_file, limit, selected_template="direct", campaign_id: str = None, public_host: str = "http://localhost:8000"):
     global campaign_running, campaign_status, campaign_current, campaign_total, campaign_logs, stop_requested
     
     with campaign_lock:
@@ -322,7 +375,7 @@ def run_campaign_thread(csv_file, limit, selected_template="direct", campaign_id
         leads = load_csv_as_json(csv_file)
         
         pending = [lead for lead in leads if lead.get("status") == "not_contacted"]
-        daily_limit = limit if limit else config.get("daily_limit", 60)
+        daily_limit = limit if limit else 7
         campaign_total = min(len(pending), daily_limit)
         
         if campaign_total == 0:
@@ -358,7 +411,8 @@ def run_campaign_thread(csv_file, limit, selected_template="direct", campaign_id
 
             lead["template_type"] = selected_template
             template_type = lead.get("template_type", "direct")
-            subject, body, is_html = generate_email_draft(lead, template_type, campaign_id=campaign_id)
+            resolved_public_host = _resolve_tracking_host(config, public_host)
+            subject, body, is_html = generate_email_draft(lead, template_type, campaign_id=campaign_id, public_host=resolved_public_host)
 
             campaign_status = f"Sending email {i+1} of {campaign_total} to {name}..."
             log(f"[{i+1}/{campaign_total}] Sending email to {name} ({email_addr}) using template '{template_type}'...")
@@ -369,10 +423,10 @@ def run_campaign_thread(csv_file, limit, selected_template="direct", campaign_id
                 
                 # Inject tracking pixel if HTML and metrics enabled
                 if is_html and METRICS_ENABLED:
-                    public_host = config.get("public_host", "http://localhost:8000")
-                    pixel_url = f"{public_host}/api/track/open?email={urllib.parse.quote(email_addr)}"
-                    pixel_img = f'<img src="{pixel_url}" width="1" height="1" alt="" style="display:none;" />'
-                    if '</body>' in body.lower():
+                    pixel_img = _build_tracking_pixel(email_addr, resolved_public_host)
+                    if '{{tracking_pixel}}' in body:
+                        body = body.replace('{{tracking_pixel}}', pixel_img)
+                    elif '</body>' in body.lower():
                         import re
                         body = re.sub(r'</body>', f'{pixel_img}</body>', body, flags=re.IGNORECASE)
                     else:
@@ -413,6 +467,11 @@ def run_campaign_thread(csv_file, limit, selected_template="direct", campaign_id
                 
                 lead["status"] = "sent"
                 lead["notes"] = f"Sent via automated web campaign at {time.strftime('%Y-%m-%d %H:%M:%S')}"
+                if METRICS_ENABLED and campaign_id:
+                    try:
+                        record_sent(campaign_id)
+                    except:
+                        pass
                 save_json_as_csv(leads, csv_file)
                 campaign_current += 1
                 success_count += 1
@@ -543,8 +602,10 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
                     from metrics_logger import summarize_performance, get_last_n_campaigns
                     perf = summarize_performance(days=7)
                     combined["total_opens"]   = perf.get("total_opens", 0)
+                    combined["unique_opens"]  = perf.get("unique_opens", 0)
                     combined["avg_open_rate"] = perf.get("avg_open_rate", 0)
                     combined["campaigns"]     = perf.get("campaign_details", [])
+                    combined["recent_opens"]  = perf.get("recent_opens", [])
                 except Exception as le:
                     combined["local_metrics_error"] = str(le)
 
@@ -600,7 +661,7 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
             # Parse limit and template parameter
             parsed_url = urllib.parse.urlparse(self.path)
             query_params = urllib.parse.parse_qs(parsed_url.query)
-            limit = 100
+            limit = 7
             if 'limit' in query_params:
                 try:
                     limit = int(query_params['limit'][0])
@@ -610,6 +671,7 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
             selected_template = "direct"
             if 'template' in query_params:
                 selected_template = query_params['template'][0]
+            request_public_host = query_params.get('public_host', ['http://localhost:8000'])[0]
 
             if campaign_running:
                 self.send_response(400)
@@ -624,7 +686,7 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
                     c_id = start_campaign(csv_file, "Manual", "UI", selected_template, limit)
                 except:
                     c_id = None
-                run_campaign_thread(csv_file, limit, selected_template, campaign_id=c_id)
+                run_campaign_thread(csv_file, limit, selected_template, campaign_id=c_id, public_host=request_public_host)
 
             t = threading.Thread(target=manual_runner)
             t.daemon = True
@@ -713,12 +775,13 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
                 default_cfg = {
                     "timezone": "Asia/Kolkata",
                     "send_times": ["09:00", "14:00"],
-                    "daily_limit_per_window": 30,
+                    "daily_limit_per_window": 7,
                     "report_interval_days": 3,
                     "active_csv": "",
                     "active_template": "sales",
                     "active_region": "",
                     "active_lead_source": "Manual CSV",
+                    "public_host": "https://api.cortogen.com",
                     "ga4_property_id": ""
                 }
                 with open(agent_cfg_path, 'w') as f:
@@ -809,6 +872,7 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
                     "active_template": "sales",
                     "active_region": "",
                     "active_lead_source": "Manual CSV",
+                    "public_host": "https://api.cortogen.com",
                     "ga4_property_id": ""
                 }
                 self.wfile.write(json.dumps(default).encode())
@@ -984,10 +1048,12 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
                     ga4  = compute_ga4_delta(days=7)
                     combined.update({
                         "total_opens":    perf.get("total_opens", 0),
+                        "unique_opens":   perf.get("unique_opens", 0),
                         "avg_open_rate":  perf.get("avg_open_rate", 0),
                         "campaigns":      perf.get("campaign_details", []),
                         "total_sent":     perf.get("total_sent", 0),
                         "campaigns_run":  perf.get("campaigns_run", 0),
+                        "recent_opens":   perf.get("recent_opens", []),
                         "ga4_new_users":  ga4.get("total_new_users", 0),
                         "ga4_installs":   ga4.get("total_installs", 0),
                         "ga4_sessions":   ga4.get("total_sessions", 0),
@@ -1001,8 +1067,10 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
                 )
                 with urllib.request.urlopen(req, timeout=5) as response:
                     remote = json.loads(response.read())
-                    combined["recent_opens"] = remote.get("recent_opens", [])
-                    combined["unique_opens"] = remote.get("unique_opens", 0)
+                    remote_recent = remote.get("recent_opens", [])
+                    if remote_recent:
+                        combined["recent_opens"] = remote_recent
+                    combined["unique_opens"] = max(combined.get("unique_opens", 0), remote.get("unique_opens", 0))
             except Exception:
                 pass
             self.wfile.write(json.dumps(combined).encode('utf-8'))
