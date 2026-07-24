@@ -14,10 +14,14 @@ import random
 import smtplib
 import sys
 import socket
+import ssl
+import certifi
+from datetime import datetime, timezone
 from email.mime.text import MIMEText
 from email.header import Header
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+_PUBLIC_TLS_CONTEXT = ssl.create_default_context(cafile=certifi.where())
 
 # Metrics logger (graceful fallback if not present)
 try:
@@ -180,9 +184,12 @@ def _normalize_template_type(template_type: str) -> str:
     return template
 
 
-def _build_tracking_pixel(email: str, public_host: str) -> str:
+def _build_tracking_pixel(email: str, public_host: str, cache_key: str = "") -> str:
     host = (public_host or "https://api.cortogen.com").rstrip("/")
-    return f'<img src="{host}/api/track/open?email={urllib.parse.quote(email)}" width="1" height="1" alt="" style="display:none;" />'
+    query = f"email={urllib.parse.quote(email)}"
+    if cache_key:
+        query += f"&v={urllib.parse.quote(str(cache_key))}"
+    return f'<img src="{host}/api/track/open?{query}" width="1" height="1" alt="" style="display:none;" />'
 
 
 def _default_tracking_host(port: int = PORT) -> str:
@@ -212,6 +219,39 @@ def _resolve_tracking_host(config: dict | None = None, request_host: str | None 
             return configured.rstrip("/")
 
     return _default_tracking_host()
+
+
+def _tracking_baseline() -> datetime | None:
+    if not METRICS_ENABLED:
+        return None
+    try:
+        config_path = os.path.join(BASE_DIR, "config.json")
+        with open(config_path, "r", encoding="utf-8") as config_file:
+            started_at = json.load(config_file).get("tracking_started_at", "")
+        if not started_at:
+            return None
+        return datetime.fromisoformat(started_at.replace("Z", "+00:00")).astimezone(timezone.utc).replace(tzinfo=None)
+    except Exception:
+        return None
+
+
+def _scoped_remote_opens(remote_opens: list) -> tuple[list, int, int]:
+    baseline = _tracking_baseline()
+    if baseline is None:
+        return remote_opens, len(remote_opens), len({item.get("email") for item in remote_opens if item.get("email")})
+
+    scoped = []
+    for item in remote_opens:
+        opened_at = item.get("opened_at", "")
+        try:
+            opened = datetime.fromisoformat(opened_at.replace("Z", "+00:00")).astimezone(timezone.utc).replace(tzinfo=None)
+        except (TypeError, ValueError):
+            continue
+        if opened >= baseline:
+            scoped.append(item)
+
+    unique = len({item.get("email") for item in scoped if item.get("email")})
+    return scoped, len(scoped), unique
 
 
 def generate_email_draft(target, template_type, campaign_id: str = "manual", public_host: str = "http://localhost:8000"):
@@ -260,7 +300,7 @@ def generate_email_draft(target, template_type, campaign_id: str = "manual", pub
                 if '{{tracking_pixel}}' in personalized_html:
                     personalized_html = personalized_html.replace(
                         '{{tracking_pixel}}',
-                        _build_tracking_pixel(target_email, public_host)
+                        _build_tracking_pixel(target_email, public_host, campaign_id)
                     )
 
                 body = personalized_html
@@ -423,7 +463,7 @@ def run_campaign_thread(csv_file, limit, selected_template="direct", campaign_id
                 
                 # Inject tracking pixel if HTML and metrics enabled
                 if is_html and METRICS_ENABLED:
-                    pixel_img = _build_tracking_pixel(email_addr, resolved_public_host)
+                    pixel_img = _build_tracking_pixel(email_addr, resolved_public_host, f"{campaign_id}-{i}")
                     if '{{tracking_pixel}}' in body:
                         body = body.replace('{{tracking_pixel}}', pixel_img)
                     elif '</body>' in body.lower():
@@ -615,9 +655,14 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
                     'https://api.cortogen.com/api/admin/email-stats',
                     headers={'X-Admin-Key': 'CORTOGEN_ADMIN_SECURE_123'}
                 )
-                with urllib.request.urlopen(req, timeout=5) as response:
+                with urllib.request.urlopen(req, timeout=5, context=_PUBLIC_TLS_CONTEXT) as response:
                     remote = json.loads(response.read())
-                    combined["recent_opens"]  = remote.get("recent_opens", [])
+                    scoped, scoped_total, scoped_unique = _scoped_remote_opens(remote.get("recent_opens", []))
+                    combined["recent_opens"] = scoped
+                    combined["total_opens"] = scoped_total
+                    combined["unique_opens"] = scoped_unique
+                    sent = combined.get("total_sent", 0)
+                    combined["avg_open_rate"] = round(scoped_total / sent, 4) if sent > 0 else 0
                     combined["remote_stats"]  = remote
             except Exception:
                 pass  # silently ignore if offline
@@ -1065,12 +1110,15 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
                     'https://api.cortogen.com/api/admin/email-stats',
                     headers={'X-Admin-Key': 'CORTOGEN_ADMIN_SECURE_123'}
                 )
-                with urllib.request.urlopen(req, timeout=5) as response:
+                with urllib.request.urlopen(req, timeout=5, context=_PUBLIC_TLS_CONTEXT) as response:
                     remote = json.loads(response.read())
-                    remote_recent = remote.get("recent_opens", [])
-                    if remote_recent:
-                        combined["recent_opens"] = remote_recent
-                    combined["unique_opens"] = max(combined.get("unique_opens", 0), remote.get("unique_opens", 0))
+                    scoped, scoped_total, scoped_unique = _scoped_remote_opens(remote.get("recent_opens", []))
+                    combined["recent_opens"] = scoped
+                    combined["total_opens"] = scoped_total
+                    combined["unique_opens"] = scoped_unique
+                    sent = combined.get("total_sent", 0)
+                    combined["avg_open_rate"] = round(scoped_total / sent, 4) if sent > 0 else 0
+                    combined["remote_stats"] = remote
             except Exception:
                 pass
             self.wfile.write(json.dumps(combined).encode('utf-8'))

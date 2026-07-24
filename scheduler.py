@@ -97,11 +97,14 @@ def default_tracking_host(port=8000):
         return f"http://localhost:{port}"
 
 
-def build_tracking_pixel(email: str, public_host: str) -> str:
+def build_tracking_pixel(email: str, public_host: str, cache_key: str = "") -> str:
     host = (public_host or "https://api.cortogen.com").rstrip("/")
-    return f'<img src="{host}/api/track/open?email={urllib.parse.quote(email)}" width="1" height="1" alt="" style="display:none;" />'
+    query = f"email={urllib.parse.quote(email)}"
+    if cache_key:
+        query += f"&v={urllib.parse.quote(str(cache_key))}"
+    return f'<img src="{host}/api/track/open?{query}" width="1" height="1" alt="" style="display:none;" />'
 
-def generate_email_draft(target, template_type, config=None):
+def generate_email_draft(target, template_type, config=None, cache_key=None):
     # Use custom body/subject if configured via dashboard
     if target.get('custom_subject') and target.get('custom_subject').strip():
         subject = target['custom_subject']
@@ -138,7 +141,7 @@ def generate_email_draft(target, template_type, config=None):
 
                 personalized_html = personalized_html.replace('{{email}}', urllib.parse.quote(target.get('email', '')))
                 public_host = (config or {}).get('public_host') or default_tracking_host()
-                personalized_html = personalized_html.replace('{{tracking_pixel}}', build_tracking_pixel(target.get('email', ''), public_host))
+                personalized_html = personalized_html.replace('{{tracking_pixel}}', build_tracking_pixel(target.get('email', ''), public_host, cache_key or time.time_ns()))
                 
                 body = personalized_html
                 is_html = True
@@ -218,7 +221,7 @@ def run_campaign_batch(config):
             continue
             
         template_type = target.get('template_type', 'student_study')
-        subject, body, is_html = generate_email_draft(target, template_type, config=config)
+        subject, body, is_html = generate_email_draft(target, template_type, config=config, cache_key=f"scheduler-{time.time_ns()}")
         
         print(f"[{i+1}/{daily_quota}] Sending to {target['name']} ({email_addr}) [{target['institution']}] using template '{template_type}'...")
         
