@@ -17,5 +17,7 @@
 
   "active_lead_source": "Manual CSV",
 
+  "public_host": "https://api.cortogen.com",
+
   "ga4_property_id": "YOUR_GA4_PROPERTY_ID_e.g_123456789"
 }

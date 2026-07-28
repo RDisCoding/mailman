@@ -97,7 +97,7 @@ def default_tracking_host(port=8000):
         return f"http://localhost:{port}"
 
 
-def build_tracking_pixel(email: str, public_host: str, cache_key: str = "") -> str:
+def build_tracking_pixel(email: str, public_host: str = "https://api.cortogen.com", cache_key: str = "") -> str:
     host = (public_host or "https://api.cortogen.com").rstrip("/")
     query = f"email={urllib.parse.quote(email)}"
     if cache_key:
@@ -221,7 +221,12 @@ def run_campaign_batch(config):
             continue
             
         template_type = target.get('template_type', 'student_study')
-        subject, body, is_html = generate_email_draft(target, template_type, config=config, cache_key=f"scheduler-{time.time_ns()}")
+        subject, body, is_html = generate_email_draft(
+            target,
+            template_type,
+            config={**config, 'public_host': config.get('public_host') or 'https://api.cortogen.com'},
+            cache_key=f"scheduler-{time.time_ns()}"
+        )
         
         print(f"[{i+1}/{daily_quota}] Sending to {target['name']} ({email_addr}) [{target['institution']}] using template '{template_type}'...")
         

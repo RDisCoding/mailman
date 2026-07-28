@@ -712,7 +712,8 @@
                 // Get active CSV from config to send it to the endpoint
                 const cfgRes = await fetch('/api/agent-config');
                 const cfg = await cfgRes.json();
-                const res = await fetch(`/api/send-batch?file=${encodeURIComponent(cfg.active_csv)}&template=${encodeURIComponent(cfg.active_template)}&limit=${cfg.daily_limit_per_window}&public_host=${encodeURIComponent(window.location.origin)}`, { method: 'POST' });
+                const publicHost = cfg.public_host || 'https://api.cortogen.com';
+                const res = await fetch(`/api/send-batch?file=${encodeURIComponent(cfg.active_csv)}&template=${encodeURIComponent(cfg.active_template)}&limit=${cfg.daily_limit_per_window}&public_host=${encodeURIComponent(publicHost)}`, { method: 'POST' });
                 const data = await res.json();
                 showToast(data.message || 'Batch triggered');
             } catch(e) {

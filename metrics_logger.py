@@ -133,16 +133,35 @@ def record_open(email: str):
     for entry in reversed(log):
         if entry.get("total_sent", 0) > 0:
             opened_at = datetime.now().isoformat(timespec="seconds")
+            campaign_id = entry.get("campaign_id", "")
+            open_events = entry.setdefault("open_events", [])
+
+            # Avoid duplicate counts when the same pixel URL is requested multiple times
+            # by the same email within a short window.
+            for existing in reversed(open_events):
+                if existing.get("email") == email and existing.get("campaign_id") == campaign_id:
+                    if existing.get("opened_at") == opened_at:
+                        print(f"[Metrics] Duplicate open ignored for email={email} at {opened_at}")
+                        return
+                    try:
+                        existing_ts = datetime.fromisoformat(existing.get("opened_at"))
+                        current_ts = datetime.fromisoformat(opened_at)
+                        if existing_ts and current_ts and abs((current_ts - existing_ts).total_seconds()) <= 30:
+                            print(f"[Metrics] Close duplicate open ignored for email={email} at {opened_at}")
+                            return
+                    except Exception:
+                        pass
+
             entry["total_opens"] = entry.get("total_opens", 0) + 1
-            entry.setdefault("open_events", []).append({
+            open_events.append({
                 "email": email,
                 "opened_at": opened_at,
-                "campaign_id": entry.get("campaign_id", "")
+                "campaign_id": campaign_id
             })
             sent = entry["total_sent"]
             entry["open_rate"] = round(entry["total_opens"] / sent, 4) if sent > 0 else 0.0
             save_campaign_log(log)
-            print(f"[Metrics] Open tracked for email={email} | campaign={entry['campaign_id']} | "
+            print(f"[Metrics] Open tracked for email={email} | campaign={campaign_id} | "
                   f"opens={entry['total_opens']} | rate={entry['open_rate']:.1%}")
             return
     print(f"[Metrics] Open tracked for email={email} but no active campaign found.")

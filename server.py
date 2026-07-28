@@ -203,6 +203,11 @@ def _default_tracking_host(port: int = PORT) -> str:
 
 
 def _resolve_tracking_host(config: dict | None = None, request_host: str | None = None) -> str:
+    if config:
+        configured = (config.get("public_host") or "").strip()
+        if configured:
+            return configured.rstrip("/")
+
     if request_host:
         host = request_host.strip().rstrip("/")
         if host and host not in {
@@ -212,11 +217,6 @@ def _resolve_tracking_host(config: dict | None = None, request_host: str | None 
             "https://127.0.0.1:8000",
         }:
             return host
-
-    if config:
-        configured = (config.get("public_host") or "").strip()
-        if configured:
-            return configured.rstrip("/")
 
     return _default_tracking_host()
 
@@ -254,7 +254,25 @@ def _scoped_remote_opens(remote_opens: list) -> tuple[list, int, int]:
     return scoped, len(scoped), unique
 
 
-def generate_email_draft(target, template_type, campaign_id: str = "manual", public_host: str = "http://localhost:8000"):
+def _merge_recent_opens(local_opens: list, remote_opens: list) -> tuple[list, int, int]:
+    seen = set()
+    merged = []
+    for item in local_opens + remote_opens:
+        key = (
+            (item.get("email", "") or "").lower(),
+            item.get("opened_at", "")
+        )
+        if key in seen:
+            continue
+        seen.add(key)
+        merged.append(item)
+
+    merged.sort(key=lambda x: x.get("opened_at", ""), reverse=True)
+    unique = len({item.get("email") for item in merged if item.get("email")})
+    return merged, len(merged), unique
+
+
+def generate_email_draft(target, template_type, campaign_id: str = "manual", public_host: str = "https://api.cortogen.com"):
     # Use custom body/subject if configured via dashboard
     if target.get('custom_subject') and target.get('custom_subject').strip():
         subject = target['custom_subject']
@@ -575,106 +593,6 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
     def do_OPTIONS(self):
         self.send_response(200, "OK")
         self.end_headers()
-
-    def do_GET(self):
-        # API Route: Fetch all researchers
-        if self.path.startswith('/api/researchers'):
-            csv_file = get_target_file(self.path)
-            
-            self.send_response(200)
-            self.send_header('Content-type', 'application/json; charset=utf-8')
-            self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
-            self.send_header('Pragma', 'no-cache')
-            self.send_header('Expires', '0')
-            self.end_headers()
-            
-            leads = load_csv_as_json(csv_file)
-            self.wfile.write(json.dumps(leads).encode('utf-8'))
-            return
-
-        # API Route: Email open tracking pixel
-        if self.path.startswith('/api/track/open'):
-            parsed = urllib.parse.urlparse(self.path)
-            params = urllib.parse.parse_qs(parsed.query)
-            email  = urllib.parse.unquote(params.get('email', [''])[0])
-
-            # Log the open in metrics
-            if email and METRICS_ENABLED:
-                threading.Thread(target=record_open, args=(email,), daemon=True).start()
-
-            # Return 1x1 transparent GIF
-            self.send_response(200)
-            self.send_header('Content-Type', 'image/gif')
-            self.send_header('Content-Length', str(len(_PIXEL_GIF)))
-            self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate')
-            self.send_header('Pragma', 'no-cache')
-            self.end_headers()
-            self.wfile.write(_PIXEL_GIF)
-            return
-
-        # API Route: Fetch current campaign status
-        if self.path == '/api/campaign-status':
-            self.send_response(200)
-            self.send_header('Content-type', 'application/json')
-            self.end_headers()
-            
-            status_data = {
-                "running": campaign_running,
-                "status": campaign_status,
-                "current": campaign_current,
-                "total": campaign_total,
-                "logs": campaign_logs
-            }
-            self.wfile.write(json.dumps(status_data).encode('utf-8'))
-            return
-            
-        # API Route: Fetch analytics (local metrics + remote stats)
-        if self.path == '/api/analytics':
-            self.send_response(200)
-            self.send_header('Content-type', 'application/json')
-            self.end_headers()
-
-            combined = {"total_opens": 0, "unique_opens": 0, "recent_opens": [], "campaigns": []}
-
-            # Local campaign metrics
-            if METRICS_ENABLED:
-                try:
-                    from metrics_logger import summarize_performance, get_last_n_campaigns
-                    perf = summarize_performance(days=7)
-                    combined["total_opens"]   = perf.get("total_opens", 0)
-                    combined["unique_opens"]  = perf.get("unique_opens", 0)
-                    combined["avg_open_rate"] = perf.get("avg_open_rate", 0)
-                    combined["campaigns"]     = perf.get("campaign_details", [])
-                    combined["recent_opens"]  = perf.get("recent_opens", [])
-                except Exception as le:
-                    combined["local_metrics_error"] = str(le)
-
-            # Remote stats (best-effort)
-            try:
-                req = urllib.request.Request(
-                    'https://api.cortogen.com/api/admin/email-stats',
-                    headers={'X-Admin-Key': 'CORTOGEN_ADMIN_SECURE_123'}
-                )
-                with urllib.request.urlopen(req, timeout=5, context=_PUBLIC_TLS_CONTEXT) as response:
-                    remote = json.loads(response.read())
-                    scoped, scoped_total, scoped_unique = _scoped_remote_opens(remote.get("recent_opens", []))
-                    combined["recent_opens"] = scoped
-                    combined["total_opens"] = scoped_total
-                    combined["unique_opens"] = scoped_unique
-                    sent = combined.get("total_sent", 0)
-                    combined["avg_open_rate"] = round(scoped_total / sent, 4) if sent > 0 else 0
-                    combined["remote_stats"]  = remote
-            except Exception:
-                pass  # silently ignore if offline
-
-            self.wfile.write(json.dumps(combined).encode('utf-8'))
-            return
-            
-        # Default: Serve static files
-        if self.path == '/' or self.path == '':
-            self.path = '/index.html'
-            
-        return super().do_GET()
 
     def do_POST(self):
         # API Route: Save all researchers
@@ -1112,12 +1030,14 @@ class OutreachRequestHandler(http.server.SimpleHTTPRequestHandler):
                 )
                 with urllib.request.urlopen(req, timeout=5, context=_PUBLIC_TLS_CONTEXT) as response:
                     remote = json.loads(response.read())
-                    scoped, scoped_total, scoped_unique = _scoped_remote_opens(remote.get("recent_opens", []))
-                    combined["recent_opens"] = scoped
-                    combined["total_opens"] = scoped_total
-                    combined["unique_opens"] = scoped_unique
+                    scoped_remote, scoped_total, scoped_unique = _scoped_remote_opens(remote.get("recent_opens", []))
+                    merged_recent, merged_total, merged_unique = _merge_recent_opens(combined.get("recent_opens", []), scoped_remote)
+
+                    combined["recent_opens"] = merged_recent
+                    combined["total_opens"] = max(combined.get("total_opens", 0), merged_total)
+                    combined["unique_opens"] = max(combined.get("unique_opens", 0), merged_unique)
                     sent = combined.get("total_sent", 0)
-                    combined["avg_open_rate"] = round(scoped_total / sent, 4) if sent > 0 else 0
+                    combined["avg_open_rate"] = round(combined.get("total_opens", 0) / sent, 4) if sent > 0 else 0
                     combined["remote_stats"] = remote
             except Exception:
                 pass
